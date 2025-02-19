@@ -92,7 +92,7 @@ class Skeleton(Preprocess):
 
         return med_x, med_y
     
-    def calc_rotation(self, med_x: 'NDArray', med_y: 'NDArray', root_mask: 'NDArray') -> 'NDArray':
+    def calc_rotation(self, med_x: 'NDArray', med_y: 'NDArray', init_mask: 'NDArray') -> 'NDArray':
         """
         Get angle of rotation from root skeleton
         """
@@ -102,11 +102,11 @@ class Skeleton(Preprocess):
 
         angle = np.rad2deg(np.arctan(dx/dy))
         
-        rotated_root_mask = rotate(root_mask, angle, preserve_range=True, mode='symmetric')
+        rotated_mask = rotate(init_mask, angle, preserve_range=True, mode='symmetric')
 
-        rotated_root_label, _ = self.clean_root_chunk(rotated_root_mask)
+        rotated_label_mask, _ = self.clean_root_chunk(rotated_mask)
 
-        return rotated_root_label
+        return rotated_label_mask
    
     def add_endpoints(self, med_x: 'NDArray', med_y: 'NDArray') -> None:
         """
@@ -162,12 +162,12 @@ class Skeleton(Preprocess):
         
         self.new_points = np.array(new_points)
 
-    def generate_buffer_coords(self, rotated_root_mask: 'NDArray') -> None:
+    def generate_buffer_coords(self, rotated_mask: 'NDArray') -> None:
         """
         Generate co-ordinates to pad around the root
         Define region to be warped during transformation
         """
-        padding = rotated_root_mask.shape[1] 
+        padding = rotated_mask.shape[1] 
         
         self.old_buffer_coords = np.vstack([self.points+[padding,0], self.points+[-padding,0]])
         self.new_buffer_coords = np.vstack([self.new_points+[padding,0], self.new_points+[-padding,0]])

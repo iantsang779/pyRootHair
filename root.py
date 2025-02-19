@@ -84,7 +84,7 @@ class Root(Skeleton):
         return root_hairs
 
 
-    def split_root_coords(self, root_hairs, tip_border: int) -> tuple['NDArray', int]:
+    def split_root_coords(self, root_hairs, tip_border: int) -> None:
         """
         Split the root hair mask around the location of root tip
         """

@@ -46,24 +46,25 @@ def main():
         image = Preprocess(img_path)
         # processed_image = image.adjust_image(args.factor, args.gain, args.sigma)
         # root_mask, _ =  image.motsu_threshold(processed_image)
-        root_mask, _, init_mask = image.load_mask('/home/iantsang/Images/Wheat/Raw/pic26_shrunk_Simple Segmentation.png')
+        root_mask, init_mask = image.load_mask('/home/iantsang/Images/Wheat/Raw/pic26_shrunk_Simple Segmentation.png')
 
         skeleton = Skeleton()
         clean_root = skeleton.extract_root(root_mask, args.root_crit)
         sk_y, sk_x = skeleton.skeletonize(clean_root)
         sk_spline, sk_height = skeleton.skeleton_params(sk_x, sk_y)
         med_x, med_y = skeleton.calc_skeleton_midline(sk_spline, sk_height, args.skeleton_bin_height)
-        rotated_root_clean = skeleton.calc_rotation(med_x, med_y, clean_root)
+        rotated_mask_clean = skeleton.calc_rotation(med_x, med_y, init_mask)
 
         # rotated_root_mask, _ = image.motsu_threshold(rotated_img)
         # rotated_skeleton = Skeleton()
-        sk_r_y, sk_r_x = skeleton.skeletonize(rotated_root_clean)
+        rotated_root_mask = rotated_mask_clean == 2
+        sk_r_y, sk_r_x = skeleton.skeletonize(rotated_root_mask)
         sk_r_spline, sk_r_height = skeleton.skeleton_params(sk_r_x, sk_r_y)
         med_r_x, med_r_y = skeleton.calc_skeleton_midline(sk_r_spline, sk_r_height, args.skeleton_bin_height)
         skeleton.add_endpoints(med_r_x, med_r_y)
         skeleton.calc_skel_euclidean()
-        skeleton.generate_buffer_coords(rotated_root_clean)
-        straight_mask = skeleton.straighten_image(rotated_root_clean)
+        skeleton.generate_buffer_coords(rotated_mask_clean)
+        straight_mask = skeleton.straighten_image(rotated_mask_clean)
         
         rt = Root(straight_mask)
 

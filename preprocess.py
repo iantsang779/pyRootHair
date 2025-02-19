@@ -50,6 +50,5 @@ class Preprocess():
 
         mask = iio.imread(mask_path)
         root_mask = (mask == 2)
-        rh_mask = (mask == 1)
 
-        return root_mask, rh_mask, mask
+        return root_mask, mask
