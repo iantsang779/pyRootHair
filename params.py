@@ -1,12 +1,11 @@
 import numpy as np
 import re
 import pandas as pd
-import matplotlib.pyplot as plt
+
 from numpy.typing import NDArray
 from itertools import zip_longest
 from scipy.ndimage import label
 from skimage.measure import regionprops
-from skimage.morphology import remove_small_objects
 from statsmodels.nonparametric.smoothers_lowess import lowess
 from root import Root
 
@@ -26,22 +25,19 @@ class GetParams(Root):
         self.len_d, self.len_pos = None, None
         self.area_d, self.area_pos = None, None
 
-    def sliding_window(self, height_bin_size: int, mask_filt: int, factor: int, conn: int) -> None:
+    def sliding_window(self, height_bin_size: int) -> None:
         """
         Sliding window down root hair sections to compute data
         """
-        height_bin_size = height_bin_size // factor
-        mask_filt = mask_filt // factor
         
         root_hair_segments = regionprops(self.root_hairs)
-        for index, segment in enumerate(root_hair_segments): # loop over each root hair section (2)
+        for index, segment in enumerate(root_hair_segments): # loop over each root hair section (left and right side)
 
             min_row, min_col, max_row, max_col = segment.bbox # calculate binding box coords of each segment
-            segment_mask = self.root_hairs[min_row:max_row, min_col:max_col] # mask each root hair segment]
-            segment_mask = remove_small_objects(segment_mask, min_size=mask_filt)
+            segment_mask = self.root_hairs[min_row:max_row, min_col:max_col] # mask each root hair segment
+            # segment_mask = remove_small_objects(segment_mask, min_size=mask_filt)
             height = segment_mask.shape[0] # get height of mask
-            fig, ax = plt.subplots()
-            ax.imshow(segment_mask)
+     
             for bin_start in range(0, height, height_bin_size): # sliding window down each section
 
                 bin_end = bin_start + height_bin_size # calculate bin end
@@ -54,13 +50,11 @@ class GetParams(Root):
                     horizontal_rh_length = max_segment_col - min_segment_col 
 
                     if index == 0:
-                        # _, centroid_x1 = rh_segment_centroid 
                         self.horizontal_rh_list_1.append(horizontal_rh_length)
                         self.rh_area_list_1.append(rh_segment_area)
                         self.bin_end_list_1.append(bin_end)
                            
                     elif index == 1:
-                        # _, centroid_x2 = rh_segment_centroid
                         self.horizontal_rh_list_2.append(horizontal_rh_length)
                         self.rh_area_list_2.append(rh_segment_area)
                         self.bin_end_list_2.append(bin_end) 
@@ -111,25 +105,21 @@ class GetParams(Root):
         self.bin_list = [_check_zeros(i, conv) for i in self.bin_list]
         self.bin_list.reverse()
         
-    def calculate_avg_root_thickness(self, final_root_labeled: 'NDArray', conv: int, factor: int, conn: int) -> None:
+    def calculate_avg_root_thickness(self, final_root_labeled: 'NDArray', conv: int) -> None:
         """
         Calculate average root thickness from root mask via sliding window
         """
         width_list = []
 
-        conv = conv // factor
-
         root_measured = regionprops(final_root_labeled)
-
         root_params = [i.bbox for i in root_measured]
-
         root_start, _, root_end, _ = root_params[0]
 
         for start in range(root_start, root_end, 100):
 
             end = start + 100
             root_section = final_root_labeled[start:end, :]
-            _, root_section_measured = self.clean_root_chunk(root_section, conn) # remove any small fragments from binning
+            _, root_section_measured = self.clean_root_chunk(root_section) # remove any small fragments from binning
             root_binned_params =  [i.bbox for i in root_section_measured]
             _, min_col, _, max_col = root_binned_params[0] # get bounding box for min and max col of root per bin
             root_width = max_col - min_col

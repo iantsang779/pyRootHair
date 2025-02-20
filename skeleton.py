@@ -3,8 +3,7 @@ import matplotlib.pyplot as plt
 
 from numpy.typing import NDArray
 from skimage.transform import rotate, PiecewiseAffineTransform, warp
-from skimage.morphology import skeletonize, remove_small_objects
-from skimage.io import imread
+from skimage.morphology import skeletonize
 from skimage.measure import label, regionprops
 from scipy.spatial.distance import euclidean
 from scipy.interpolate import CubicSpline
@@ -37,17 +36,15 @@ class Skeleton(Preprocess):
 
         return root_section_labeled, root_section_measured
     
-    def extract_root(self, root_mask: 'NDArray', crit: int) -> 'NDArray':
+    def extract_root(self, root_mask: 'NDArray') -> 'NDArray':
         """
         Filter out non-primary root sections from root mask
         """
-                        
-        root_mask_small = remove_small_objects(root_mask, min_size=crit) # remove small fragments
-       
-        root_labeled_cleaned, root_count_cleaned = label(root_mask_small, connectivity=2, return_num=True) # re check num objects
+                               
+        root_labeled_cleaned, root_count_cleaned = label(root_mask, connectivity=2, return_num=True) # re check num objects
 
         if root_count_cleaned > 1: # if more than 1 root is present    
-            root_labeled_cleaned, _ = self.clean_root_chunk(root_mask_small)
+            root_labeled_cleaned, count = self.clean_root_chunk(root_mask)
 
         return root_labeled_cleaned
 
@@ -104,9 +101,9 @@ class Skeleton(Preprocess):
         
         rotated_mask = rotate(init_mask, angle, preserve_range=True, mode='symmetric')
 
-        rotated_label_mask, _ = self.clean_root_chunk(rotated_mask)
+        # rotated_label_mask, _ = self.clean_root_chunk(rotated_mask)
 
-        return rotated_label_mask
+        return rotated_mask
    
     def add_endpoints(self, med_x: 'NDArray', med_y: 'NDArray') -> None:
         """
@@ -184,7 +181,7 @@ class Skeleton(Preprocess):
         ax.legend()
 
 
-    def straighten_image(self, rotated_mask: 'NDArray') -> None:
+    def straighten_image(self, rotated_mask: 'NDArray') -> 'NDArray':
         """
         Use piecewise affine transformation to straighten the root
         """

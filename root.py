@@ -1,5 +1,5 @@
 import numpy as np
-
+import matplotlib.pyplot as plt
 from skimage.measure import label, regionprops
 from skimage.morphology import remove_small_objects, skeletonize
 from scipy.ndimage import convolve
@@ -15,8 +15,8 @@ class Root(Skeleton):
         self.found_tip = False
         self.root_tip_x, self.root_tip_y = None, None
         self.final_labeled_root = None
-        self.final_root_mask = (self.straight_mask == 2)
-        self.final_rh_mask = np.logical_or(self.straight_mask > 0.4, self.straight_mask <= 1)
+        self.final_root_mask = (self.straight_mask > 1.5) # set final masks for root and root hair
+        self.final_rh_mask = (self.straight_mask > 0.4) & (self.straight_mask <= 1) 
 
 
     def check_root_tip(self) -> None:
@@ -24,6 +24,8 @@ class Root(Skeleton):
         Check whether root tip is present in root mask
         
         """
+        plt.imsave('final_root_mask.png', self.final_root_mask)
+        plt.imsave('final_rh_mask.png', self.final_rh_mask)
         self.final_labeled_root, _ = label(self.final_root_mask, connectivity=2, return_num=True)
         root_measured = regionprops(self.final_labeled_root) # measure cleaned root
         coords = [i.coords for i in root_measured][0] # get all coords of masked cleaned root
@@ -43,40 +45,34 @@ class Root(Skeleton):
         if self.found_tip:
             # rotate root skeleton 
             final_skeleton = skeletonize(self.final_labeled_root)
-        
             kernel = np.array([[1,1,1], 
                                [1,2,1],  # each pixel in sliding window has value of 2 (2 x 1), while neighboring pixels have a value of 1 
                                [1,1,1]]) # define kernel that slides over each pixel in the rotated root skeleton.
         
         
             neighbours = convolve(final_skeleton.astype(int), kernel, mode='constant') # apply convolution to skeleton to find out which pixels have 1 neighbour
-        
             endpoints = np.where(neighbours == 3) # edges only have 1 neighbour, so 2 + 1 = 3
-            
             endpoints = list(zip(endpoints[0], endpoints[1])) # store results in paired list 
-        
             root_tip = max(endpoints, key = lambda x: x[0]) # get coords where y-coord is max (bottom of root - assuming root growing downwards)
         
             self.root_tip_y, self.root_tip_x = root_tip 
 
-    def trim_rh_mask(self,crit: int) -> 'NDArray':
+    def trim_rh_mask(self) -> 'NDArray':
         """
         Remove fragments from root hair mask, and remove any non-primary root hair masks
         """
+        small_mask = remove_small_objects(self.final_rh_mask, min_size=500)
 
-        
-        small_mask = remove_small_objects(self.final_rh_mask, min_size=crit)
+        root_hairs, count = label(self.final_rh_mask, connectivity=2, return_num=True)
 
-        root_hairs, count = label(small_mask, connectivity=2, return_num=True)
-
-        if count > 2: # indicates non-primary root hair sections in mask
+        if count > 2: # get rid of any small hair fragments + non-primary root hair sections
             check_root_hair = regionprops(root_hairs) # measure area of root hair masks
             
             rh_regions = sorted(check_root_hair, key = lambda x: x.area, reverse=True) # sort all root hair regions in desc order by size
             area_1_label = rh_regions[0].label # get label of largest RH area
             area_2_label = rh_regions[1].label # get label of second largest RH area
             
-            small_mask = np.logical_or(root_hairs == area_1_label, root_hairs == area_2_label)
+            small_mask = np.logical_or(root_hairs == area_1_label, root_hairs == area_2_label) # set mask to retain only primary hair sections
             
             root_hairs, _ = label(small_mask, connectivity=2, return_num=True) 
 
@@ -84,7 +80,7 @@ class Root(Skeleton):
         return root_hairs
 
 
-    def split_root_coords(self, root_hairs, tip_border: int) -> None:
+    def split_root_coords(self, root_hairs:'NDArray', tip_border:int) -> None:
         """
         Split the root hair mask around the location of root tip
         """
