@@ -1,9 +1,9 @@
 import os
 import imageio.v3 as iio
+import torch
 
 from numpy.typing import NDArray
 from skimage import io, color, transform, exposure, filters
-
 
 class Preprocess():
     """
@@ -15,7 +15,7 @@ class Preprocess():
         self.image = io.imread(image_path)
         self.image_name = os.path.basename(self.image_path).split('.')[0]
         self.image_metadata = iio.immeta(uri=self.image_path)
- 
+
     def adjust_image(self, factor:int, gain:int, sigma: int) -> 'NDArray':
         """
         Grayscale, downsize, adjust contrast and apply gaussian blur to image
@@ -46,6 +46,7 @@ class Preprocess():
                 
         return root_mask, rh_mask  
     
+
     def load_mask(self, mask_path: str):
 
         mask = iio.imread(mask_path)

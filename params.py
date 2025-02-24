@@ -186,7 +186,7 @@ class GetParams(Root):
         self.growth_gradient = (max_y - min_y) / (self.max_x - self.min_x) # gradient of the region
 
 
-    def generate_table(self, img_name: str, datetime: str) -> tuple[pd.DataFrame, pd.DataFrame]:
+    def generate_table(self, img_name: str) -> tuple[pd.DataFrame, pd.DataFrame]:
         """
         Generate table of summary parameters, and raw RHL/RHD measurements for each image
         """
@@ -197,7 +197,7 @@ class GetParams(Root):
         summary_df = pd.DataFrame({'Name': [img_name],
                                 #    'Mode': [self.image_metadata['mode']],
                                 #    'Shape': [self.image_metadata['shape']],
-                                   'DateTime': [datetime],
+                                #    'DateTime': [datetime],
                                    'Avg RHL (mm)': [np.mean(self.avg_rhl_list)],
                                    'Max RHL (mm)': [np.max(self.avg_rhl_list)],
                                    'Min RHL (mm)': [np.min(self.avg_rhl_list)],
