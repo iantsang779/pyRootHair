@@ -18,7 +18,7 @@ def parse_args():
     parser.add_argument('--in_dir', help='Path to directory containing input image(s)', nargs='?', dest='img_dir', required=True)
     parser.add_argument('--adjust_dir', help='Path to directory to store adjusted input image(s) for prediction', nargs='?', dest='adjusted_img_dir', required=True)
     parser.add_argument('--masks', help='Path to directory to store model predicted mask(s)', nargs='?', dest='mask_dir', required=True)
-    parser.add_agrument('--model_path', help='Filepath to nnU-Net segmentation model', type=str, dest='model_path', required=True)
+    parser.add_argument('--model_path', help='Filepath to nnU-Net segmentation model', type=str, dest='model_path', required=True)
     parser.add_argument('--skeleton_bin_height', help='Bin size for sliding window down skeletoniozed root to calculate root midline (default = 100 px)', type=int, nargs='?', dest='skeleton_bin_height', default=100)
     parser.add_argument('--tip_padding', help='Number of pixels to pad around the root tip to split root hair segments (default = 40x)', type=int, nargs='?', dest='tip_padding', default=40)
     parser.add_argument('--resolution', help='Bin size (pixels) for measurements along each root hair segment. Smaller bin sizes yield more data points per root (default = 20 px)', type=int, nargs='?', dest='height_bin_size', default=20)
@@ -38,9 +38,8 @@ def main():
     model = nnUNet()
     model.check_gpu()
     
-    im_loader = ImageLoader()
-    
     for img in os.listdir(args.img_dir):
+        im_loader = ImageLoader()
         im_loader.read_images(args.img_dir, img)
         im_loader.resize_height()
         im_loader.resize_width()
@@ -57,8 +56,9 @@ def main():
         model.load_model(args.model_path) 
         model.run_inference(args.adjusted_img_dir, args.mask_dir) # generate predicted masks
 
-        for mask_path in tqdm(args.mask_dir): # loop through each predicted mask
+        for mask_path in tqdm(os.listdir(args.mask_dir)): # loop through each predicted mask
             init_mask = iio.imread(mask_path)
+            print('Read in Image!')
             root_mask = (init_mask == 2)
 
             skeleton = Skeleton()
@@ -101,9 +101,9 @@ def main():
             print(summary)
             print(raw)
 
-        if args.output_path:
-            summary.to_csv(f'{args.output_path}_summary.csv')
-            raw.to_csv(f'{args.output_path}_raw.csv')
+        if args.save_path:
+            summary.to_csv(f'{args.save_path}_summary.csv')
+            raw.to_csv(f'{args.save_path}_raw.csv')
         
         print(f'Total runtime for current batch of images: {time.perf_counter()-start:.2f} seconds.')
 

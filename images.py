@@ -14,6 +14,7 @@ class ImageLoader():
         self.resized_h, self.resized_w, self.resized_c = (None, None, None)
         self.adjust_height, self.adjust_channel = (False, False)
         self.image = None
+        self.image_name = None
         self.resized_img = None
 
     def read_images(self, img_dir:str, img:str) -> None:
@@ -27,7 +28,8 @@ class ImageLoader():
             raise TypeError(f'Incorrect file format for {img}. Input images must of PNG format.')
 
         self.image = iio.imread(os.path.join(img_dir, img))
-        print(f'\n...Loading {img}...\n')
+        self.image_name = img
+        print(f'\n...Loading {img}...')
         self.old_h, self.old_w, self.old_c = self.image.shape
 
         if self.old_h != self.target_h:
@@ -51,12 +53,12 @@ class ImageLoader():
         """
         Pad width of image if the resized image width < 2028
         """
+        if self.adjust_height:
+            _, resized_w, _ = self.resized_img.shape
 
-        _, resized_w, _ = self.resized_img.shape
-
-        if resized_w < self.target_w: 
-            pad_amount = (self.target_w - resized_w) // 2
-            self.resized_img = np.pad(self.resized_img, ((0,0), (pad_amount, pad_amount+1), (0,0)), mode='median')
+            if resized_w < self.target_w: 
+                pad_amount = (self.target_w - resized_w) // 2
+                self.resized_img = np.pad(self.resized_img, ((0,0), (pad_amount, pad_amount+1), (0,0)), mode='median')
 
     def resize_channel(self) -> None:
         """
@@ -68,16 +70,19 @@ class ImageLoader():
     def save_resized_image(self, img_dir:str) -> None:
         """
         Convert image from float64 to uint8 and save image as XXX_resized.png
+        Save images with _0000.png suffix for nnUNet 
         """
-        self.resized_img = img_as_ubyte(self.resized_img)
-        new_img_name = os.path.basename(self.image).split('.')[0]
-        print(f'\n...Saving resized image: {new_img_name}, in {img_dir}...\n')
+        if self.adjust_height or self.adjust_channel:
+            self.resized_img = img_as_ubyte(self.resized_img)
+            new_img_name = self.image_name.split('.')[0]
+            iio.imwrite(os.path.join(img_dir, f'{new_img_name}_resized_0000.png'), self.resized_img)
+            print(f'\n...Saving resized image: {new_img_name}_resized_0000.png, in {img_dir}...\n')
 
-        iio.imwrite(f'os.path.join({img_dir}, {new_img_name}_resized.png)', self.resized_img)
-
-
-
-
+        else:
+            img_name = self.image_name.split('.')[0]
+            if not img_name.endswith('_0000.png'):
+                iio.imwrite(os.path.join(img_dir, f'{img_name}_0000.png'), self.image)
+                print(f'\n...Saving resized image: {img_name}_0000.png, in {img_dir}...\n')
 
 
     

@@ -11,14 +11,20 @@ class nnUNet():
         self.gpu_exists = False
         self.home_dir = None
 
+        print('########################################')
+        print('Thank you for using iRootHair!')
+        print('########################################\n')  
+
     def check_gpu(self) -> None:
         """
         Check whether GPU is available on local machine/cluster
         """
+        
         if torch.cuda.is_available():
             self.gpu_exists = True
-            print(f'\n...GPU Detected! Using {torch.cuda.get_device_name(0)} ...\n')
- 
+            print(f'\n...GPU Detected! Using {torch.cuda.get_device_name(0)}...\n')
+        else:
+            print(f'\n...No GPU Detected...\n')
     def setup_nnunet_paths(self) -> None:
         """
         Setup nnUnet path for results if it doesn't currently exist. Required for running inference
@@ -35,8 +41,13 @@ class nnUNet():
         Load pre-trained nnUNet segmentation model from path
         """
         print('\n...Loading nnU-Net model...\n')
-        subprocess.run(["nnUNetv2_install_pretrained_model_from_zip", model_path])
-        print('\n...Model loaded!...\n')
+        try:
+            res = subprocess.run(["nnUNetv2_install_pretrained_model_from_zip", model_path])
+    
+            print('\n...Model loaded...\n')
+
+        except subprocess.CalledProcessError as e:
+            print(f'Failed with error: {e}')
 
     def run_inference(self, in_dir:str, out_dir:str):
         """
@@ -45,16 +56,27 @@ class nnUNet():
         
         print('\n...Running inference...\n')
 
-        subprocess.run(["nnUNetv2_predict",
-                        "-d", "Dataset069_iRootHair",
-                        "-i", in_dir,
-                        "-o", out_dir,
-                        "-f", "0","1","2","3","4", # 5 fold cross-val
-                        "-c", "2d", # only trained on 2d config
-                        "-tr", "nnUNetTrainer",
-                        "-p", "nnUNetResEncUNetLPlans"])
+        try:
+            res = subprocess.run(["nnUNetv2_predict",
+                            "-d", "Dataset069_iRootHair",
+                            "-i", in_dir,
+                            "-o", out_dir,
+                            "-f", "0","1","2","3","4", # 5 fold cross-val
+                            "-c", "2d", # only trained on 2d config
+                            "-tr", "nnUNetTrainer",
+                            "-p", "nnUNetResEncUNetLPlans"], 
+                            check=True, 
+                            capture_output=True,
+                            text=True)
+            
+            print(f'Output: {res.stdout}\n')
+            print(f'Error: {res.stderr}\n')
+
+            print('\n...Inference successful - predicted masks have been generated...\n')
+
+        except subprocess.CalledProcessError as e:
+            print(f'Failed with error: {e}')
         
-        print('\n...Predicted masks have been generated...\n')
     
     
         
