@@ -10,12 +10,14 @@ from skeleton import Skeleton
 from root import Root
 from params import GetParams
 from model import nnUNet
+from images import ImageLoader
 # from plots import Plotter
 
 def parse_args():
     parser = argparse.ArgumentParser(prog='iRootHair')
-    parser.add_argument('--input', help='Path to directory containing input image(s)', nargs='?', dest='img_dir', required=True)
-    parser.add_argument('--masks', help='Path to directory to store model prediction(s)', nargs='?', dest='mask_dir', required=True)
+    parser.add_argument('--in_dir', help='Path to directory containing input image(s)', nargs='?', dest='img_dir', required=True)
+    parser.add_argument('--adjust_dir', help='Path to directory to store adjusted input image(s) for prediction', nargs='?', dest='adjusted_img_dir', required=True)
+    parser.add_argument('--masks', help='Path to directory to store model predicted mask(s)', nargs='?', dest='mask_dir', required=True)
     parser.add_agrument('--model_path', help='Filepath to nnU-Net segmentation model', type=str, dest='model_path', required=True)
     parser.add_argument('--skeleton_bin_height', help='Bin size for sliding window down skeletoniozed root to calculate root midline (default = 100 px)', type=int, nargs='?', dest='skeleton_bin_height', default=100)
     parser.add_argument('--tip_padding', help='Number of pixels to pad around the root tip to split root hair segments (default = 40x)', type=int, nargs='?', dest='tip_padding', default=40)
@@ -31,21 +33,31 @@ def parse_args():
 
 
 def main():
+    args = parse_args()
+
     model = nnUNet()
     model.check_gpu()
     
-    start = time.perf_counter()
-    args = parse_args()
+    im_loader = ImageLoader()
+    
+    for img in os.listdir(args.img_dir):
+        im_loader.read_images(args.img_dir, img)
+        im_loader.resize_height()
+        im_loader.resize_width()
+        im_loader.resize_channel()
+        im_loader.save_resized_image(args.adjusted_img_dir)
 
     summary = pd.DataFrame()
     raw = pd.DataFrame()
 
     if model.gpu_exists: # check if GPU exists
+        start = time.perf_counter()
+        
         model.setup_nnunet_paths() # set up nnUNet results path
         model.load_model(args.model_path) 
-        model.run_inference(args.img_dir, args.out_dir) # generate predicted masks
+        model.run_inference(args.adjusted_img_dir, args.mask_dir) # generate predicted masks
 
-        for mask_path in tqdm(args.mask_dir):
+        for mask_path in tqdm(args.mask_dir): # loop through each predicted mask
             init_mask = iio.imread(mask_path)
             root_mask = (init_mask == 2)
 
@@ -93,7 +105,7 @@ def main():
             summary.to_csv(f'{args.output_path}_summary.csv')
             raw.to_csv(f'{args.output_path}_raw.csv')
         
-        print(f'Runtime for current batch of images: {time.perf_counter()-start:.2f} seconds.')
+        print(f'Total runtime for current batch of images: {time.perf_counter()-start:.2f} seconds.')
 
 
 if __name__ == '__main__':

@@ -29,7 +29,8 @@ class GetParams(Root):
         """
         Sliding window down root hair sections to compute data
         """
-        
+        print('\n...Calculating root hair parameters...\n')
+
         root_hair_segments = regionprops(self.root_hairs)
         for index, segment in enumerate(root_hair_segments): # loop over each root hair section (left and right side)
 
@@ -193,7 +194,8 @@ class GetParams(Root):
        
         if datetime is None:
             datetime = 'NA'
-
+        
+        print('\n...Generating tables...\n')
         summary_df = pd.DataFrame({'Name': [img_name],
                                 #    'Mode': [self.image_metadata['mode']],
                                 #    'Shape': [self.image_metadata['shape']],

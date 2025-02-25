@@ -1,6 +1,5 @@
 import os
 import imageio.v3 as iio
-import torch
 
 from numpy.typing import NDArray
 from skimage import io, color, transform, exposure, filters

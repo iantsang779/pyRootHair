@@ -24,8 +24,6 @@ class Root(Skeleton):
         Check whether root tip is present in root mask
         
         """
-        plt.imsave('final_root_mask.png', self.final_root_mask)
-        plt.imsave('final_rh_mask.png', self.final_rh_mask)
         self.final_labeled_root, _ = label(self.final_root_mask, connectivity=2, return_num=True)
         root_measured = regionprops(self.final_labeled_root) # measure cleaned root
         coords = [i.coords for i in root_measured][0] # get all coords of masked cleaned root
@@ -34,7 +32,7 @@ class Root(Skeleton):
         
         if image_height - max_root_y_coord > 1: # if > 1 px difference between image height and max y of root
             self.found_tip = True 
-
+            
         return self.final_labeled_root
     
     def find_root_tip(self) -> None:
@@ -54,8 +52,10 @@ class Root(Skeleton):
             endpoints = np.where(neighbours == 3) # edges only have 1 neighbour, so 2 + 1 = 3
             endpoints = list(zip(endpoints[0], endpoints[1])) # store results in paired list 
             root_tip = max(endpoints, key = lambda x: x[0]) # get coords where y-coord is max (bottom of root - assuming root growing downwards)
-        
+            print('\n...Located root tip...\n')
             self.root_tip_y, self.root_tip_x = root_tip 
+        else:
+            print('\n...Failed to locate root tip...\n')
 
     def trim_rh_mask(self) -> 'NDArray':
         """

@@ -40,7 +40,7 @@ class Skeleton(Preprocess):
         """
         Filter out non-primary root sections from root mask
         """
-                               
+        print('\n...Extracting root...\n')      
         root_labeled_cleaned, root_count_cleaned = label(root_mask, connectivity=2, return_num=True) # re check num objects
 
         if root_count_cleaned > 1: # if more than 1 root is present    
@@ -189,7 +189,7 @@ class Skeleton(Preprocess):
         tform.estimate(self.new_buffer_coords,self.old_buffer_coords)
 
         straight_mask = warp(rotated_mask, tform, mode='symmetric')
-
+        print('\n...Straightening the root...\n')
         return straight_mask
 
 
