@@ -72,7 +72,11 @@ class ImageLoader():
         Convert image from float64 to uint8 and save image as XXX_resized.png
         Save images with _0000.png suffix for nnUNet 
         """
+   
         if self.adjust_height or self.adjust_channel:
+            if img_dir is None:
+                raise ValueError(f'The input image {self.image_name} has incorrect dimensions. Please supply a filepath using --adjusted_images to allow iRootHair to save a modified copy of the original image.')
+            
             self.resized_img = img_as_ubyte(self.resized_img)
             new_img_name = self.image_name.split('.')[0]
             iio.imwrite(os.path.join(img_dir, f'{new_img_name}_resized_0000.png'), self.resized_img)
@@ -80,7 +84,11 @@ class ImageLoader():
 
         else:
             img_name = self.image_name.split('.')[0]
-            if not img_name.endswith('_0000.png'):
+            
+            if not self.image_name.endswith('_0000.png'):
+                if img_dir is None:
+                    raise ValueError(f'The input image {self.image_name} is missing the correct file name suffix. Please supply a filepath using --adjusted_images to allow iRootHair to save a copy of the original image with the appropiate file name for prediction.')
+    
                 iio.imwrite(os.path.join(img_dir, f'{img_name}_0000.png'), self.image)
                 print(f'\n...Saving resized image: {img_name}_0000.png, in {img_dir}...\n')
 

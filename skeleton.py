@@ -40,7 +40,7 @@ class Skeleton(Preprocess):
         """
         Filter out non-primary root sections from root mask
         """
-        print('\n...Extracting root...\n')      
+        print('\n...Extracting root...')      
         root_labeled_cleaned, root_count_cleaned = label(root_mask, connectivity=2, return_num=True) # re check num objects
 
         if root_count_cleaned > 1: # if more than 1 root is present    
@@ -72,11 +72,13 @@ class Skeleton(Preprocess):
 
         return merged_spline, skeleton_height
 
-    def calc_skeleton_midline(self, merged_spline: 'NDArray', height: int, bin_size: int) -> tuple[list, list]:
+    def calc_skeleton_midline(self, merged_spline: 'NDArray', height: int) -> tuple[list, list]:
         """
         Calculate midline of original root skeleton using a sliding window
         """
         med_x, med_y = [], []
+        
+        bin_size = 100
 
         for start in range(0, height, bin_size):
             end = start + bin_size
@@ -189,7 +191,7 @@ class Skeleton(Preprocess):
         tform.estimate(self.new_buffer_coords,self.old_buffer_coords)
 
         straight_mask = warp(rotated_mask, tform, mode='symmetric')
-        print('\n...Straightening the root...\n')
+        print('...Straightening the root...')
         return straight_mask
 
 

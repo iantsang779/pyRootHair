@@ -52,10 +52,10 @@ class Root(Skeleton):
             endpoints = np.where(neighbours == 3) # edges only have 1 neighbour, so 2 + 1 = 3
             endpoints = list(zip(endpoints[0], endpoints[1])) # store results in paired list 
             root_tip = max(endpoints, key = lambda x: x[0]) # get coords where y-coord is max (bottom of root - assuming root growing downwards)
-            print('\n...Located root tip...\n')
+            print('...Located root tip...')
             self.root_tip_y, self.root_tip_x = root_tip 
         else:
-            print('\n...Failed to locate root tip...\n')
+            print('..Failed to locate root tip...')
 
     def trim_rh_mask(self) -> 'NDArray':
         """
@@ -80,11 +80,12 @@ class Root(Skeleton):
         return root_hairs
 
 
-    def split_root_coords(self, root_hairs:'NDArray', tip_border:int) -> None:
+    def split_root_coords(self, root_hairs:'NDArray') -> None:
         """
         Split the root hair mask around the location of root tip
         """
-
+        tip_border = 40
+        
         if self.found_tip:
             root_tip_y_max, root_tip_y_min = self.root_tip_y + tip_border, self.root_tip_y - tip_border
             root_tip_x_max, root_tip_x_min = self.root_tip_x + tip_border, self.root_tip_x - tip_border

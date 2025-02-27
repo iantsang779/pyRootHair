@@ -1,7 +1,6 @@
 import torch
 import os
 import subprocess
-import imageio.v3 as iio
 
 from pathlib import Path
 
@@ -12,7 +11,7 @@ class nnUNet():
         self.home_dir = None
 
         print('########################################')
-        print('Thank you for using iRootHair!')
+        print('   Thank you for using iRootHair!   ')
         print('########################################\n')  
 
     def check_gpu(self) -> None:
@@ -25,6 +24,7 @@ class nnUNet():
             print(f'\n...GPU Detected! Using {torch.cuda.get_device_name(0)}...\n')
         else:
             print(f'\n...No GPU Detected...\n')
+
     def setup_nnunet_paths(self) -> None:
         """
         Setup nnUnet path for results if it doesn't currently exist. Required for running inference
@@ -42,7 +42,7 @@ class nnUNet():
         """
         print('\n...Loading nnU-Net model...\n')
         try:
-            res = subprocess.run(["nnUNetv2_install_pretrained_model_from_zip", model_path])
+            subprocess.run(["nnUNetv2_install_pretrained_model_from_zip", model_path])
     
             print('\n...Model loaded...\n')
 
@@ -57,21 +57,19 @@ class nnUNet():
         print('\n...Running inference...\n')
 
         try:
-            res = subprocess.run(["nnUNetv2_predict",
+            subprocess.run(["nnUNetv2_predict",
                             "-d", "Dataset069_iRootHair",
                             "-i", in_dir,
                             "-o", out_dir,
                             "-f", "0","1","2","3","4", # 5 fold cross-val
                             "-c", "2d", # only trained on 2d config
                             "-tr", "nnUNetTrainer",
-                            "-p", "nnUNetResEncUNetLPlans"], 
+                            "-p", "nnUNetResEncUNetLPlans",
+                            "--disable_progress_bar"], 
                             check=True, 
                             capture_output=True,
                             text=True)
-            
-            print(f'Output: {res.stdout}\n')
-            print(f'Error: {res.stderr}\n')
-
+        
             print('\n...Inference successful - predicted masks have been generated...\n')
 
         except subprocess.CalledProcessError as e:

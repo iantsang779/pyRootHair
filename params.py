@@ -1,6 +1,7 @@
 import numpy as np
 import re
 import pandas as pd
+import matplotlib.pyplot as plt
 
 from numpy.typing import NDArray
 from itertools import zip_longest
@@ -29,7 +30,7 @@ class GetParams(Root):
         """
         Sliding window down root hair sections to compute data
         """
-        print('\n...Calculating root hair parameters...\n')
+        print('...Calculating root hair parameters...')
 
         root_hair_segments = regionprops(self.root_hairs)
         for index, segment in enumerate(root_hair_segments): # loop over each root hair section (left and right side)
@@ -192,10 +193,10 @@ class GetParams(Root):
         Generate table of summary parameters, and raw RHL/RHD measurements for each image
         """
        
-        if datetime is None:
-            datetime = 'NA'
+        # if datetime is None:
+        #     datetime = 'NA'
         
-        print('\n...Generating tables...\n')
+        print('...Generating tables...\n')
         summary_df = pd.DataFrame({'Name': [img_name],
                                 #    'Mode': [self.image_metadata['mode']],
                                 #    'Shape': [self.image_metadata['shape']],
@@ -223,3 +224,77 @@ class GetParams(Root):
                                'RHD 2': self.rh_area_list_2})   
         
         return summary_df, raw_df
+    
+    def plot_rhl(self, ax) -> None:
+        """
+        Plot root hair length relative to distance from root tip
+        """
+        ax.scatter(x=self.bin_list, y=self.horizontal_rh_list_1, color='darkmagenta', marker='*', alpha=0.3)
+        ax.scatter(x=self.bin_list, y=self.horizontal_rh_list_2, color='lightseagreen', marker='X', alpha=0.3)
+        ax.plot(self.smooth_1_rhl[:, 0], self.smooth_1_rhl[:, 1], color='darkmagenta', linewidth=4, linestyle='dashed', label='RHL 1')
+        ax.plot(self.smooth_2_rhl[:, 0], self.smooth_2_rhl[:, 1], color='lightseagreen', linewidth=4, linestyle='dashdot', label='RHL 2')
+        ax.legend(loc='upper right')
+        ax.set_ylim(0, max(self.horizontal_rh_list_2) * 2)
+        ax.set_xlabel('Distance From Root Tip (mm)')
+        ax.set_ylabel('Root Hair Length (mm)')
+    
+    def plot_avg_rhl(self, ax) -> None:
+        """
+        Plot average root hair length relative to distance from root tip
+        Annotate regions of positive root hair growth and estimate elongation zone
+        """
+        ax.fill_between(self.smooth_avg_rhl[:, 0], min(self.gradient) * 1.1, max(self.avg_rhl_list) * 2, where=self.pos_regions, color='cyan', alpha=0.15, label='RH Growth Regions')        
+        ax.scatter(x=self.bin_list, y=self.avg_rhl_list, color='orangered')
+        ax.plot(self.smooth_avg_rhl[:, 0], self.smooth_avg_rhl[:, 1], color='darkviolet', linewidth=3, label='Avg RHL')
+        ax.plot((self.min_x, self.min_x), (-1, 10), color='royalblue', linewidth=2, linestyle='dashed', label='Primary Elongation Zone')
+        ax.plot((self.max_x, self.max_x),(-1, 10), color='royalblue', linewidth=2, linestyle='dashed')
+        ax.plot(self.smooth_avg_rhl[:, 0], self.gradient, color='green', alpha=0.7, linestyle='dashdot', label='Avg RH Gradient')
+        
+        ax.set_ylim(min(self.gradient) * 1.1, max(self.avg_rhl_list) * 2)
+        ax.set_xlabel('Distance From Root Tip (mm)')
+        ax.set_ylabel('Average Root Hair Length (mm)')
+        ax.legend(loc='upper right')
+    
+    def plot_rhd(self, ax) -> None:
+        """
+        Plot root hair density relative to distance from root tip
+        """
+        ax.scatter(x=self.bin_list, y=self.rh_area_list_1, color='darkmagenta', marker='*', alpha=0.3)
+        ax.scatter(x=self.bin_list, y=self.rh_area_list_2, color='lightseagreen', marker='X', alpha=0.3)
+        ax.plot(self.smooth_1_rhd[:, 0], self.smooth_1_rhd[:, 1], color='darkmagenta', linewidth=4, linestyle='dashed', label='RHD 1')
+        ax.plot(self.smooth_2_rhd[:, 0], self.smooth_2_rhd[:, 1], color='lightseagreen', linewidth=4, linestyle='dashdot', label='RHD 2')
+        ax.set_ylim(0, max(self.rh_area_list_2) * 2)
+        ax.set_xlabel('Distance From Root Tip (mm)')
+        ax.set_ylabel(r'Root Hair Density (mm$^{2}$)')
+        ax.legend(loc='upper right')
+    
+    def plot_avg_rhd(self, ax) -> None:
+        """
+        Plot average root hair density relative to distance from root tip
+        """
+        ax.scatter(x=self.bin_list, y=self.avg_rhd_list, color='orangered')
+        ax.plot(self.smooth_avg_rhd[:, 0], self.smooth_avg_rhd[:, 1], color='darkviolet', linewidth=3, label='Avg RHD')
+
+        ax.set_ylim(0, max(self.avg_rhd_list) * 2)
+        ax.set_xlabel('Distance From Root Tip (mm)')
+        ax.set_ylabel(r'Average Root Hair Density (mm$^{2}$)')
+        ax.legend(loc='upper right')
+    
+    def plot_summary(self, image_name: str) -> None:
+        """
+        Panel all summary plots together
+        """
+        labels = ['a', 'b', 'c', 'd']
+        positions = [(0,0), (0,1), (1,0), (1,1)]
+
+        fig, ax = plt.subplots(2,2, figsize=(12, 10))
+        self.plot_rhl(ax[0,0])
+        self.plot_rhd(ax[0,1])
+        self.plot_avg_rhl(ax[1,0])
+        self.plot_avg_rhd(ax[1,1])
+        
+        for label, pos in zip(labels, positions):
+            ax[pos].annotate(label, xy=(0.05, 0.92), xycoords='axes fraction', fontweight='bold', fontsize=18)
+            
+        plt.title(f'{image_name} Summary')
+        plt.savefig(f'{image_name}_summary.png')
