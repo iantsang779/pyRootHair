@@ -4,6 +4,7 @@ import pandas as pd
 import imageio.v3 as iio
 import matplotlib.pyplot as plt
 import os
+import sys
 
 from tqdm import tqdm
 from preprocess import Preprocess
@@ -14,11 +15,14 @@ from model import nnUNet
 from images import ImageLoader
 
 def parse_args():
-    parser = argparse.ArgumentParser(prog='iRootHair')
+    parser = argparse.ArgumentParser(prog='pyRootHair')
     parser.add_argument('--input', help='Path to directory containing input image(s)', nargs='?', dest='img_dir', required=True)
     parser.add_argument('--adjusted_input', help='Path to an empty directory to store adjusted input image(s) for prediction.', nargs='?', dest='adjusted_img_dir')
     parser.add_argument('--masks', help='Path to directory to store model predicted mask(s)', nargs='?', dest='mask_dir', required=True)
     parser.add_argument('--model_path', help='Filepath to nnU-Net segmentation model', type=str, dest='model_path', required=True)
+    parser.add_argument('--override_model_path', help='Filepath to custom nnU-Net segmentation model', type=str, dest='custom_model_path')
+    parser.add_argument('--override_model_dataset', help='Dataset ID for nnUNetv2. Required if specifying --override_model_path', type=str, dest='custom_dataset_id', required='--override_model_path' in sys.argv)
+    parser.add_argument('--override_model_planner', help='Model plans for nnUNetv2. Required if specifying --override_model_path', type=str, dest='custom_model_planner', required='--override_model_path' in sys.argv)
     parser.add_argument('--resolution', help='Bin size (pixels) for measurements along each root hair segment. Smaller bin sizes yield more data points per root (default = 20 px)', type=int, nargs='?', dest='height_bin_size', default=20)
     parser.add_argument('--rhd_filt', help='Area threshold to remove small areas from area list; sets area for a particular bin to 0 when below the value (default = 180 px^2)', type=int, nargs='?', dest='area_filt', default=180)
     parser.add_argument('--rhl_filt', help='Length threshold to remove small lengths from length list; sets length for a particular bin to 0 when below the value (default = 14px)', type=int, nargs='?', dest='length_filt', default=14)
@@ -52,8 +56,15 @@ def main():
 
     if model.gpu_exists: # check if GPU exists
         model.setup_nnunet_paths() # set up nnUNet results path
-        model.load_model(args.model_path) 
-        model.run_inference(args.adjusted_img_dir, args.mask_dir) # generate predicted masks
+        
+        if args.custom_model_path is not None: # check whether path to own nnUNet model has been specified
+            model.load_model(args.custom_model_path)
+            model.run_inference(args.adjusted_img_dir, args.mask_dir, 
+                                args.custom_dataset_id, args.custom_model_planner) # generate predicted masks
+            
+        else: # load and run inference with pre-trained model if --custom_model_path is not supplied
+            model.load_model(args.model_path) 
+            model.run_inference(args.adjusted_img_dir, args.mask_dir) # generate predicted masks
 
         for mask_file in tqdm(os.listdir(args.mask_dir)): # loop through each predicted mask
             if mask_file.endswith('.png'):
@@ -69,7 +80,7 @@ def main():
                 rotated_mask = skeleton.calc_rotation(med_x, med_y, init_mask) 
 
                 rotated_root_mask = (rotated_mask == 2) 
-                # plt.imsave(f'{mask_file.split('.')[0]}_clean_root.png',rotated_root_mask)
+
                 clean_root_rotated = skeleton.extract_root(rotated_root_mask)
                 sk_r_y, sk_r_x = skeleton.skeletonize(clean_root_rotated)
                 sk_r_spline, sk_r_height = skeleton.skeleton_params(sk_r_x, sk_r_y)

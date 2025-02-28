@@ -11,7 +11,7 @@ class nnUNet():
         self.home_dir = None
 
         print('########################################')
-        print('   Thank you for using iRootHair!   ')
+        print('   Thank you for using pyRootHair!   ')
         print('########################################\n')  
 
     def check_gpu(self) -> None:
@@ -36,7 +36,7 @@ class nnUNet():
             os.environ['nnUNet_results'] = res_path # export path to newly created directory (temp)
             print(f'\n...nnUNet paths have been set up...\n')
 
-    def load_model(self, model_path:str) -> None:
+    def load_model(self, model_path:str,) -> None:
         """
         Load pre-trained nnUNet segmentation model from path
         """
@@ -49,7 +49,9 @@ class nnUNet():
         except subprocess.CalledProcessError as e:
             print(f'Failed with error: {e}')
 
-    def run_inference(self, in_dir:str, out_dir:str):
+    def run_inference(self, in_dir:str, out_dir:str, 
+                      dataset: str='Dataset069_iRootHair',
+                      planner: str='nnUNetResEncUNetLPlans'):
         """
         Run inference with model on input directory. Outputs predicted masks in output_directory. 
         """
@@ -58,13 +60,13 @@ class nnUNet():
 
         try:
             subprocess.run(["nnUNetv2_predict",
-                            "-d", "Dataset069_iRootHair",
+                            "-d", dataset,
                             "-i", in_dir,
                             "-o", out_dir,
                             "-f", "0","1","2","3","4", # 5 fold cross-val
                             "-c", "2d", # only trained on 2d config
                             "-tr", "nnUNetTrainer",
-                            "-p", "nnUNetResEncUNetLPlans",
+                            "-p", planner,
                             "--disable_progress_bar"], 
                             check=True, 
                             capture_output=True,
