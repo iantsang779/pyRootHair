@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 
 from numpy.typing import NDArray
 from skimage.transform import rotate, PiecewiseAffineTransform, warp
@@ -171,7 +172,7 @@ class Skeleton(Preprocess):
         self.old_buffer_coords = np.vstack([self.points+[padding,0], self.points+[-padding,0]])
         self.new_buffer_coords = np.vstack([self.new_points+[padding,0], self.new_points+[-padding,0]])
     
-    def visualize_transformation(self, mask: 'NDArray') -> None:
+    def visualize_transformation(self, mask: 'NDArray', path: str, img_name: str) -> None:
         """
         Check transformation co-ordinates have been correctly mapped
         """
@@ -181,6 +182,7 @@ class Skeleton(Preprocess):
         plt.plot(self.old_buffer_coords[:,0], self.old_buffer_coords[:,1], 'yx', label='original buffer coords')
         plt.plot(self.new_buffer_coords[:,0], self.new_buffer_coords[:,1], 'g+', label='new buffer coords')
         ax.legend()
+        plt.savefig(os.path.join(path, img_name))
 
 
     def straighten_image(self, rotated_mask: 'NDArray') -> 'NDArray':

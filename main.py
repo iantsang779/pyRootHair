@@ -23,10 +23,10 @@ def parse_args():
     parser.add_argument('--rhd_filt', help='Area threshold to remove small areas from area list; sets area for a particular bin to 0 when below the value (default = 180 px^2)', type=int, nargs='?', dest='area_filt', default=180)
     parser.add_argument('--rhl_filt', help='Length threshold to remove small lengths from length list; sets length for a particular bin to 0 when below the value (default = 14px)', type=int, nargs='?', dest='length_filt', default=14)
     parser.add_argument('--conv', help='The number of pixels corresponding to 1mm in the original input images (default = 127.5 px)', type=int, nargs='?', dest='conv', default=127.5)
-    parser.add_argument('--output', help='Filepath to save data', type=str, dest='save_path')
-    parser.add_argument('--show_segmentation', help='Save model segmentation results in --output directory.', dest='show_segmentation', action='store_true')
-    parser.add_argument('--show_transformation', help='Save diagnostic plot showing root straightening in --output directory', dest='show_transformation', action='store_true')
-    parser.add_argument('--show_summary', help='Save summary plots for each input image in --output directory.', dest='show_summary', action='store_true')
+    parser.add_argument('--output', help='Filepath to save data', type=str, dest='save_path', required=True)
+    parser.add_argument('--plot_segmentation', help='Save model segmentation results in --output directory.', dest='show_segmentation', action='store_true')
+    parser.add_argument('--plot_transformation', help='Save diagnostic plot showing root straightening in --output directory', dest='show_transformation', action='store_true')
+    parser.add_argument('--plot_summary', help='Save summary plots for each input image in --output directory.', dest='show_summary', action='store_true')
 
     return parser.parse_args()
 
@@ -66,11 +66,12 @@ def main():
                 sk_y, sk_x = skeleton.skeletonize(clean_root)
                 sk_spline, sk_height = skeleton.skeleton_params(sk_x, sk_y)
                 med_x, med_y = skeleton.calc_skeleton_midline(sk_spline, sk_height)
-                rotated_mask = skeleton.calc_rotation(med_x, med_y, init_mask)
+                rotated_mask = skeleton.calc_rotation(med_x, med_y, init_mask) 
 
-                rotated_root_mask = (rotated_mask == 2)
-                
-                sk_r_y, sk_r_x = skeleton.skeletonize(rotated_root_mask)
+                rotated_root_mask = (rotated_mask == 2) 
+                # plt.imsave(f'{mask_file.split('.')[0]}_clean_root.png',rotated_root_mask)
+                clean_root_rotated = skeleton.extract_root(rotated_root_mask)
+                sk_r_y, sk_r_x = skeleton.skeletonize(clean_root_rotated)
                 sk_r_spline, sk_r_height = skeleton.skeleton_params(sk_r_x, sk_r_y)
                 med_r_x, med_r_y = skeleton.calc_skeleton_midline(sk_r_spline, sk_r_height)
                 skeleton.add_endpoints(med_r_x, med_r_y)
@@ -99,10 +100,10 @@ def main():
                 raw = pd.concat([raw_df, raw])
 
                 if args.show_transformation:
-                    skeleton.visualize_transformation(init_mask)
+                    skeleton.visualize_transformation(init_mask, args.save_path, mask_file.split('.')[0]) 
 
                 if args.show_segmentation:
-                    plt.imsave(f'{mask_file.split('.')[0]}_mask.png', straight_mask)
+                    plt.imsave(os.path.join(args.save_path,f'{mask_file.split('.')[0]}_mask.png'), straight_mask)
                 
                 if args.show_summary:
                     data.plot_summary(mask_file.split('.')[0])

@@ -55,7 +55,7 @@ class Root(Skeleton):
             print('...Located root tip...')
             self.root_tip_y, self.root_tip_x = root_tip 
         else:
-            print('..Failed to locate root tip...')
+            print('...Failed to locate root tip...')
 
     def trim_rh_mask(self) -> 'NDArray':
         """
@@ -85,7 +85,7 @@ class Root(Skeleton):
         Split the root hair mask around the location of root tip
         """
         tip_border = 40
-        
+
         if self.found_tip:
             root_tip_y_max, root_tip_y_min = self.root_tip_y + tip_border, self.root_tip_y - tip_border
             root_tip_x_max, root_tip_x_min = self.root_tip_x + tip_border, self.root_tip_x - tip_border
