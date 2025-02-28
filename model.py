@@ -36,7 +36,7 @@ class nnUNet():
             os.environ['nnUNet_results'] = res_path # export path to newly created directory (temp)
             print(f'\n...nnUNet paths have been set up...\n')
 
-    def load_model(self, model_path:str,) -> None:
+    def load_model(self, model_path:str) -> None:
         """
         Load pre-trained nnUNet segmentation model from path
         """
