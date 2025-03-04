@@ -11,51 +11,81 @@ from preprocess import Preprocess
 from skeleton import Skeleton
 from root import Root
 from params import GetParams
-from model import nnUNet
+from cnn import nnUNet
 from images import ImageLoader
+from random_forest import ForestTrainer
 
 def parse_args():
-    parser = argparse.ArgumentParser(prog='pyRootHair')
-    parser.add_argument('--input', help='Path to directory containing input image(s)', nargs='?', dest='img_dir', required=True)
+    parser = argparse.ArgumentParser(prog='pyRootHair',
+                                     description='pyRootHair Arguments')
+    parser.add_argument('--no_gpu', help='Toggle whether to run pyRootHair with, or without a GPU. Only specify this flag if a GPU is unavailable.', dest='no_gpu', action='store_true')
+    parser.add_argument('--input', help='Path to directory containing input image(s)', nargs='?', dest='img_dir')
     parser.add_argument('--adjusted_input', help='Path to an empty directory to store adjusted input image(s) for prediction.', nargs='?', dest='adjusted_img_dir')
-    parser.add_argument('--masks', help='Path to directory to store model predicted mask(s)', nargs='?', dest='mask_dir', required=True)
-    parser.add_argument('--model_path', help='Filepath to nnU-Net segmentation model', type=str, dest='model_path', required=True)
+    parser.add_argument('--masks', help='Path to directory to store model predicted mask(s)', nargs='?', dest='mask_dir')
+    parser.add_argument('--model_path', help='Filepath to nnU-Net segmentation model', type=str, dest='model_path')
     parser.add_argument('--override_model_path', help='Filepath to custom nnU-Net segmentation model', type=str, dest='custom_model_path')
     parser.add_argument('--override_model_dataset', help='Dataset ID for nnUNetv2. Required if specifying --override_model_path', type=str, dest='custom_dataset_id', required='--override_model_path' in sys.argv)
     parser.add_argument('--override_model_planner', help='Model plans for nnUNetv2. Required if specifying --override_model_path', type=str, dest='custom_model_planner', required='--override_model_path' in sys.argv)
+    parser.add_argument('--rfc_model_path', help='Filepath to trained Random Forest Classifier model. Required if specifying --no_gpu', type=str, dest='rfc_model_path')
     parser.add_argument('--resolution', help='Bin size (pixels) for measurements along each root hair segment. Smaller bin sizes yield more data points per root (default = 20 px)', type=int, nargs='?', dest='height_bin_size', default=20)
     parser.add_argument('--rhd_filt', help='Area threshold to remove small areas from area list; sets area for a particular bin to 0 when below the value (default = 180 px^2)', type=int, nargs='?', dest='area_filt', default=180)
     parser.add_argument('--rhl_filt', help='Length threshold to remove small lengths from length list; sets length for a particular bin to 0 when below the value (default = 14px)', type=int, nargs='?', dest='length_filt', default=14)
     parser.add_argument('--conv', help='The number of pixels corresponding to 1mm in the original input images (default = 127.5 px)', type=int, nargs='?', dest='conv', default=127.5)
-    parser.add_argument('--output', help='Filepath to save data', type=str, dest='save_path', required=True)
+    parser.add_argument('--output', help='Filepath to save data', type=str, dest='save_path')
     parser.add_argument('--plot_segmentation', help='Save model segmentation results in --output directory.', dest='show_segmentation', action='store_true')
     parser.add_argument('--plot_transformation', help='Save diagnostic plot showing root straightening in --output directory', dest='show_transformation', action='store_true')
     parser.add_argument('--plot_summary', help='Save summary plots for each input image in --output directory.', dest='show_summary', action='store_true')
 
-    return parser.parse_args()
+    return parser.parse_args(), parser
 
+def check_arguments_gpu():
+    args, parser = parse_args()
+
+    missing_args = []
+        # check necessary arguments are supplied
+    if args.img_dir is None:
+        missing_args.append('--input')
+    if args.adjusted_img_dir is None:
+        missing_args.append('--adjusted_input')
+    if args.mask_dir is None:
+        missing_args.append('--masks')
+    if args.model_path is None:
+        missing_args.append('--model_path')
+    if missing_args:
+        parser.error(f'The following arguments are required unless --no_gpu is specified: {missing_args}')
+
+def check_arguments_nogpu():
+    args, parser = parse_args()
+
+    if args.no_gpu:
+        if args.rfc_model_path is None:
+            parser.error(f'The following argument is required when specifying --no_gpu: --rfc_model_path.')
+        if args.model_path or args.custom_model_path:
+            parser.error(f'Invalid argument with --no_gpu! --no_gpu should only be run with --rfc_model_path and --output.')
 
 def main():
-    args = parse_args()
+    args, parser = parse_args()
 
     model = nnUNet()
     model.check_gpu() # determine which model to load depending on GPU availability
     
     start = time.perf_counter()
 
-    for img in os.listdir(args.img_dir): # loop through all input images, modify and save with nnUNet prefix
-        im_loader = ImageLoader()
-        im_loader.read_images(args.img_dir, img)
-        im_loader.resize_height()
-        im_loader.resize_width()
-        im_loader.resize_channel()
-        im_loader.save_resized_image(args.adjusted_img_dir)
-
     summary = pd.DataFrame()
     raw = pd.DataFrame()
 
-    if model.gpu_exists: # check if GPU exists
-        model.setup_nnunet_paths() # set up nnUNet results path
+    if model.gpu_exists and not args.no_gpu: # check if GPU exists
+        
+        check_arguments_gpu()
+
+        for img in os.listdir(args.img_dir): # loop through all input images, modify and save with nnUNet prefix
+            im_loader = ImageLoader()
+            im_loader.read_images(args.img_dir, img)
+            im_loader.resize_height()
+            im_loader.resize_width()
+            im_loader.resize_channel()
+            im_loader.save_resized_image(args.adjusted_img_dir)
+            model.setup_nnunet_paths() # set up nnUNet results path
         
         if args.custom_model_path is not None: # check whether path to own nnUNet model has been specified
             model.load_model(args.custom_model_path)
@@ -127,6 +157,14 @@ def main():
             raw.to_csv(f'{args.save_path}_raw.csv')
         
         print(f'\nTotal runtime for current batch of images: {time.perf_counter()-start:.2f} seconds.')
+
+    elif args.no_gpu: # if GPU is not available
+        check_arguments_nogpu()
+        rf = ForestTrainer()
+        model = rf.load_model(args.rfc_model_path)
+
+    else:
+        raise ValueError('Missing a GPU. Please add the --no_gpu flag, and specify the path to the trained random forest model with --rfc_model_path')
 
 
 if __name__ == '__main__':

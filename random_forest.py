@@ -1,54 +1,114 @@
-import joblib
-import imageio.v3 as iio
+import argparse
 import numpy as np
 import matplotlib.pyplot as plt
-import argparse
-import os
+import imageio.v3 as iio
+import joblib
 
 from numpy.typing import NDArray
-from functools import partial
-from skimage.feature import multiscale_basic_features
-from skimage.future import fit_segmenter, predict_segmenter
+from skimage.feature import multiscale_basic_features 
 from sklearn.ensemble import RandomForestClassifier
+from functools import partial
 
-class CustomModel():
+def parse_args():
+    parser = argparse.ArgumentParser(prog='pyRootHair Random Forest Classifier',
+                                     description='Train a RFC segmentation model for non-GPU users.')
+    parser.add_argument('--train_img', help='Path to image to train the Random Forest Classifier on.', dest='train_img_path', type=str, required=True)
+    parser.add_argument('--train_mask', help='Path to binary mask corresponding to the training image.', dest='train_mask_path', type=str, required=True)
+    parser.add_argument('--model_output', help='Save name and path for the trained Random Forest Classifier', dest='model_output_path', required=True)
+    parser.add_argument('--sigma_min', help='Minimum sigma for feature extraction. Default = 1', dest='sigma_min', type=int, default=1)
+    parser.add_argument('--sigma_max', help='Maximum sigma for feature extraction. Default = 4', dest='sigma_max', type=int, default=4)
+    parser.add_argument('--n_estimators', help='Number of trees in the Random Forest Classifier. Default = 50', dest='n_estimators', type=int, default=50)
+    parser.add_argument('--max_depth', help='Maximum depth of the Random Forest Classifier. Default = 10', dest='max_depth', type=int, default=1)
+    parser.add_argument('--max_samples', help='Number of samples extracted from features to train each estimator. Default = 0.05.', dest='max_samples', default=0.05)
+    
+    return parser.parse_args()
+
+class ForestTrainer():
+
     def __init__(self) -> None:
-        self.training_image = None
-        self.training_mask = None
+        self.train_img = None
+        self.train_mask = None
+        self.func = None
+        self.rfc = None
+        self.train_features = None
+        self.train_labels = None
         
 
-    def load_training(self, train_img:'NDArray', train_mask:'NDArray'):
-        self.training_image = iio.imread(train_img)
-        self.training_mask = iio.imread(train_mask)
+    def load_training(self, train_img_path:str, train_mask_path:str) -> None:
+        self.train_img = iio.imread(train_img_path)
+        self.train_mask = iio.imread(train_mask_path)
 
-    def check_mask_labels(self) -> None:
-        """
-        Check whether input mask has unique values of 1, 2 and 3 only.
-        """
-        if not np.array_equal(np.unique(self.training_mask), [1,2,3]):
-            raise ValueError('The training mask must only contain values 0, 1 and 2. Please ensure you have generated the training mask correctly (see GitHub documentation for more details).')
+    def check_mask_class(self) -> None:
+        newmask = self.train_mask.copy()
+
+        if not np.array_equal(np.unique(self.train_mask), [1,2,3]):
+            newmask[self.train_mask == 0] = 1
+            newmask[self.train_mask  == 1] = 2
+            newmask[self.train_mask  == 2] = 3
+
+            self.train_mask = newmask
     
-    def extract_features(self, image:'NDArray'):
+    def features_func(self, image: 'NDArray', sigma_min:int, sigma_max:int):
+        
+        return multiscale_basic_features(
+            image,
+            intensity=True,
+            edges=False,
+            texture=True,
+            sigma_min=sigma_min,
+            sigma_max=sigma_max,
+            channel_axis=-1,
+        )
+
+    def train(self, sigma_min: int, sigma_max:int, n_estimators:int, max_depth:int, max_samples:int, model_path:str) -> None:
         """
-        Extract features from input image for Random Forest Training
+        Train a Random Forest Classsifier on a representative example of an image.
         """
-        features = partial(multiscale_basic_features,
-                            image = image,
-                            intensity=True,
-                            edges=False,
-                            texture=True,
-                            sigma_min=1,
-                            sigma_max=8,
-                            channel_axis=-1)
-        return features
+        # https://github.com/scikit-image/scikit-image/blob/v0.25.2/skimage/future/trainable_segmentation.py#L90-L119
+        rfc = RandomForestClassifier(n_estimators=n_estimators, n_jobs=-1, max_depth=max_depth, max_samples=max_samples)
 
-    def train_random_forest(self, path:str):
-        clf = RandomForestClassifier(n_estimators=50, n_jobs=-1, max_depth=10, max_samples=0.05)
-        clf = fit_segmenter(self.training_mask, self.extract_features(self.training_image), clf)
+        train_features = self.features_func(self.train_img, sigma_min, sigma_max) # extract features from image
+        print(train_features.shape)
+        self.train_features = train_features[self.train_mask > 0]
+        self.train_labels = self.train_mask.ravel()
+
+        rfc.fit(self.train_features, self.train_labels)
+        self.rfc = rfc        
+
+        print('...Saving trained random forest model...')
+        joblib.dump(self.rfc, f'{model_path}.joblib')
+
+    def load_model(self, model_path:str) -> RandomForestClassifier: 
+        
+        return joblib.load(f'{model_path}.joblib')
 
 
+    def predict(self, image:'NDArray', sigma_min:int, sigma_max:int) -> 'NDArray':
+        """
+        Predict binary mask for a given input image based on the previously trained RFC.
+        """
+        # https://github.com/scikit-image/scikit-image/blob/v0.25.2/skimage/future/trainable_segmentation.py#L122-L164
+        features = self.features_func(iio.imread(image), sigma_min, sigma_max)
+        
+        shape = features.shape
+        if features.ndim > 2:
+            features = features.reshape((-1, shape[-1]))
 
-    def load_model(self, path:str):
+        predicted_labels = self.rfc.predict(features)
 
-        return joblib.load(path) 
+        output = predicted_labels.reshape(shape[:-1])
+
+
+def main():
+    args = parse_args()
+
+    rf = ForestTrainer()
+    rf.load_training(args.train_img_path, args.train_mask_path)
+    rf.check_mask_class()
+    rf.train(args.sigma_min, args.sigma_max, args.n_estimators, args.max_depth, args.max_samples, args.model_output_path)
+    
+
+if __name__ == '__main__':
+    main()
+
 
