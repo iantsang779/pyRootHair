@@ -5,6 +5,7 @@ import os
 
 from skimage.util import img_as_ubyte
 from skimage.transform import resize
+from pathlib import Path
 
 class ImageLoader():
 
@@ -16,6 +17,7 @@ class ImageLoader():
         self.image = None
         self.image_name = None
         self.resized_img = None
+        self.sub_dir_path = None
 
     def read_images(self, img_dir:str, img:str) -> None:
         """
@@ -67,30 +69,41 @@ class ImageLoader():
         if self.adjust_channel:
             self.resized_img = self.resized_img[:,:,3]
 
-    def save_resized_image(self, img_dir:str) -> None:
+    def setup_dir(self, img_dir:str, run_id:str) -> None:
+        """ 
+        Setup adjusted_images folder in the same directory as the input images folder.
         """
+
+        input_path = Path(img_dir) # path of the input image directory
+        parent_dir = input_path.parent # get parent of the image directory
+
+        adjusted_dir = parent_dir / 'adjusted_images'
+        adjusted_dir.mkdir(parents=True, exist_ok=True) # make dir to store adjusted images if it doesn't exist
+        
+        sub_dir = adjusted_dir / run_id
+        sub_dir.mkdir(parents=True, exist_ok=True) # make sub dir within adjusted_images with the user specified run_id
+        self.sub_dir_path = Path(sub_dir)
+
+    def save_resized_image(self) -> None:
+        """
+        Store adjusted images in a new directory
         Convert image from float64 to uint8 and save image as XXX_resized.png
         Save images with _0000.png suffix for nnUNet 
         """
-   
+        
         if self.adjust_height or self.adjust_channel:
-            if img_dir is None:
-                raise ValueError(f'The input image {self.image_name} has incorrect dimensions. Please supply a filepath using --adjusted_images to allow pyRootHair to save a modified copy of the original image.')
             
             self.resized_img = img_as_ubyte(self.resized_img)
             new_img_name = self.image_name.split('.')[0]
-            iio.imwrite(os.path.join(img_dir, f'{new_img_name}_resized_0000.png'), self.resized_img)
-            print(f'\n...Saving resized image: {new_img_name}_resized_0000.png, in {img_dir}...\n')
+            iio.imwrite(os.path.join(self.sub_dir_path, f'{new_img_name}_resized_0000.png'), self.resized_img)
+            print(f'\n...Saving resized image: {new_img_name}_resized_0000.png, in {self.sub_dir_path}...\n')
 
         else:
             img_name = self.image_name.split('.')[0]
             
-            if not self.image_name.endswith('_0000.png'):
-                if img_dir is None:
-                    raise ValueError(f'The input image {self.image_name} is missing the correct file name suffix. Please supply a filepath using --adjusted_images to allow pyRootHair to save a copy of the original image with the appropiate file name for prediction.')
-    
-                iio.imwrite(os.path.join(img_dir, f'{img_name}_0000.png'), self.image)
-                print(f'\n...Saving resized image: {img_name}_0000.png, in {img_dir}...\n')
+            if not self.image_name.endswith('_0000.png'):    
+                iio.imwrite(os.path.join(self.sub_dir_path, f'{img_name}_0000.png'), self.image)
+                print(f'\n...Saving resized image: {img_name}_0000.png, in {self.sub_dir_path}...\n')
 
 
     

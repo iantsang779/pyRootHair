@@ -6,13 +6,16 @@ from pathlib import Path
 
 class nnUNet():
 
-    def __init__(self):
+    def __init__(self, in_dir:str, run_id:str) -> None:
         self.gpu_exists = False
         self.home_dir = None
+        self.in_dir = in_dir # user input directory containing raw images
+        self.run_id = run_id
+        
 
-        print('########################################')
-        print('   Thank you for using pyRootHair!   ')
-        print('########################################\n')  
+        print('#########################################')
+        print('     Thank you for using pyRootHair!     ')
+        print('#########################################\n')  
 
     def check_gpu(self) -> None:
         """
@@ -49,20 +52,28 @@ class nnUNet():
         except subprocess.CalledProcessError as e:
             print(f'Failed with error: {e}')
 
-    def run_inference(self, in_dir:str, out_dir:str, 
-                      dataset: str='Dataset069_iRootHair',
-                      planner: str='nnUNetResEncUNetLPlans'):
+    def run_inference(self, run_id:str, dataset: str='Dataset069_iRootHair', planner: str='nnUNetResEncUNetLPlans'):
         """
         Run inference with model on input directory. Outputs predicted masks in output_directory. 
         """
         
         print('\n...Running inference...\n')
 
+        adjusted_img_dir = Path(self.in_dir) / 'adjusted_images' / run_id # directory containing modified images for nnUNet input
+
+        parent_path = Path(self.in_dir).parent
+        mask_dir = parent_path / 'masks'
+        mask_dir.mkdir(parents=True, exist_ok=True) # make dir to store masks
+
+        sub_dir = mask_dir / run_id
+        sub_dir.mkdir()
+
+
         try:
             subprocess.run(["nnUNetv2_predict",
                             "-d", dataset,
-                            "-i", in_dir,
-                            "-o", out_dir,
+                            "-i", adjusted_img_dir,
+                            "-o", mask_dir,
                             "-f", "0","1","2","3","4", # 5 fold cross-val
                             "-c", "2d", # only trained on 2d config
                             "-tr", "nnUNetTrainer",
