@@ -2,6 +2,8 @@ import argparse
 import numpy as np
 import imageio.v3 as iio
 import joblib
+import os
+import matplotlib.pyplot as plt
 
 from numpy.typing import NDArray
 from skimage.feature import multiscale_basic_features 
@@ -30,8 +32,7 @@ class ForestTrainer():
         self.rfc = None
         self.train_features = None
         self.train_labels = None
-        
-
+    
     def load_training(self, train_img_path:str, train_mask_path:str) -> None:
         self.train_img = iio.imread(train_img_path)
         self.train_mask = iio.imread(train_mask_path)
@@ -47,7 +48,7 @@ class ForestTrainer():
             self.train_mask = newmask
     
     def features_func(self, image: 'NDArray', sigma_min:int, sigma_max:int):
-        
+        print('\n...Extracting features...')
         return multiscale_basic_features(
             image,
             intensity=True,
@@ -66,36 +67,37 @@ class ForestTrainer():
         rfc = RandomForestClassifier(n_estimators=n_estimators, n_jobs=-1, max_depth=max_depth, max_samples=max_samples)
 
         train_features = self.features_func(self.train_img, sigma_min, sigma_max) # extract features from image
-        print(train_features.shape)
         self.train_features = train_features[self.train_mask > 0]
         self.train_labels = self.train_mask.ravel()
 
         rfc.fit(self.train_features, self.train_labels)
         self.rfc = rfc        
 
-        print('...Saving trained random forest model...')
+        print('\n...Saving trained random forest model...')
         joblib.dump(self.rfc, f'{model_path}.joblib')
+        print(f'\n...RFC model saved as {model_path}.joblib')
 
     def load_model(self, model_path:str) -> RandomForestClassifier: 
         
         return joblib.load(model_path)
 
 
-    def predict(self, image:'NDArray', sigma_min:int, sigma_max:int) -> 'NDArray':
+    def predict(self, img_path:str, image:str, sigma_min:int, sigma_max:int, model) -> 'NDArray':
         """
         Predict binary mask for a given input image based on the previously trained RFC.
         """
         # https://github.com/scikit-image/scikit-image/blob/v0.25.2/skimage/future/trainable_segmentation.py#L122-L164
-        features = self.features_func(iio.imread(image), sigma_min, sigma_max)
+        print(f'\n...Loading {image}')
+        features = self.features_func(iio.imread(os.path.join(img_path, image)), sigma_min, sigma_max)
         
         shape = features.shape
         if features.ndim > 2:
             features = features.reshape((-1, shape[-1]))
 
-        predicted_labels = self.rfc.predict(features)
-
+        predicted_labels = model.predict(features)
+        print(predicted_labels)
         output = predicted_labels.reshape(shape[:-1])
-
+        plt.imsave(os.path.join(img_path, 'test.png'), output)
         return output
     
 def main():
