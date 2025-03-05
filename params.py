@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import re
 import pandas as pd
@@ -20,11 +21,14 @@ class GetParams(Root):
         self.bin_list = []
         self.avg_rhl_list, self.avg_rhd_list = [], []
         self.smooth_avg_rhd, self.smooth_avg_rhl = None, None
+        self.smooth_1_rhl, self.smooth_2_rhl = None, None
+        self.smooth_1_rhd, self.smooth_2_rhd = None, None
         self.min_x, self.max_x = None, None
-        self.growth_gradient = None
         self.root_thickness = None
         self.len_d, self.len_pos = None, None
         self.area_d, self.area_pos = None, None
+        self.pos_regions = None
+        self.gradient = None
 
     def sliding_window(self, height_bin_size: int) -> None:
         """
@@ -166,14 +170,19 @@ class GetParams(Root):
         self.avg_rhl_list = [(x + y) / 2 for x, y in zip(self.horizontal_rh_list_1, self.horizontal_rh_list_2)]
         self.avg_rhd_list = [(x + y) / 2 for x, y in zip(self.rh_area_list_1, self.rh_area_list_2)]
 
+        
         # lowess regression to average list
         self.smooth_avg_rhl = lowess(self.avg_rhl_list, self.bin_list, frac=0.15) # avg rhl
         self.smooth_avg_rhd = lowess(self.avg_rhd_list, self.bin_list, frac=0.15) # avg rhl
+        self.smooth_1_rhl = lowess(self.horizontal_rh_list_1, self.bin_list, frac=0.15)
+        self.smooth_2_rhl = lowess(self.horizontal_rh_list_2, self.bin_list, frac=0.15)
+        self.smooth_1_rhd = lowess(self.rh_area_list_1, self.bin_list, frac=0.15)
+        self.smooth_2_rhd = lowess(self.rh_area_list_2, self.bin_list, frac=0.15)
 
-        gradient = np.gradient(self.smooth_avg_rhl[:, 1], self.smooth_avg_rhd[:, 0])
-        pos_regions = gradient > 0 # retain regions of positive gradient (increasing RHL)
+        self.gradient = np.gradient(self.smooth_avg_rhl[:, 1], self.smooth_avg_rhd[:, 0])
+        self.pos_regions = self.gradient > 0 # retain regions of positive gradient (increasing RHL)
 
-        labels, n_features = label(pos_regions) # label regions of bool array
+        labels, n_features = label(self.pos_regions) # label regions of bool array
         regions = [self.smooth_avg_rhl[labels == i] for i in range(1, n_features + 1)]
         longest_region = max(regions, key=len) # keep the longest growth region
         
@@ -280,7 +289,7 @@ class GetParams(Root):
         ax.set_ylabel(r'Average Root Hair Density (mm$^{2}$)')
         ax.legend(loc='upper right')
     
-    def plot_summary(self, image_name: str) -> None:
+    def plot_summary(self, path:str, image_name: str) -> None:
         """
         Panel all summary plots together
         """
@@ -297,4 +306,4 @@ class GetParams(Root):
             ax[pos].annotate(label, xy=(0.05, 0.92), xycoords='axes fraction', fontweight='bold', fontsize=18)
             
         plt.title(f'{image_name} Summary')
-        plt.savefig(f'{image_name}_summary.png')
+        plt.savefig(os.path.join(path, f'{image_name}_summary.png'))

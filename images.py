@@ -103,7 +103,7 @@ class ImageLoader():
             
             if not self.image_name.endswith('_0000.png'):    
                 iio.imwrite(os.path.join(self.sub_dir_path, f'{img_name}_0000.png'), self.image)
-                print(f'\n...Saving resized image: {img_name}_0000.png, in {self.sub_dir_path}...\n')
+                print(f'\n...Renaming image {img_name} to {img_name}_0000.png in {self.sub_dir_path}...\n')
 
 
     

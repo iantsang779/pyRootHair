@@ -60,10 +60,16 @@ def check_arguments_nogpu():
         if args.model_path or args.custom_model_path:
             parser.error(f'Invalid argument with --no_gpu! --no_gpu should only be run with --rfc_model_path and --output.')
 
+def check_arguments_output():
+    args, parser = parse_args()
+
+    if args.save_path is None:
+        parser.error('Please specify filepath to store output data with --output.')
+
 def main():
     args, _ = parse_args()
 
-    model = nnUNet()
+    model = nnUNet(args.img_dir, args.run_id)
     model.check_gpu() # determine which model to load depending on GPU availability
     
     start = time.perf_counter()
@@ -87,65 +93,69 @@ def main():
         
         if args.custom_model_path is not None: # check whether path to own nnUNet model has been specified
             model.load_model(args.custom_model_path)    
+            model.run_inference(args.custom_dataset_id, args.custom_model_planner) # generate predicted masks
         else: # load and run inference with pre-trained model if --custom_model_path is not supplied
             model.load_model(args.model_path) 
-        
-        model.run_inference(args.run_id, args.custom_dataset_id, args.custom_model_planner) # generate predicted masks
+            model.run_inference() # generate predicted masks
 
         mask_path = Path(args.img_dir).parent/'masks'/args.run_id
 
         for mask_file in os.listdir(mask_path): # loop through each predicted mask
-            print(f'\n...Processing {mask_file}...')
-            init_mask = iio.imread(os.path.join(mask_path, mask_file))
-            root_mask = (init_mask == 2)
+            if mask_file.endswith('.png'):
+                print(f'\n...Processing {mask_file}...')
+                init_mask = iio.imread(os.path.join(mask_path, mask_file))
+                root_mask = (init_mask == 2)
 
-            skeleton = Skeleton() 
-            clean_root = skeleton.extract_root(root_mask)
-            sk_y, sk_x = skeleton.skeletonize(clean_root)
-            sk_spline, sk_height = skeleton.skeleton_params(sk_x, sk_y)
-            med_x, med_y = skeleton.calc_skeleton_midline(sk_spline, sk_height)
-            rotated_mask = skeleton.calc_rotation(med_x, med_y, init_mask) 
+                skeleton = Skeleton() 
+                clean_root = skeleton.extract_root(root_mask)
+                sk_y, sk_x = skeleton.skeletonize(clean_root)
+                sk_spline, sk_height = skeleton.skeleton_params(sk_x, sk_y)
+                med_x, med_y = skeleton.calc_skeleton_midline(sk_spline, sk_height)
+                rotated_mask = skeleton.calc_rotation(med_x, med_y, init_mask) 
 
-            rotated_root_mask = (rotated_mask == 2) 
+                rotated_root_mask = (rotated_mask == 2) 
 
-            clean_root_rotated = skeleton.extract_root(rotated_root_mask)
-            sk_r_y, sk_r_x = skeleton.skeletonize(clean_root_rotated)
-            sk_r_spline, sk_r_height = skeleton.skeleton_params(sk_r_x, sk_r_y)
-            med_r_x, med_r_y = skeleton.calc_skeleton_midline(sk_r_spline, sk_r_height)
-            skeleton.add_endpoints(med_r_x, med_r_y)
-            skeleton.calc_skel_euclidean()
-            skeleton.generate_buffer_coords(rotated_mask)
-            straight_mask = skeleton.straighten_image(rotated_mask)
+                clean_root_rotated = skeleton.extract_root(rotated_root_mask)
+                sk_r_y, sk_r_x = skeleton.skeletonize(clean_root_rotated)
+                sk_r_spline, sk_r_height = skeleton.skeleton_params(sk_r_x, sk_r_y)
+                med_r_x, med_r_y = skeleton.calc_skeleton_midline(sk_r_spline, sk_r_height)
+                skeleton.add_endpoints(med_r_x, med_r_y)
+                skeleton.calc_skel_euclidean()
+                skeleton.generate_buffer_coords(rotated_mask)
+                straight_mask = skeleton.straighten_image(rotated_mask)
 
-            rt = Root(straight_mask)
-            final_root = rt.check_root_tip()
-            rt.find_root_tip()
-            root_hairs = rt.trim_rh_mask()
-            rt.split_root_coords(root_hairs)
+                rt = Root(straight_mask)
+                final_root = rt.check_root_tip()
+                rt.find_root_tip()
+                root_hairs = rt.trim_rh_mask()
+                rt.split_root_coords(root_hairs)
 
-            data = GetParams(root_hairs)
-            data.sliding_window(args.height_bin_size)
-            data.clean_data(args.area_filt, args.length_filt)
-            data.calibrate_data(args.conv)
-            data.calculate_avg_root_thickness(final_root, args.conv)
-            data.calculate_uniformity()
-            data.calculate_growth()
-            # datetime = data.get_metadata(image.image_metadata)
-        
-            summary_df, raw_df = data.generate_table(mask_file.split('.')[0])
-
-            summary = pd.concat([summary_df,summary])
-            raw = pd.concat([raw_df, raw])
-
-            if args.show_transformation:
-                skeleton.visualize_transformation(init_mask, args.save_path, mask_file.split('.')[0]) 
-
-            if args.show_segmentation:
-                plt.imsave(os.path.join(args.save_path,f'{mask_file.split('.')[0]}_mask.png'), straight_mask)
+                data = GetParams(root_hairs)
+                data.sliding_window(args.height_bin_size)
+                data.clean_data(args.area_filt, args.length_filt)
+                data.calibrate_data(args.conv)
+                data.calculate_avg_root_thickness(final_root, args.conv)
+                data.calculate_uniformity()
+                data.calculate_growth()
+                # datetime = data.get_metadata(image.image_metadata)
             
-            if args.show_summary:
-                data.plot_summary(mask_file.split('.')[0])
+                summary_df, raw_df = data.generate_table(mask_file.split('.')[0])
 
+                summary = pd.concat([summary_df,summary])
+                raw = pd.concat([raw_df, raw])
+
+                if args.show_transformation:
+                    check_arguments_output()
+                    skeleton.visualize_transformation(init_mask, args.save_path, mask_file.split('.')[0]) 
+
+                if args.show_segmentation:
+                    check_arguments_output()
+                    plt.imsave(os.path.join(args.save_path,f'{mask_file.split('.')[0]}_mask.png'), straight_mask)
+                
+                if args.show_summary:
+                    check_arguments_output()
+                    data.plot_summary(args.save_path, mask_file.split('.')[0])
+        
         print(f'\n{summary}')
         print(f'\n{raw}')
 
