@@ -1,13 +1,11 @@
 import argparse
 import numpy as np
-import matplotlib.pyplot as plt
 import imageio.v3 as iio
 import joblib
 
 from numpy.typing import NDArray
 from skimage.feature import multiscale_basic_features 
 from sklearn.ensemble import RandomForestClassifier
-from functools import partial
 
 def parse_args():
     parser = argparse.ArgumentParser(prog='pyRootHair Random Forest Classifier',
@@ -80,7 +78,7 @@ class ForestTrainer():
 
     def load_model(self, model_path:str) -> RandomForestClassifier: 
         
-        return joblib.load(f'{model_path}.joblib')
+        return joblib.load(model_path)
 
 
     def predict(self, image:'NDArray', sigma_min:int, sigma_max:int) -> 'NDArray':
@@ -98,7 +96,8 @@ class ForestTrainer():
 
         output = predicted_labels.reshape(shape[:-1])
 
-
+        return output
+    
 def main():
     args = parse_args()
 
