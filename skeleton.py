@@ -41,7 +41,6 @@ class Skeleton(Preprocess):
         """
         Filter out non-primary root sections from root mask
         """
-        print('\n...Extracting root...')      
         root_labeled_cleaned, root_count_cleaned = label(root_mask, connectivity=2, return_num=True) # re check num objects
 
         if root_count_cleaned > 1: # if more than 1 root is present    

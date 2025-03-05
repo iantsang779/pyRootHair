@@ -52,37 +52,39 @@ class nnUNet():
         except subprocess.CalledProcessError as e:
             print(f'Failed with error: {e}')
 
-    def run_inference(self, run_id:str, dataset: str='Dataset069_iRootHair', planner: str='nnUNetResEncUNetLPlans'):
+    def run_inference(self, dataset: str='Dataset069_iRootHair', planner: str='nnUNetResEncUNetLPlans'):
         """
         Run inference with model on input directory. Outputs predicted masks in output_directory. 
         """
         
         print('\n...Running inference...\n')
 
-        adjusted_img_dir = Path(self.in_dir) / 'adjusted_images' / run_id # directory containing modified images for nnUNet input
+        adjusted_img_dir = Path(self.in_dir).parent / 'adjusted_images' / self.run_id # directory containing modified images for nnUNet input
+        print('Adjusted img dir', adjusted_img_dir)
 
         parent_path = Path(self.in_dir).parent
         mask_dir = parent_path / 'masks'
         mask_dir.mkdir(parents=True, exist_ok=True) # make dir to store masks
 
-        sub_dir = mask_dir / run_id
-        sub_dir.mkdir()
-
+        sub_dir = mask_dir / self.run_id
+        sub_dir.mkdir(exist_ok=True)
 
         try:
-            subprocess.run(["nnUNetv2_predict",
+            res = subprocess.run(["nnUNetv2_predict",
                             "-d", dataset,
-                            "-i", adjusted_img_dir,
-                            "-o", mask_dir,
+                            "-i", str(adjusted_img_dir),
+                            "-o", str(Path(sub_dir)),
                             "-f", "0","1","2","3","4", # 5 fold cross-val
                             "-c", "2d", # only trained on 2d config
                             "-tr", "nnUNetTrainer",
                             "-p", planner,
-                            "--disable_progress_bar"], 
-                            check=True, 
-                            capture_output=True,
-                            text=True)
-        
+                            "--disable_progress_bar"],
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE,
+                            text=True,
+                            check=True)
+            print(res.stdout)
+            print(res.stderr)
             print('\n...Inference successful - predicted masks have been generated...\n')
 
         except subprocess.CalledProcessError as e:
