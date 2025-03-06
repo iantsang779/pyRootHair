@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import os
+import pandas as pd
 
 from numpy.typing import NDArray
 from params import GetParams
@@ -12,7 +13,9 @@ class CheckArgs():
         self.parser = parser
 
     def check_arguments_gpu(self) -> None:
-
+        """
+        Check necessary arguments if GPU is available
+        """
         missing_args = []
             # check necessary arguments are supplied
         if self.args.img_dir is None:
@@ -25,7 +28,9 @@ class CheckArgs():
             self.parser.error(f'The following arguments are required unless --no_gpu is specified: {missing_args}')
 
     def check_arguments_nogpu(self)-> None:
-
+        """
+        Check necessary arguments if GPU is not available
+        """
         if self.args.rfc_model_path is None:
             self.parser.error('The following argument is required when specifying --no_gpu: --rfc_model_path.')
         if self.args.model_path or self.args.custom_model_path:
@@ -35,7 +40,9 @@ class CheckArgs():
 
     
     def check_arguments_output(self) -> None:
-
+        """
+        Check --output argument is provided
+        """
         if self.args.save_path is None:
             self.parser.error('Please specify filepath to store output data with --output.')
 
@@ -47,7 +54,7 @@ class Pipeline(CheckArgs):
         self.args = check_args.args
         self.parser = check_args.parser
 
-    def run_pipeline(self, init_mask: 'NDArray'):
+    def run_pipeline(self, init_mask: 'NDArray', filename:'str') -> tuple[pd.DataFrame, pd.DataFrame]:
         """
         Core pipeline bringing together logic across all modules
         """
@@ -74,9 +81,9 @@ class Pipeline(CheckArgs):
         rt = Root(straight_mask)
         final_root = rt.check_root_tip()
         rt.find_root_tip()
+        rt.split_root_coords()
         root_hairs = rt.trim_rh_mask()
-        rt.split_root_coords(root_hairs)
-
+        
         data = GetParams(root_hairs)
         data.sliding_window(self.args.height_bin_size)
         data.clean_data(self.args.area_filt, self.args.length_filt)
@@ -86,19 +93,20 @@ class Pipeline(CheckArgs):
         data.calculate_growth()
         # datetime = data.get_metadata(image.image_metadata)
     
-        summary_df, raw_df = data.generate_table(self.mask_file.split('.')[0], self.args.batch_id)
+        summary_df, raw_df = data.generate_table(filename.split('.')[0], self.args.batch_id)
 
 
         if self.args.show_transformation:
             self.check_args.check_arguments_output()
-            skeleton.visualize_transformation(init_mask, self.args.save_path, self.mask_file.split('.')[0]) 
+            skeleton.visualize_transformation(init_mask, self.args.save_path, filename.split('.')[0]) 
 
         if self.args.show_segmentation:
             self.check_args.check_arguments_output()
-            plt.imsave(os.path.join(self.args.save_path,f'{self.mask_file.split('.')[0]}_mask.png'), straight_mask)
+            plt.imsave(os.path.join(self.args.save_path,f'{filename.split('.')[0]}_mask.png'), straight_mask)
+            plt.imsave(os.path.join(self.args.save_path,f'{filename.split('.')[0]}_root_hair_mask.png'), root_hairs)
         
         if self.args.show_summary:
             self.check_args.check_arguments_output()
-            data.plot_summary(self.args.save_path, self.mask_file.split('.')[0])
+            data.plot_summary(self.args.save_path, filename.split('.')[0])
 
         return summary_df, raw_df

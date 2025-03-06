@@ -17,7 +17,8 @@ class Root(Skeleton):
         self.final_labeled_root = None
         self.final_root_mask = (self.straight_mask > 1.5) # set final masks for root and root hair
         self.final_rh_mask = (self.straight_mask > 0.4) & (self.straight_mask <= 1) 
-
+        self.final_rh_mask_labeled = None
+        self.count = None
 
     def check_root_tip(self) -> None:
         """
@@ -55,44 +56,41 @@ class Root(Skeleton):
             print('...Located root tip...')
             self.root_tip_y, self.root_tip_x = root_tip 
         else:
-            print('...Failed to locate root tip...')
+            print('...Failed to locate root tip...')        
 
-    def trim_rh_mask(self) -> 'NDArray':
-        """
-        Remove fragments from root hair mask, and remove any non-primary root hair masks
-        """
-        small_mask = remove_small_objects(self.final_rh_mask, min_size=500)
-
-        root_hairs, count = label(self.final_rh_mask, connectivity=2, return_num=True)
-
-        if count > 2: # get rid of any small hair fragments + non-primary root hair sections
-            check_root_hair = regionprops(root_hairs) # measure area of root hair masks
-            
-            rh_regions = sorted(check_root_hair, key = lambda x: x.area, reverse=True) # sort all root hair regions in desc order by size
-            area_1_label = rh_regions[0].label # get label of largest RH area
-            area_2_label = rh_regions[1].label # get label of second largest RH area
-            
-            small_mask = np.logical_or(root_hairs == area_1_label, root_hairs == area_2_label) # set mask to retain only primary hair sections
-            
-            root_hairs, _ = label(small_mask, connectivity=2, return_num=True) 
-
-
-        return root_hairs
-
-
-    def split_root_coords(self, root_hairs:'NDArray') -> None:
+    def split_root_coords(self) -> None:
         """
         Split the root hair mask around the location of root tip
         """
-        tip_border = 40
+        tip_border = 20
 
         if self.found_tip:
             root_tip_y_max, root_tip_y_min = self.root_tip_y + tip_border, self.root_tip_y - tip_border
             root_tip_x_max, root_tip_x_min = self.root_tip_x + tip_border, self.root_tip_x - tip_border
             
-            root_hairs[root_tip_y_min:root_tip_y_max, root_tip_x_min:root_tip_x_max] = False # apply coords to mask
+            self.final_rh_mask[root_tip_y_min:root_tip_y_max, root_tip_x_min:root_tip_x_max] = False # apply coords to mask
 
+        self.final_rh_mask_labeled, self.count = label(self.final_rh_mask, connectivity=2, return_num=True)
+
+    def trim_rh_mask(self) -> 'NDArray':
+        """
+        Remove fragments from root hair mask, and remove any non-primary root hair masks
+        """
+    
+        check_root_hair = regionprops(self.final_rh_mask_labeled) # measure area of root hair masks
         
+        rh_regions = sorted(check_root_hair, key = lambda x: x.area, reverse=True) # sort all root hair regions in desc order by size
+
+        area_1_label = rh_regions[0].label # get label of largest RH area
+        area_2_label = rh_regions[1].label # get label of second largest RH area
+        
+        cleaned_rh = np.logical_or(self.final_rh_mask_labeled == area_1_label, self.final_rh_mask_labeled == area_2_label) # set mask to retain only primary hair sections
+        
+        self.final_rh_mask_labeled, _ = label(cleaned_rh, connectivity=2, return_num=True) 
+
+        return self.final_rh_mask_labeled 
+
+
 
 
 

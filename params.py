@@ -8,6 +8,7 @@ from numpy.typing import NDArray
 from itertools import zip_longest
 from scipy.ndimage import label
 from skimage.measure import regionprops
+from skimage.morphology import remove_small_objects
 from statsmodels.nonparametric.smoothers_lowess import lowess
 from root import Root
 
@@ -37,13 +38,13 @@ class GetParams(Root):
         print('...Calculating root hair parameters...')
 
         root_hair_segments = regionprops(self.root_hairs)
-        for index, segment in enumerate(root_hair_segments): # loop over each root hair section (left and right side)
 
+        for index, segment in enumerate(root_hair_segments): # loop over each root hair section (left and right side)
             min_row, min_col, max_row, max_col = segment.bbox # calculate binding box coords of each segment
             segment_mask = self.root_hairs[min_row:max_row, min_col:max_col] # mask each root hair segment
-            # segment_mask = remove_small_objects(segment_mask, min_size=mask_filt)
+            # segment_mask = remove_small_objects(segment_mask, connectivity=2, min_size=200)
             height = segment_mask.shape[0] # get height of mask
-     
+
             for bin_start in range(0, height, height_bin_size): # sliding window down each section
 
                 bin_end = bin_start + height_bin_size # calculate bin end
