@@ -29,7 +29,7 @@ def parse_args():
     parser.add_argument('--rhd_filt', help='Area threshold to remove small areas from area list; sets area for a particular bin to 0 when below the value (default = 180 px^2)', type=int, nargs='?', dest='area_filt', default=180)
     parser.add_argument('--rhl_filt', help='Length threshold to remove small lengths from length list; sets length for a particular bin to 0 when below the value (default = 14px)', type=int, nargs='?', dest='length_filt', default=14)
     parser.add_argument('--conv', help='The number of pixels corresponding to 1mm in the original input images (default = 127.5 px)', type=int, nargs='?', dest='conv', default=127.5)
-    parser.add_argument('--output', help='Filepath to save data.', type=str, dest='save_path')
+    parser.add_argument('--output', help='Filepath to save data. Must be a different directory relative to the input image directory.', type=str, dest='save_path')
     parser.add_argument('--plot_segmentation', help='Save model segmentation results in --output directory. Useful for debugging.', dest='show_segmentation', action='store_true')
     parser.add_argument('--plot_transformation', help='Save diagnostic plot showing root straightening in --output directory. Useful for debugging.', dest='show_transformation', action='store_true')
     parser.add_argument('--plot_summary', help='Save summary plots for each input image in --output directory.', dest='show_summary', action='store_true')
@@ -76,7 +76,7 @@ def main():
             if mask_file.endswith('.png'):
                 main = Pipeline(check_args)
                 init_mask = iio.imread(os.path.join(mask_path, mask_file))
-                s, r = main.run_pipeline(init_mask) # run pipeline for each image
+                s, r = main.run_pipeline(init_mask, mask_file) # run pipeline for each image
                 
                 summary = pd.concat([s,summary]) # add data from each image to the correct data frame
                 raw = pd.concat([r,raw])
@@ -94,15 +94,14 @@ def main():
 
         check_args.check_arguments_nogpu()
         rf = ForestTrainer()
-        model = rf.load_model(args.rfc_model_path)
-        
-        
+        model = rf.load_model(args.rfc_model_path) # load trained random forest model
+    
         for img in os.listdir(args.img_dir): 
             if img.endswith('.png'):
                 mask = rf.predict(args.img_dir, img, args.sigma_min, args.sigma_max, model)
+                init_mask = rf.reconvert_mask_class(mask) # check mask classes are 0, 1, 2
                 main = Pipeline(check_args)
-                init_mask = iio.imread(mask)
-                s, r = main.run_pipeline(init_mask)
+                s, r = main.run_pipeline(init_mask, img)
 
                 summary = pd.concat([s,summary]) # add data from each image to the correct data frame
                 raw = pd.concat([r,raw])

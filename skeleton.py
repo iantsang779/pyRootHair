@@ -9,12 +9,9 @@ from skimage.measure import label, regionprops
 from scipy.spatial.distance import euclidean
 from scipy.interpolate import CubicSpline
 
-from preprocess import Preprocess
-
-class Skeleton(Preprocess):
+class Skeleton():
    
     def __init__(self) -> None:
-        self.clean_root_mask = None
         self.points = None
         self.new_points = None
         self.old_buffer_coords = None
@@ -25,14 +22,13 @@ class Skeleton(Preprocess):
         """
         Clean up each small section of the root mask by removing all but the largest area present
         """
-
         root_section_labeled, _ = label(mask, connectivity=2, return_num=True) # label the root mask
         root_section_measured = regionprops(root_section_labeled) # measure the root section 
         max_label = max(root_section_measured, key=lambda x: x.area).label # get the label associated with the largest area in the measured section
         
         # mask out the smaller sections, retaining only the largest section
-        self.clean_root_mask = root_section_labeled == max_label 
-        root_section_labeled, _ = label(self.clean_root_mask, connectivity=2, return_num=True) # re label root 
+        clean_root_mask = root_section_labeled == max_label 
+        root_section_labeled, _ = label(clean_root_mask, connectivity=2, return_num=True) # re label root 
         root_section_measured = regionprops(root_section_labeled) # re measure root section
 
         return root_section_labeled, root_section_measured
