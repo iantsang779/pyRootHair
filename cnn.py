@@ -69,6 +69,9 @@ class nnUNet():
         sub_dir = mask_dir / self.run_id
         sub_dir.mkdir(exist_ok=True)
 
+        print(f'\n...Setting up a new directory {Path(sub_dir)} to store the predicted masks ...\n')
+
+
         try:
             res = subprocess.run(["nnUNetv2_predict",
                             "-d", dataset,
