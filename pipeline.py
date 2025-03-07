@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import os
 import pandas as pd
+import numpy as np
 
 from numpy.typing import NDArray
 from params import GetParams
@@ -25,20 +26,23 @@ class CheckArgs():
         if self.args.model_path is None:
             missing_args.append('--model_path')
         if missing_args:
-            self.parser.error(f'The following arguments are required unless --no_gpu is specified: {missing_args}')
+            self.parser.error(f'The following arguments are required when running pyRootHair with a GPU: {missing_args}')
 
-    def check_arguments_nogpu(self)-> None:
+    def check_arguments_rfc(self)-> None:
         """
         Check necessary arguments if GPU is not available
         """
         if self.args.rfc_model_path is None:
-            self.parser.error('The following argument is required when specifying --no_gpu: --rfc_model_path.')
+            self.parser.error('The following argument is required if using a Random Forest Classifier: --rfc_model_path.')
         if self.args.model_path or self.args.custom_model_path:
-            self.parser.error('Invalid argument with --no_gpu! --no_gpu should only be run with --rfc_model_path and --output.')
+            self.parser.error('Conflicting arguments: --rfc_model_path does not require --model_path or any --override arguments.')
         if self.args.img_dir is None:
             self.parser.error('Missing argument for the input image directory --input.')
+        if self.args.input_mask:
+            self.parser.error('Conflicting arguments: --input_mask is not compatbile with --rfc_model_path.')
+        if self.args.batch_id is None:
+            self.parser.error('Missing argument for batch_id: --batch_id')
 
-    
     def check_arguments_output(self) -> None:
         """
         Check --output argument is provided
@@ -46,6 +50,30 @@ class CheckArgs():
         if self.args.save_path is None:
             self.parser.error('Please specify filepath to store output data with --output.')
 
+
+    def check_arguments_single_mask(self) -> None:
+        """
+        Check necessary arguments if processing a single binary mask
+        """
+        if self.args.rfc_model_path:
+            self.parser.error('Conflicting arguments: --input_mask was specified, which is not compatible with --rfc_model_path.')
+        if self.args.model_path or self.args.custom_model_path:
+            self.parser.error('Conflicting arguments: --input_mask only accepts a single mask')
+        if self.args.img_dir:
+            self.parser.error('Conflicting arguments: --input is for a directory containing a batch of images intended for GPU processing. Please use --input_mask instead for a single mask.')
+    
+    def convert_mask(self, mask: 'NDArray') -> 'NDArray':
+
+        newmask = mask.copy()
+
+        if not np.array_equal(np.unique(mask), [0,1,2]):
+            print('\n...Mask classes are not correct!...')
+
+            newmask[mask == 1] = 0
+            newmask[mask  == 2] = 1
+            newmask[mask  == 3] = 2
+        
+        return newmask
 
 class Pipeline(CheckArgs):
     
