@@ -20,11 +20,11 @@ class CheckArgs():
         missing_args = []
             # check necessary arguments are supplied
         if self.args.img_dir is None:
-            missing_args.append('--input')
+            missing_args.append('-i/--input')
         if self.args.batch_id is None:
-            missing_args.append('--batch_id')
-        if self.args.model_path is None:
-            missing_args.append('--model_path')
+            missing_args.append('-b/--batch_id')
+        # if self.args.model_path is None:
+        #     missing_args.append('--model_path')
         if missing_args:
             self.parser.error(f'The following arguments are required when running pyRootHair with a GPU: {missing_args}')
 
@@ -37,18 +37,18 @@ class CheckArgs():
         if self.args.model_path or self.args.custom_model_path:
             self.parser.error('Conflicting arguments: --rfc_model_path does not require --model_path or any --override arguments.')
         if self.args.img_dir is None:
-            self.parser.error('Missing argument for the input image directory --input.')
+            self.parser.error('Missing argument for the input image directory -i/--input.')
         if self.args.input_mask:
             self.parser.error('Conflicting arguments: --input_mask is not compatbile with --rfc_model_path.')
         if self.args.batch_id is None:
-            self.parser.error('Missing argument for batch_id: --batch_id')
+            self.parser.error('Missing argument for batch_id: -b/--batch_id')
 
     def check_arguments_output(self) -> None:
         """
         Check --output argument is provided
         """
         if self.args.save_path is None:
-            self.parser.error('Please specify filepath to store output data with --output.')
+            self.parser.error('Please specify filepath to store output data with -o/--output.')
 
 
     def check_arguments_single_mask(self) -> None:
@@ -60,7 +60,7 @@ class CheckArgs():
         if self.args.model_path or self.args.custom_model_path:
             self.parser.error('Conflicting arguments: --input_mask only accepts a single mask')
         if self.args.img_dir:
-            self.parser.error('Conflicting arguments: --input is for a directory containing a batch of images intended for GPU processing. Please use --input_mask instead for a single mask.')
+            self.parser.error('Conflicting arguments: -i/--input is for a directory containing a batch of images intended for GPU processing. Please use --input_mask instead for a single mask.')
     
     def convert_mask(self, mask: 'NDArray') -> 'NDArray':
 

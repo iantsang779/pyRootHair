@@ -5,7 +5,7 @@ import imageio.v3 as iio
 import os
 import sys
 
-from cnn import nnUNet
+from cnn import nnUNet, nnUNetv2
 from images import ImageLoader
 from pathlib import Path
 from random_forest import ForestTrainer
@@ -15,9 +15,9 @@ def parse_args():
     parser = argparse.ArgumentParser(prog='pyRootHair',
                                      description='pyRootHair Arguments')
     
-    parser.add_argument('--input', help='Filepath to directory containing input image(s).', type=str, nargs='?', dest='img_dir')
-    parser.add_argument('--batch_id', help='Unique ID for each batch of input images', type=str, nargs='?', dest='batch_id')
-    parser.add_argument('--model_path', help='Filepath to nnU-Net segmentation model', type=str, dest='model_path')
+    parser.add_argument('-i', '--input', help='Filepath to directory containing input image(s).', type=str, nargs='?', dest='img_dir')
+    parser.add_argument('-b', '--batch_id', help='Unique ID for each batch of input images', type=str, nargs='?', dest='batch_id')
+    # parser.add_argument('--model_path', help='Filepath to nnU-Net segmentation model', type=str, dest='model_path')
     parser.add_argument('--override_model_path', help='Filepath to custom nnU-Net segmentation model', type=str, dest='custom_model_path')
     parser.add_argument('--override_model_dataset', help='Dataset ID for nnUNetv2. Required if specifying --override_model_path', type=str, dest='custom_dataset_id', required='--override_model_path' in sys.argv)
     parser.add_argument('--override_model_planner', help='Model plans for nnUNetv2. Required if specifying --override_model_path', type=str, dest='custom_model_planner', required='--override_model_path' in sys.argv)
@@ -29,7 +29,7 @@ def parse_args():
     parser.add_argument('--rhd_filt', help='Area threshold to remove small areas from area list; sets area for a particular bin to 0 when below the value. Default = 180 px^2)', type=int, nargs='?', dest='area_filt', default=180)
     parser.add_argument('--rhl_filt', help='Length threshold to remove small lengths from length list; sets length for a particular bin to 0 when below the value. Default = 14 px', type=int, nargs='?', dest='length_filt', default=14)
     parser.add_argument('--conv', help='The number of pixels corresponding to 1mm in the original input images. Default = 127.5 px', type=int, nargs='?', dest='conv', default=127.5)
-    parser.add_argument('--output', help='Filepath to save data. Must be a different directory relative to the input image directory.', type=str, dest='save_path')
+    parser.add_argument('-o','--output', help='Filepath to save data. Must be a different directory relative to the input image directory.', type=str, dest='save_path')
     parser.add_argument('--plot_segmentation', help='Save model segmentation results in --output directory. Useful for debugging.', dest='show_segmentation', action='store_true')
     parser.add_argument('--plot_transformation', help='Save diagnostic plot showing root straightening in --output directory. Useful for debugging.', dest='show_transformation', action='store_true')
     parser.add_argument('--plot_summary', help='Save summary plots for each input image in --output directory.', dest='show_summary', action='store_true')
@@ -41,7 +41,8 @@ def main():
     args, parser = parse_args()
     check_args = CheckArgs(args, parser)
 
-    model = nnUNet(args.img_dir, args.batch_id)
+    # model = nnUNet(args.img_dir, args.batch_id)
+    model = nnUNetv2(args.img_dir, args.batch_id)
     model.check_gpu() # determine which model to load depending on GPU availability
     
     raw = pd.DataFrame() # initialize empty data frames to append to in run_pipeline()
@@ -52,6 +53,7 @@ def main():
     if model.gpu_exists: #! 1. Main Pipeline (With GPU)
 
         check_args.check_arguments_gpu()
+        model.setup_nnunet_paths()
 
         if args.custom_model_path is None: # if using default model
         
@@ -63,11 +65,12 @@ def main():
                 im_loader.resize_channel()
                 im_loader.setup_dir(args.img_dir, args.batch_id)
                 im_loader.save_resized_image()
-                model.setup_nnunet_paths() # set up nnUNet results path
+                # model.setup_nnunet_paths() # set up nnUNet results path
         
-            model.load_model(args.model_path) 
-            model.run_inference() # generate predicted masks
-
+            # model.load_model(args.model_path) 
+            # model.run_inference() # generate predicted masks
+            model.initialize_model()
+            model.run_inference()
         else: # if a custom model path is loaded
             model.load_model(args.custom_model_path)    
             model.run_inference(args.custom_dataset_id, args.custom_model_planner) # generate predicted masks            
