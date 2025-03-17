@@ -16,7 +16,7 @@ class Root(Skeleton):
         self.root_tip_x, self.root_tip_y = None, None
         self.final_labeled_root = None
         self.final_root_mask = (self.straight_mask > 1.5) # set final masks for root and root hair
-        self.final_rh_mask = (self.straight_mask > 0.4) & (self.straight_mask <= 1.2) 
+        self.final_rh_mask = (self.straight_mask > 0.4) & (self.straight_mask <= 1.4) 
         self.final_rh_mask_labeled = None
         self.count = None
 
