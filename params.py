@@ -39,13 +39,16 @@ class GetParams(Root):
 
         root_hair_segments = regionprops(self.root_hairs)
 
+        root_hair_coords = [i.coords for i in root_hair_segments] # all coordinates of root hair segments
+        
+        max_height = max(np.max(root_hair_coords[0][:,0]), np.max(root_hair_coords[1][:,0])) # get max height of root hair segment, and set that as max height for sliding window
+
         for index, segment in enumerate(root_hair_segments): # loop over each root hair section (left and right side)
             min_row, min_col, max_row, max_col = segment.bbox # calculate binding box coords of each segment
             segment_mask = self.root_hairs[min_row:max_row, min_col:max_col] # mask each root hair segment
             # segment_mask = remove_small_objects(segment_mask, connectivity=2, min_size=200)
-            height = segment_mask.shape[0] # get height of mask
-
-            for bin_start in range(0, height, height_bin_size): # sliding window down each section
+            
+            for bin_start in range(0, max_height, height_bin_size): # sliding window down each section
 
                 bin_end = bin_start + height_bin_size # calculate bin end
                 rh_segment = segment_mask[bin_start:bin_end, :] # define mask for sliding window for root hairs
