@@ -48,8 +48,9 @@ class ImageLoader():
         Resize input image such that ouput reiszed image has height of 1520 px. Resizes width by the same scale factor
         """
         if self.adjust_height:
-            resize_factor = self.old_h / self.target_h
-            self.resized_img = resize(self.image, (self.old_h // resize_factor), (self.old_w // resize_factor), anti_aliasing=True)
+            resize_factor = self.old_h / self.target_h 
+           
+            self.resized_img = resize(self.image, (int(round(self.old_h / resize_factor)), int(round(self.old_w // resize_factor))), anti_aliasing=True)
 
     def resize_width(self) -> None:
         """
@@ -67,7 +68,7 @@ class ImageLoader():
         Remove alpha channel if present
         """
         if self.adjust_channel:
-            self.resized_img = self.resized_img[:,:,3]
+            self.resized_img = self.resized_img[:,:,:3]
 
     def setup_dir(self, img_dir:str, run_id:str) -> None:
         """ 
