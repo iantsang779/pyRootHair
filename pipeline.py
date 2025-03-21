@@ -110,8 +110,9 @@ class Pipeline(CheckArgs):
         rt.find_root_tip()
         rt.split_root_coords()
         root_hairs = rt.trim_rh_mask()
+        root_hairs_cropped = rt.crop_rh_mask()
         
-        data = GetParams(root_hairs)
+        data = GetParams(root_hairs_cropped)
         data.sliding_window(self.args.height_bin_size)
         data.clean_data(self.args.area_filt, self.args.length_filt)
         data.calibrate_data(self.args.conv)
