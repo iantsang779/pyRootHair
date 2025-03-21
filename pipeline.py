@@ -23,19 +23,18 @@ class CheckArgs():
             missing_args.append('-i/--input')
         if self.args.batch_id is None:
             missing_args.append('-b/--batch_id')
-        # if self.args.model_path is None:
-        #     missing_args.append('--model_path')
         if missing_args:
-            self.parser.error(f'The following arguments are required when running pyRootHair with a GPU: {missing_args}')
+            self.parser.error(f'The following arguments are required when running pyRootHair using the main pipeline: {missing_args}')
 
     def check_arguments_rfc(self)-> None:
         """
         Check necessary arguments if GPU is not available
         """
+
         if self.args.rfc_model_path is None:
             self.parser.error('The following argument is required if using a Random Forest Classifier: --rfc_model_path.')
-        if self.args.model_path or self.args.custom_model_path:
-            self.parser.error('Conflicting arguments: --rfc_model_path does not require --model_path or any --override arguments.')
+        if self.args.override_model_chkpoint or self.args.override_model_path:
+            self.parser.error('Conflicting arguments: --rfc_model_path does not require any --override arguments.')
         if self.args.img_dir is None:
             self.parser.error('Missing argument for the input image directory -i/--input.')
         if self.args.input_mask:
@@ -57,8 +56,8 @@ class CheckArgs():
         """
         if self.args.rfc_model_path:
             self.parser.error('Conflicting arguments: --input_mask was specified, which is not compatible with --rfc_model_path.')
-        if self.args.model_path or self.args.custom_model_path:
-            self.parser.error('Conflicting arguments: --input_mask only accepts a single mask')
+        if self.args.override_model_chkpoint or self.args.override_model_path:
+            self.parser.error('Conflicting arguments: --input_mask does not require any model path or checkpoint.')
         if self.args.img_dir:
             self.parser.error('Conflicting arguments: -i/--input is for a directory containing a batch of images intended for GPU processing. Please use --input_mask instead for a single mask.')
     
@@ -67,7 +66,7 @@ class CheckArgs():
         newmask = mask.copy()
 
         if not np.array_equal(np.unique(mask), [0,1,2]):
-            print('\n...Mask classes are not correct!...')
+            print(f'\n...Converting Mask Classes from {np.unique(mask)} to {0,1,2} ...')
 
             newmask[mask == 1] = 0
             newmask[mask  == 2] = 1
