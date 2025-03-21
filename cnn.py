@@ -1,6 +1,5 @@
 import torch
 import os
-import subprocess
 
 from pathlib import Path
 from nnunetv2.inference.predict_from_raw_data import nnUNetPredictor
@@ -127,20 +126,31 @@ class nnUNetv2():
         """
         if os.environ.get('nnUNet_results') is None: # check whether nnUNet_results exists in local machine
             self.home_dir = Path.home() # get user home directory
-            Path(os.path.join(self.home_dir, 'nnUNet_results')).mkdir() # make directory for nnUNet results
+            Path(os.path.join(self.home_dir, 'nnUNet_results')).mkdir(exist_ok=True) # make directory for nnUNet results
             res_path = os.path.join(self.home_dir, 'nnUNet_results')
             os.environ['nnUNet_results'] = res_path # export path to newly created directory (temp)
             print(f'\n...nnUNet paths have been set up...\n')
+        else:
+            print('Found an existing folder called nnUNet_results.')
+
+        
     
     def initialize_model(self):
         # https://github.com/MIC-DKFZ/nnUNet/blob/f8f5b494b7226b8b0b1bca34ad3e9b68facb52b8/nnunetv2/inference/predict_from_raw_data.py#L39
-        self.predictor = nnUNetPredictor() # instantiate nnUNet predictor
+
+        if self.gpu_exists:
+            device = torch.device('cuda', 0) # set device to GPU if available
+        else:
+            device = 'cpu' # use CPU for inference if GPU is not available
+
+        self.predictor = nnUNetPredictor(device=device) # instantiate nnUNet predictor
 
         # initialize network and load checkpoint
         self.predictor.initialize_from_trained_model_folder(
             join(os.environ.get('nnUNet_results'), 'Dataset069_iRootHair/nnUNetTrainer__nnUNetResEncUNetLPlans__2d'),
-            use_folds=(0,1,2,3,4),
+            use_folds=('all'),
             checkpoint_name='checkpoint_final.pth')
+
         
     
     def run_inference(self):
