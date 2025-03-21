@@ -84,7 +84,6 @@ class ImageLoader():
         sub_dir = adjusted_dir / run_id
         sub_dir.mkdir(parents=True, exist_ok=True) # make sub dir within adjusted_images with the user specified run_id
         self.sub_dir_path = Path(sub_dir)
-        print(f'\n...Setting up a new directory {self.sub_dir_path} to store renamed/adjusted images..\n')
 
     def save_resized_image(self) -> None:
         """
