@@ -34,34 +34,34 @@ class ImageLoader():
         print(f'\n...Loading {img}...')
         self.old_h, self.old_w, self.old_c = self.image.shape
 
-        if self.old_h != self.target_h:
-            self.adjust_height = True
+        # if self.old_h != self.target_h:
+        #     self.adjust_height = True
         if self.old_c > self.target_c:
             self.adjust_channel = True
 
         # if original image width <= (2028/1520) * original image height
-        if not self.old_w <= (self.target_w / self.target_h) * self.old_h:
-            raise ValueError(f'The width of image {img} is too wide. Please crop this image, and try again.')
+        # if not self.old_w <= (self.target_w / self.target_h) * self.old_h:
+        #     raise ValueError(f'The width of image {img} is too wide. Please crop this image, and try again.')
         
-    def resize_height(self) -> None:
-        """
-        Resize input image such that ouput reiszed image has height of 1520 px. Resizes width by the same scale factor
-        """
-        if self.adjust_height:
-            resize_factor = self.old_h / self.target_h 
+    # def resize_height(self) -> None:
+    #     """
+    #     Resize input image such that ouput reiszed image has height of 1520 px. Resizes width by the same scale factor
+    #     """
+    #     if self.adjust_height:
+    #         resize_factor = self.old_h / self.target_h 
            
-            self.resized_img = resize(self.image, (int(round(self.old_h / resize_factor)), int(round(self.old_w // resize_factor))), anti_aliasing=True)
+    #         self.resized_img = resize(self.image, (int(round(self.old_h / resize_factor)), int(round(self.old_w // resize_factor))), anti_aliasing=True)
 
-    def resize_width(self) -> None:
-        """
-        Pad width of image if the resized image width < 2028
-        """
-        if self.adjust_height:
-            _, resized_w, _ = self.resized_img.shape
+    # def resize_width(self) -> None:
+    #     """
+    #     Pad width of image if the resized image width < 2028
+    #     """
+    #     if self.adjust_height:
+    #         _, resized_w, _ = self.resized_img.shape
 
-            if resized_w < self.target_w: 
-                pad_amount = (self.target_w - resized_w) // 2
-                self.resized_img = np.pad(self.resized_img, ((0,0), (pad_amount, pad_amount+1), (0,0)), mode='median')
+    #         if resized_w < self.target_w: 
+    #             pad_amount = (self.target_w - resized_w) // 2
+    #             self.resized_img = np.pad(self.resized_img, ((0,0), (pad_amount, pad_amount+1), (0,0)), mode='median')
 
     def resize_channel(self) -> None:
         """
@@ -93,19 +93,19 @@ class ImageLoader():
         Save images with _0000.png suffix for nnUNet 
         """
         
-        if self.adjust_height or self.adjust_channel:
+        # if self.adjust_height or self.adjust_channel:
             
-            self.resized_img = img_as_ubyte(self.resized_img)
-            new_img_name = self.image_name.split('.')[0]
-            iio.imwrite(os.path.join(self.sub_dir_path, f'{new_img_name}_resized_0000.png'), self.resized_img)
-            print(f'\n...Saving resized image: {new_img_name}_resized_0000.png, in {self.sub_dir_path}...\n')
+        #     self.resized_img = img_as_ubyte(self.resized_img)
+        #     new_img_name = self.image_name.split('.')[0]
+        #     iio.imwrite(os.path.join(self.sub_dir_path, f'{new_img_name}_resized_0000.png'), self.resized_img)
+        #     print(f'\n...Saving resized image: {new_img_name}_resized_0000.png, in {self.sub_dir_path}...\n')
 
-        else:
-            img_name = self.image_name.split('.')[0]
-            
-            if not self.image_name.endswith('_0000.png'):    
-                iio.imwrite(os.path.join(self.sub_dir_path, f'{img_name}_0000.png'), self.image)
-                print(f'\n...Renaming image {img_name} to {img_name}_0000.png in {self.sub_dir_path}...\n')
+        # else:
+        img_name = self.image_name.split('.')[0]
+        
+        if not self.image_name.endswith('_0000.png'):    
+            iio.imwrite(os.path.join(self.sub_dir_path, f'{img_name}_0000.png'), self.image)
+            print(f'\n...Renaming image {img_name} to {img_name}_0000.png in {self.sub_dir_path}...\n')
 
 
     
