@@ -68,7 +68,7 @@ def main():
         model.check_gpu() # determine which model to load depending on GPU availability
         check_args.check_arguments_gpu()
 
-        if model.gpu_exists(): # set device to available GPU or CPU
+        if model.gpu_exists: # set device to available GPU or CPU
             device = torch.device('cuda',0) 
         else:
             device = 'cpu'
