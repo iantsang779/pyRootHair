@@ -120,21 +120,24 @@ class nnUNetv2():
         else:
             print(f'\n...No GPU Detected...\n')
 
-    def setup_nnunet_paths(self) -> None:
-        """
-        Setup nnUnet path for results if it doesn't currently exist. Required for running inference
-        """
-        if os.environ.get('nnUNet_results') is None: # check whether nnUNet_results exists in local machine
-            self.home_dir = Path.home() # get user home directory
-            Path(os.path.join(self.home_dir, 'nnUNet_results')).mkdir(exist_ok=True) # make directory for nnUNet results
-            res_path = os.path.join(self.home_dir, 'nnUNet_results')
-            os.environ['nnUNet_results'] = res_path # export path to newly created directory (temp)
-            print(f'\n...nnUNet paths have been set up...\n')
-        else:
-            print('Found an existing folder called nnUNet_results.')
+    # def setup_paths(self) -> None:
+    #     """
+    #     Setup paths for results and model storing.
+    #     """
+    #     master_pth = Path('~/pyroothair').expanduser() # master directory where everything is stored
+
+    #     if master_pth.is_dir(): # check whether pyroothair directory exists
+    #         Path(os.path.join(master_pth, 'nnUNet_results')).mkdir() # make directory for nnUNet results
+            
+         
+            
+    #         print(f'\n...nnUNet results path has been set up...\n')
+    #     else:
+    #         raise ValueError('Missing master folder pyroothair. Please create the folder in your home directory!')
+    ### ! Can replace this function by just having the correct directories on github (nnUNet_`results/Dataset..../nnUNet_trainer....)`
 
         
-    
+
     def initialize_model(self):
         # https://github.com/MIC-DKFZ/nnUNet/blob/f8f5b494b7226b8b0b1bca34ad3e9b68facb52b8/nnunetv2/inference/predict_from_raw_data.py#L39
 
