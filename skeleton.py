@@ -97,7 +97,7 @@ class Skeleton():
 
         angle = np.rad2deg(np.arctan(dx/dy))
         
-        rotated_mask = rotate(init_mask, angle, preserve_range=True, mode='symmetric')
+        rotated_mask = rotate(init_mask, angle, preserve_range=True, resize=True, mode='constant')
 
         # rotated_label_mask, _ = self.clean_root_chunk(rotated_mask)
 
