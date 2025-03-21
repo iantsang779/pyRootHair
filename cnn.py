@@ -100,10 +100,11 @@ from batchgenerators.utilities.file_and_folder_operations import join
 
 class nnUNetv2():
 
-    def __init__(self, in_dir:str, run_id:str):
+    def __init__(self, in_dir:str, run_id:str, args):
         self.in_dir = in_dir # user input directory containing raw images
         self.run_id = run_id
         self.predictor=None
+        self.args = args
 
         print('#########################################')
         print('     Thank you for using pyRootHair!     ')
@@ -136,25 +137,23 @@ class nnUNetv2():
     #         raise ValueError('Missing master folder pyroothair. Please create the folder in your home directory!')
     ### ! Can replace this function by just having the correct directories on github (nnUNet_`results/Dataset..../nnUNet_trainer....)`
 
-        
-
-    def initialize_model(self):
+    def initialize_model(self, device, override_model_path, override_model_checkpoint):
         # https://github.com/MIC-DKFZ/nnUNet/blob/f8f5b494b7226b8b0b1bca34ad3e9b68facb52b8/nnunetv2/inference/predict_from_raw_data.py#L39
-
-        if self.gpu_exists:
-            device = torch.device('cuda', 0) # set device to GPU if available
-        else:
-            device = 'cpu' # use CPU for inference if GPU is not available
 
         self.predictor = nnUNetPredictor(device=device) # instantiate nnUNet predictor
 
-        # initialize network and load checkpoint
-        self.predictor.initialize_from_trained_model_folder(
-            join(os.environ.get('nnUNet_results'), 'Dataset069_iRootHair/nnUNetTrainer__nnUNetResEncUNetLPlans__2d'),
-            use_folds=('all'),
-            checkpoint_name='checkpoint_final.pth')
+        if self.args.override_model_path is None: # if using default model 
+            # initialize network and load checkpoint
+            self.predictor.initialize_from_trained_model_folder(
+                join(os.environ.get('nnUNet_results'), 'Dataset069_iRootHair/nnUNetTrainer__nnUNetResEncUNetLPlans__2d'),
+                use_folds=('all'),
+                checkpoint_name='checkpoint_final.pth')
 
-        
+        else: # if user specifies custom model path, load that model instead
+            self.predictor.initialize_from_trained_model_folder(
+                override_model_path,
+                use_folds=(0,),
+                checkpoint_name=override_model_checkpoint)
     
     def run_inference(self):
 
