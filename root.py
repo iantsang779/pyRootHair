@@ -90,6 +90,23 @@ class Root(Skeleton):
 
         return self.final_rh_mask_labeled 
 
+    def crop_rh_mask(self) -> 'NDArray':
+        """
+        Crop root hair masks so that the start co-ordinate is the same for both segments.
+        Important for roots that are curved at an angle, as after rotation, left and right RH segments will be non-uniform at the top.
+        """
+
+        final_rh_mask_props = regionprops(self.final_rh_mask)
+        final_rh_mask_coords = [i.coords for i in final_rh_mask_props]
+
+        rh_seg1_start = np.min(final_rh_mask_coords[0][:,0])
+        rh_seg2_start = np.min(final_rh_mask_coords[1][:,0])
+
+        crop_start = max(rh_seg1_start, rh_seg2_start)
+
+        final_rh_mask = self.final_rh_mask_labeled[crop_start:,:] # crop the final root hair section to the start of the shorter root hair segment for uniform calculation
+
+        return final_rh_mask
 
 
 
