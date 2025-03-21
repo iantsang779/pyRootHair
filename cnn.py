@@ -145,9 +145,9 @@ class nnUNetv2():
         if self.args.override_model_path is None: # if using default model 
             # initialize network and load checkpoint
             self.predictor.initialize_from_trained_model_folder(
-                join(os.environ.get('nnUNet_results'), 'Dataset069_iRootHair/nnUNetTrainer__nnUNetResEncUNetLPlans__2d'),
+                join(os.environ.get('nnUNet_results'), 'Dataset069_iRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d'),
                 use_folds=('all'),
-                checkpoint_name='checkpoint_final.pth')
+                checkpoint_name='checkpoint_final_no_opt.pth')
 
         else: # if user specifies custom model path, load that model instead
             self.predictor.initialize_from_trained_model_folder(
