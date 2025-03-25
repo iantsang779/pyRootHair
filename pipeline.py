@@ -90,16 +90,16 @@ class Pipeline(CheckArgs):
         skeleton = Skeleton() 
         clean_root = skeleton.extract_root(root_mask)
         sk_y, sk_x = skeleton.skeletonize(clean_root)
-        sk_spline, sk_height = skeleton.skeleton_params(sk_x, sk_y)
-        med_x, med_y = skeleton.calc_skeleton_midline(sk_spline, sk_height)
+        sk_spline, sk_start, sk_end = skeleton.skeleton_params(sk_x, sk_y)
+        med_x, med_y = skeleton.calc_skeleton_midline(sk_start, sk_end, sk_spline)
         rotated_mask = skeleton.calc_rotation(med_x, med_y, init_mask) 
 
         rotated_root_mask = (rotated_mask == 2) 
 
         clean_root_rotated = skeleton.extract_root(rotated_root_mask)
         sk_r_y, sk_r_x = skeleton.skeletonize(clean_root_rotated)
-        sk_r_spline, sk_r_height = skeleton.skeleton_params(sk_r_x, sk_r_y)
-        med_r_x, med_r_y = skeleton.calc_skeleton_midline(sk_r_spline, sk_r_height)
+        sk_r_spline, sk_r_start, sk_r_end = skeleton.skeleton_params(sk_r_x, sk_r_y)
+        med_r_x, med_r_y = skeleton.calc_skeleton_midline(sk_r_start, sk_r_end, sk_r_spline)
         skeleton.add_endpoints(med_r_x, med_r_y)
         skeleton.calc_skel_euclidean()
         skeleton.generate_buffer_coords(rotated_mask)
@@ -110,7 +110,7 @@ class Pipeline(CheckArgs):
         rt.find_root_tip()
         rt.split_root_coords()
         root_hairs = rt.trim_rh_mask()
-        root_hairs_cropped = rt.crop_rh_mask()
+        root_hairs_cropped = rt.crop_rh_mask(root_hairs)
         
         data = GetParams(root_hairs_cropped)
         data.sliding_window(self.args.height_bin_size)
@@ -126,12 +126,12 @@ class Pipeline(CheckArgs):
 
         if self.args.show_transformation:
             self.check_args.check_arguments_output()
-            skeleton.visualize_transformation(init_mask, self.args.save_path, filename.split('.')[0]) 
+            skeleton.visualize_transformation(rotated_mask, self.args.save_path, filename.split('.')[0]) 
 
         if self.args.show_segmentation:
             self.check_args.check_arguments_output()
             plt.imsave(os.path.join(self.args.save_path,f'{filename.split('.')[0]}_mask.png'), straight_mask)
-            plt.imsave(os.path.join(self.args.save_path,f'{filename.split('.')[0]}_root_hair_mask.png'), root_hairs)
+            plt.imsave(os.path.join(self.args.save_path,f'{filename.split('.')[0]}_root_hair_mask.png'), root_hairs_cropped)
         
         if self.args.show_summary:
             self.check_args.check_arguments_output()
