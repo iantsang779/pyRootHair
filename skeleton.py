@@ -67,7 +67,8 @@ class Skeleton():
         y_spline = CubicSpline(t_range, skel_y)(t_range)
 
         merged_spline = np.array(list(zip(x_spline, y_spline)))
-        skeleton_start, skeleton_end = int(min(y_spline)), int(max(y_spline))
+        skeleton_start = int(min(y_spline))
+        skeleton_end = int(max(y_spline))
 
         return merged_spline, skeleton_start, skeleton_end
 
@@ -78,7 +79,6 @@ class Skeleton():
         med_x, med_y = [], []
         
         bin_size = 100
-
         for start in range(start, end, bin_size):
             end = start + bin_size
             bin_y_val = [x[1] for x in merged_spline if start <= x[1] <= end]
