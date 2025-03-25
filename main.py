@@ -95,6 +95,7 @@ def main():
             if mask_file.endswith('.png'):
                 main = Pipeline(check_args)
                 init_mask = iio.imread(os.path.join(mask_path, mask_file))
+                print(f'\n...Processing {mask_file}...')
                 s, r = main.run_pipeline(init_mask, mask_file) # run pipeline for each image
                 
                 summary = pd.concat([s,summary]) # add data from each image to the correct data frame
