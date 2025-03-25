@@ -100,11 +100,10 @@ from batchgenerators.utilities.file_and_folder_operations import join
 
 class nnUNetv2():
 
-    def __init__(self, in_dir:str, run_id:str, args):
+    def __init__(self, in_dir:str, run_id:str):
         self.in_dir = in_dir # user input directory containing raw images
         self.run_id = run_id
         self.predictor=None
-        self.args = args
 
         print('#########################################')
         print('     Thank you for using pyRootHair!     ')
@@ -137,15 +136,15 @@ class nnUNetv2():
     #         raise ValueError('Missing master folder pyroothair. Please create the folder in your home directory!')
     ### ! Can replace this function by just having the correct directories on github (nnUNet_`results/Dataset..../nnUNet_trainer....)`
 
-    def initialize_model(self, device, override_model_path, override_model_checkpoint):
+    def initialize_model(self, device, override_model_path: str = None, override_model_checkpoint: str = None):
         # https://github.com/MIC-DKFZ/nnUNet/blob/f8f5b494b7226b8b0b1bca34ad3e9b68facb52b8/nnunetv2/inference/predict_from_raw_data.py#L39
 
         self.predictor = nnUNetPredictor(device=device) # instantiate nnUNet predictor
 
-        if self.args.override_model_path is None: # if using default model 
+        if override_model_path or override_model_checkpoint is None: # if using default model 
             # initialize network and load checkpoint
             self.predictor.initialize_from_trained_model_folder(
-                join(os.environ.get('nnUNet_results'), 'Dataset069_iRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d'),
+                join(os.environ.get('nnUNet_results'), 'Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d'),
                 use_folds=('all'),
                 checkpoint_name='checkpoint_final_no_opt.pth')
 
