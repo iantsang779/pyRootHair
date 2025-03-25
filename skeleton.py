@@ -22,17 +22,20 @@ class Skeleton():
         """
         Clean up each small section of the root mask by removing all but the largest area present
         """
-        root_section_labeled, _ = label(mask, connectivity=2, return_num=True) # label the root mask
-        root_section_measured = regionprops(root_section_labeled) # measure the root section 
-        max_label = max(root_section_measured, key=lambda x: x.area).label # get the label associated with the largest area in the measured section
+        root_section_labeled, num_labels = label(mask, connectivity=2, return_num=True) # label the root mask
         
-        # mask out the smaller sections, retaining only the largest section
-        clean_root_mask = root_section_labeled == max_label 
-        root_section_labeled, _ = label(clean_root_mask, connectivity=2, return_num=True) # re label root 
-        root_section_measured = regionprops(root_section_labeled) # re measure root section
+        if num_labels > 0:
+            root_section_measured = regionprops(root_section_labeled) # measure the root section 
+            max_label = max(root_section_measured, key=lambda x: x.area).label # get the label associated with the largest area in the measured section
+            
+            # mask out the smaller sections, retaining only the largest section
+            clean_root_mask = root_section_labeled == max_label 
+            root_section_labeled, _ = label(clean_root_mask, connectivity=2, return_num=True) # re label root 
+            root_section_measured = regionprops(root_section_labeled) # re measure root section
 
-        return root_section_labeled, root_section_measured
-    
+            return root_section_labeled, root_section_measured
+      
+        
     def extract_root(self, root_mask: 'NDArray') -> 'NDArray':
         """
         Filter out non-primary root sections from root mask
@@ -54,7 +57,7 @@ class Skeleton():
 
         return skeleton_y, skeleton_x
 
-    def skeleton_params(self, skel_x: 'NDArray', skel_y: 'NDArray') -> tuple['NDArray', int]:
+    def skeleton_params(self, skel_x: 'NDArray', skel_y: 'NDArray') -> tuple['NDArray', int, int]:
         """
         Fit cubic spline to root skeleton
         """
@@ -64,11 +67,11 @@ class Skeleton():
         y_spline = CubicSpline(t_range, skel_y)(t_range)
 
         merged_spline = np.array(list(zip(x_spline, y_spline)))
-        skeleton_height = int(max(y_spline))
+        skeleton_start, skeleton_end = int(min(y_spline)), int(max(y_spline))
 
-        return merged_spline, skeleton_height
+        return merged_spline, skeleton_start, skeleton_end
 
-    def calc_skeleton_midline(self, merged_spline: 'NDArray', height: int) -> tuple[list, list]:
+    def calc_skeleton_midline(self, start:int, end: int, merged_spline: 'NDArray') -> tuple[list, list]:
         """
         Calculate midline of original root skeleton using a sliding window
         """
@@ -76,7 +79,7 @@ class Skeleton():
         
         bin_size = 100
 
-        for start in range(0, height, bin_size):
+        for start in range(start, end, bin_size):
             end = start + bin_size
             bin_y_val = [x[1] for x in merged_spline if start <= x[1] <= end]
             bin_x_val = [x[0] for x in merged_spline if start <= x[1] <= end]
