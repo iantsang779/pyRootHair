@@ -10,13 +10,10 @@ from pathlib import Path
 class ImageLoader():
 
     def __init__(self) -> None:
-        self.target_h, self.target_w, self.target_c = (1520, 2028, 3)
         self.old_h, self.old_w, self.old_c = (None, None, None)
-        self.resized_h, self.resized_w, self.resized_c = (None, None, None)
         self.adjust_height, self.adjust_channel = (False, False)
         self.image = None
         self.image_name = None
-        self.resized_img = None
         self.sub_dir_path = None
 
     def read_images(self, img_dir:str, img:str) -> None:
@@ -34,42 +31,28 @@ class ImageLoader():
         print(f'\n...Loading {img}...')
         self.old_h, self.old_w, self.old_c = self.image.shape
 
-        # if self.old_h != self.target_h:
-        #     self.adjust_height = True
-        if self.old_c > self.target_c:
+        if self.old_h > 5000:
+            self.adjust_height = True
+        if self.old_c > 3:
             self.adjust_channel = True
 
-        # if original image width <= (2028/1520) * original image height
-        # if not self.old_w <= (self.target_w / self.target_h) * self.old_h:
-        #     raise ValueError(f'The width of image {img} is too wide. Please crop this image, and try again.')
         
-    # def resize_height(self) -> None:
-    #     """
-    #     Resize input image such that ouput reiszed image has height of 1520 px. Resizes width by the same scale factor
-    #     """
-    #     if self.adjust_height:
-    #         resize_factor = self.old_h / self.target_h 
-           
-    #         self.resized_img = resize(self.image, (int(round(self.old_h / resize_factor)), int(round(self.old_w // resize_factor))), anti_aliasing=True)
+    def resize_image(self) -> None:
+        """
+        Resize input image if height > 5000px
+        """
+        if self.adjust_height:
+            
+            self.image = resize(self.image, (int(round(self.old_h / 3)), int(round(self.old_w / 3))), anti_aliasing=True)
 
-    # def resize_width(self) -> None:
-    #     """
-    #     Pad width of image if the resized image width < 2028
-    #     """
-    #     if self.adjust_height:
-    #         _, resized_w, _ = self.resized_img.shape
-
-    #         if resized_w < self.target_w: 
-    #             pad_amount = (self.target_w - resized_w) // 2
-    #             self.resized_img = np.pad(self.resized_img, ((0,0), (pad_amount, pad_amount+1), (0,0)), mode='median')
 
     def resize_channel(self) -> None:
         """
         Remove alpha channel if present
         """
         if self.adjust_channel:
-            self.resized_img = self.resized_img[:,:,:3]
-
+            self.image = self.image[:,:,:3]
+        
     def setup_dir(self, img_dir:str, run_id:str) -> None:
         """ 
         Setup adjusted_images folder in the same directory as the input images folder.
@@ -91,22 +74,21 @@ class ImageLoader():
         Convert image from float64 to uint8 and save image as XXX_resized.png
         Save images with _0000.png suffix for nnUNet 
         """
-        
-        # if self.adjust_height or self.adjust_channel:
-            
-        #     self.resized_img = img_as_ubyte(self.resized_img)
-        #     new_img_name = self.image_name.split('.')[0]
-        #     iio.imwrite(os.path.join(self.sub_dir_path, f'{new_img_name}_resized_0000.png'), self.resized_img)
-        #     print(f'\n...Saving resized image: {new_img_name}_resized_0000.png, in {self.sub_dir_path}...\n')
-
-        # else:
         img_name = self.image_name.split('.')[0]
-        
-        if not self.image_name.endswith('_0000.png'):    
+
+        if self.adjust_height or self.adjust_channel:
+            
+            self.image = img_as_ubyte(self.image)
+       
+        if not img_name.endswith('_0000.png'):    
             iio.imwrite(os.path.join(self.sub_dir_path, f'{img_name}_0000.png'), self.image)
             print(f'\n...Renaming image {img_name} to {img_name}_0000.png in {self.sub_dir_path}...\n')
 
+        else:
+            pref_name = img_name.split('_0000')[0]
+            iio.imwrite(os.path.join(self.sub_dir_path, f'{pref_name}_resized_0000.png'), self.image)
+            print(f'\n...Saving resized image: {pref_name}_resized_0000.png, in {self.sub_dir_path}...\n')
 
-    
 
+        
 
