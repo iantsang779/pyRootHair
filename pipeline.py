@@ -131,8 +131,9 @@ class Pipeline(CheckArgs):
         if self.args.show_segmentation:
             self.check_args.check_arguments_output()
             plt.imsave(os.path.join(self.args.save_path,f'{filename.split('.')[0]}_mask.png'), straight_mask)
-            plt.imsave(os.path.join(self.args.save_path,f'{filename.split('.')[0]}_root_hair_mask.png'), root_hairs_cropped)
-        
+            plt.imsave(os.path.join(self.args.save_path,f'{filename.split('.')[0]}_root_hair_mask.png'), root_hairs)
+            plt.imsave(os.path.join(self.args.save_path,f'{filename.split('.')[0]}_root_hair_mask_cropped.png'), root_hairs_cropped)
+
         if self.args.show_summary:
             self.check_args.check_arguments_output()
             data.plot_summary(self.args.save_path, filename.split('.')[0])
