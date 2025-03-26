@@ -14,8 +14,9 @@ class Root(Skeleton):
         self.straight_mask = straight_mask
         self.found_tip = False
         self.root_tip_x, self.root_tip_y = None, None
+        self.root_start_x, self.root_start_y = None, None
         self.final_labeled_root = None
-        self.final_root_mask = (self.straight_mask > 1.5) # set final masks for root and root hair
+        self.final_root_mask = (self.straight_mask > 1.7) # set final masks for root and root hair
         self.final_rh_mask = (self.straight_mask > 0.4) & (self.straight_mask <= 1.4) 
         self.final_rh_mask_labeled = None
         self.count = None
@@ -25,6 +26,8 @@ class Root(Skeleton):
         Check whether root tip is present in root mask
         
         """
+
+        self.final_root_mask = self.extract_root(self.final_root_mask) # get rid of all but main root, should only be 1 root left
         self.final_labeled_root, _ = label(self.final_root_mask, connectivity=2, return_num=True)
         root_measured = regionprops(self.final_labeled_root) # measure cleaned root
         coords = [i.coords for i in root_measured][0] # get all coords of masked cleaned root
@@ -33,7 +36,6 @@ class Root(Skeleton):
         
         if image_height - max_root_y_coord > 1: # if > 1 px difference between image height and max y of root
             self.found_tip = True 
-            
         return self.final_labeled_root
     
     def find_root_tip(self) -> None:
@@ -53,22 +55,27 @@ class Root(Skeleton):
             endpoints = np.where(neighbours == 3) # edges only have 1 neighbour, so 2 + 1 = 3
             endpoints = list(zip(endpoints[0], endpoints[1])) # store results in paired list 
             root_tip = max(endpoints, key = lambda x: x[0]) # get coords where y-coord is max (bottom of root - assuming root growing downwards)
-            print('...Located root tip...')
+            root_start = min(endpoints, key=lambda x: x[0]) # coords of where root starts
             self.root_tip_y, self.root_tip_x = root_tip 
-        else:
-            print('...Failed to locate root tip...')        
-
+            self.root_start_y, self.root_start_x = root_start
+          
     def split_root_coords(self) -> None:
         """
-        Split the root hair mask around the location of root tip
+        Split the root hair mask around the location of root tip and root start 
         """
-        tip_border = 20
+        tip_border = 50
+
+        self.final_rh_mask = self.extract_root(self.final_rh_mask) # keep the largest RH chunk (pre-tip splitting)
 
         if self.found_tip:
             root_tip_y_max, root_tip_y_min = self.root_tip_y + tip_border, self.root_tip_y - tip_border
             root_tip_x_max, root_tip_x_min = self.root_tip_x + tip_border, self.root_tip_x - tip_border
-            
+
+            root_start_y_max, root_start_y_min = self.root_start_y + tip_border, self.root_start_y - tip_border
+            root_start_x_max, root_start_x_min = self.root_start_x + tip_border, self.root_start_x - tip_border 
+
             self.final_rh_mask[root_tip_y_min:root_tip_y_max, root_tip_x_min:root_tip_x_max] = False # apply coords to mask
+            self.final_rh_mask[root_start_y_min:root_start_y_max, root_start_x_min:root_start_x_max] = False
 
         self.final_rh_mask_labeled, self.count = label(self.final_rh_mask, connectivity=2, return_num=True)
 
