@@ -307,5 +307,5 @@ class GetParams(Root):
         for label, pos in zip(labels, positions):
             ax[pos].annotate(label, xy=(0.05, 0.92), xycoords='axes fraction', fontweight='bold', fontsize=18)
             
-        plt.title(f'{image_name} Summary')
+        fig.suptitle(f'{image_name} Summary')
         plt.savefig(os.path.join(path, f'{image_name}_summary.png'))
