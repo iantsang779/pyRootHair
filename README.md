@@ -62,8 +62,8 @@ This image was specifically chosen for a few reasons:
 - Presence of non-primary root sections
 
 ```python
-image = iio.imread('~/Images/Wheat/Raw/karim_demo.png')
-mask = iio.imread('~/Images/Wheat/Masks/karim_demo_mask.png')
+image = iio.imread('demo/karim_demo.png')
+mask = iio.imread('demo/karim_demo_mask.png')
 
 fig, ax = plt.subplots(ncols=2, figsize=(15,10))
 ax[0].imshow(image)
@@ -75,7 +75,47 @@ ax[1].set_title('Binary Mask')
 
 From now on, I will process the binary mask.
 
-#### 
+#### Root extraction and skeletonization
+
+First, I will extract just the root from the binary mask. This is needed to determine how to pre-process the mask, including rotation and subsequent straightening. 
+
+All pixels with the class label '2' is considered part of the root, and stored in a new variable `root_mask`.
+
+```python
+root_mask = (mask == 2)
+
+plt.imshow(root_mask)
+```
+![alt text](/demo/init_root_mask.png)
+
+Next, I label the root, and define a very helpful function `clean_root_chunk()`.  
+This function cleans up each chunk of root (or root hair) by removing all but the largest component present. By running this function on the root binary mask, only the largest root (the primary root we are interested in) is retained.
+
+
+```python
+root_labeled_clean, count = label(root_mask, connectivity=2, return_num=True)
+
+def clean_root_chunk(mask: 'NDArray') -> tuple[NDArray, list]:
+    """
+    Clean up each small section of the root mask by removing all but the largest area present
+    """
+    root_section_labeled, num_labels = label(mask, connectivity=2, return_num=True) # label the root mask
+    
+    if num_labels > 0:
+        root_section_measured = regionprops(root_section_labeled) # measure the root section 
+        max_label = max(root_section_measured, key=lambda x: x.area).label # get the label associated with the largest area in the measured section
+        
+        # mask out the smaller sections, retaining only the largest section
+        clean_root_mask = root_section_labeled == max_label 
+        root_section_labeled, _ = label(clean_root_mask, connectivity=2, return_num=True) # re label root 
+        root_section_measured = regionprops(root_section_labeled) # re measure root section
+
+        return root_section_labeled, root_section_measured
+
+if count > 1:
+    root_labeled_cleaned, count = clean_root_chunk(root_mask)
+
+```
 
 
 
