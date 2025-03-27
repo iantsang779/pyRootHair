@@ -71,7 +71,7 @@ ax[0].set_title('Raw Image')
 ax[1].imshow(mask)
 ax[1].set_title('Binary Mask')
 ```
-![alt text](image.png)
+![alt text](demo/raw_binary.png)
 
 From now on, I will process the binary mask.
 
