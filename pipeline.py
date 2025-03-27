@@ -108,7 +108,7 @@ class Pipeline(CheckArgs):
         rt = Root(straight_mask)
         final_root = rt.check_root_tip()
         rt.find_root_tip()
-        rt.split_root_coords()
+        rt.split_root_coords(self.args.padding)
         root_hairs = rt.trim_rh_mask()
         root_hairs_cropped = rt.crop_rh_mask(root_hairs)
         
@@ -118,7 +118,7 @@ class Pipeline(CheckArgs):
         data.calibrate_data(self.args.conv)
         data.calculate_avg_root_thickness(final_root, self.args.conv)
         data.calculate_uniformity()
-        data.calculate_growth()
+        data.calculate_growth(self.args.frac)
         # datetime = data.get_metadata(image.image_metadata)
     
         summary_df, raw_df = data.generate_table(filename.split('.')[0], self.args.batch_id)

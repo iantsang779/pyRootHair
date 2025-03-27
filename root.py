@@ -59,20 +59,19 @@ class Root(Skeleton):
             self.root_tip_y, self.root_tip_x = root_tip 
             self.root_start_y, self.root_start_x = root_start
           
-    def split_root_coords(self) -> None:
+    def split_root_coords(self, padding: int) -> None:
         """
         Split the root hair mask around the location of root tip and root start 
         """
-        tip_border = 50
 
         self.final_rh_mask = self.extract_root(self.final_rh_mask) # keep the largest RH chunk (pre-tip splitting)
 
         if self.found_tip:
-            root_tip_y_max, root_tip_y_min = self.root_tip_y + tip_border, self.root_tip_y - tip_border
-            root_tip_x_max, root_tip_x_min = self.root_tip_x + tip_border, self.root_tip_x - tip_border
+            root_tip_y_max, root_tip_y_min = self.root_tip_y + padding, self.root_tip_y - padding
+            root_tip_x_max, root_tip_x_min = self.root_tip_x + padding, self.root_tip_x - padding
 
-            root_start_y_max, root_start_y_min = self.root_start_y + tip_border, self.root_start_y - tip_border
-            root_start_x_max, root_start_x_min = self.root_start_x + tip_border, self.root_start_x - tip_border 
+            root_start_y_max, root_start_y_min = self.root_start_y + padding, self.root_start_y - padding
+            root_start_x_max, root_start_x_min = self.root_start_x + padding, self.root_start_x - padding 
 
             self.final_rh_mask[root_tip_y_min:root_tip_y_max, root_tip_x_min:root_tip_x_max] = False # apply coords to mask
             self.final_rh_mask[root_start_y_min:root_start_y_max, root_start_x_min:root_start_x_max] = False
