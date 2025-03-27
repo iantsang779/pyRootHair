@@ -92,6 +92,8 @@ Next, I label the root, and define a very helpful function `clean_root_chunk()`.
 
 `clean_root_chunk()` is run if more than 1 root section is detected in the root mask. The function returns the cleaned root, and a count of the number of objects in the cleaned root mask.
 
+Cleaning the mask is extremely important to calculate accurate parameters for mask manipulation, which will soon be evident.
+
 ```python
 root_labeled_clean, count = label(root_mask, connectivity=2, return_num=True)
 
@@ -175,6 +177,131 @@ plt.plot(merged_spline[:,0], merged_spline[:,1], 'y.')
 ax.yaxis.set_inverted(True)
 ```
 ![alt text](/demo/spline.png)
+
+### Rotating the root
+
+Now that we have the median co-ordinates to approximate the root midline, we can calculate the angle required to rotate the root such that the root tip/end of the root in frame is pointing downwards.
+
+Here, I calculate the change in y and change in x of the endpoints of the root midline:
+```python
+dy = max(med_y) - min(med_y)
+dx = med_x[0] - med_x[-1]
+```
+
+Next, I calculate the angle to rotate the root relative to the vertical, and rotate the image.  
+The rotated image is resized with `resize=True` to preserve resolution of the original input image.
+
+```python
+angle = np.rad2deg(np.arctan(dx/dy))
+    
+rotated_mask = rotate(root_labeled_cleaned, angle, preserve_range=True, resize=True, mode='constant')
+
+plt.imshow(rotated_mask)
+
+```
+![alt text](demo/rotated_mask.png)
+
+### Repeat of previous steps
+
+Now we have a rotated mask of the original image, the previous steps are repeated:
+- extract the root
+- clean the root 
+- skeletonize the root 
+- approximate the midline of the rotated root skeleton
+
+All repeated steps are illustrated here for convenience:
+
+```python
+### Extract root
+
+rotated_root_mask = (rotated_mask == 2)
+
+clean_root_rotated_labeled, rotated_count = label(rotated_root_mask, connectivity=2, return_num=True)
+
+if rotated_count > 1: # if more than 1 root is present    
+    rotated_root_labeled_cleaned, new_count = clean_root_chunk(clean_root_rotated_labeled)
+
+### Skeletonize root
+skeleton_rotated = skeletonize(rotated_root_labeled_cleaned)
+
+skeleton_y_rot, skeleton_x_rot = np.nonzero(skeleton_rotated)
+
+### Map points to skeleton
+t_range_rot  = np.arange(len(skeleton_x_rot))
+x_spline_rot = CubicSpline(t_range_rot, skeleton_x_rot)(t_range_rot)
+y_spline_rot = CubicSpline(t_range_rot, skeleton_y_rot)(t_range_rot)
+
+merged_spline_rot = np.array(list(zip(x_spline_rot, y_spline_rot)))
+skeleton_start_rot = int(min(y_spline_rot))
+skeleton_end_rot = int(max(y_spline_rot))
+
+### Sliding window to approximate midline 
+med_x_rot, med_y_rot = [], []
+bin_size = 100
+
+for start in range(skeleton_start_rot, skeleton_end_rot, bin_size):
+    end = start + bin_size
+    bin_y_val_rot = [x[1] for x in merged_spline_rot if start <= x[1] <= end]
+    bin_x_val_rot = [x[0] for x in merged_spline_rot if start <= x[1] <= end]
+    
+    med_y_rot.append(np.median(bin_y_val_rot)) 
+    med_x_rot.append(np.median(bin_x_val_rot))
+```
+
+As you can see, the code is exactly the same as previously described, just with a few variable changes. This chunk calculates the approximated midline of the rotated root skeleton.
+
+### Straightening the root
+
+To obtain accurate root hair measurements, the curved root needs to be straightened as much as possible. The root will be straightened by warping. 
+
+First, I need to add endpoints to the image to ensure all of the image is warped. Here, I define the end and second end points of each end of the rotated root skeleton:
+
+```python
+points = np.array(list(zip(med_x_rot, med_y_rot)))
+
+first_point = points[0] 
+second_point = points[1]
+
+last_point = points[-1]
+seclast_point = points[-2]
+```
+
+Next, I generate new endpoints beyond the image boundary, based on euclidean distances between the previous points. This section is heavily inspired the following stackoverflow answer: https://stackoverflow.com/questions/73614379/how-do-i-use-piecewise-af%EF%AC%81ne-transformation-to-straighten-curved-text-line-cont
+
+```python
+def generate_endpoints(pointA: list, pointB: list, length: int) -> tuple[float, float]:
+    """
+    Generate new end points
+    """
+    len_pApB = euclidean(pointA, pointB)
+    n_x = pointA[0] + ((pointA[0]-pointB[0]) / len_pApB*length)
+    n_y = pointA[1] + ((pointA[1]-pointB[1]) / len_pApB*length)
+
+    return n_x, n_y
+
+first_x, first_y = generate_endpoints(first_point, second_point, 100)
+last_x, last_y = generate_endpoints(last_point, seclast_point, 100)
+
+# Add new end points to the beginning/end of points array
+points = np.vstack([[first_x, first_y], points])
+points = np.vstack([points,[last_x, last_y]])
+
+plt.imshow(rotated_root_labeled_cleaned)
+plt.scatter(points[:,0], points[:,1], s=10, marker='x')
+plt.scatter(points[:,0][0], points[:,1][0], color='red', s=20)
+plt.scatter(points[:,0][0], points[:,1][-1], color='red', s=20)
+```
+Here, this plot illustrates the addition of new endpoints (red circles) at the end of all the midline co-ordinates of the rotated root mask (blue X's).
+
+![alt text](demo/endpoints.png)
+
+
+
+
+
+
+
+
 
 
 
