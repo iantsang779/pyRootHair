@@ -4,7 +4,7 @@ Welcome to the pyRootHair github repository!
 
 Here, you will find all necessary information on how to install and setup pyRootHair, detailed information about the various pipelines and options available, and an in-depth tutorial on how pyRootHair works.
 
-Please do not hesitate to submit a pull-request, or get in touch via [email](ian.tsang@niab.com) if you have any questions, suggestions or concerns!
+Please do not hesitate to submit a pull-request, or get in touch via email if you have any questions, suggestions or concerns!
 
 
 ## Installation instructions
@@ -440,7 +440,7 @@ areas = [i.area for i in rh_props]
 
 Next, I create a new blank array mask, which has the same shape as the root hair mask, containing only `True`s. I then convert and reshape the areas list into a 2D array, and cluster the areas of all objects in the root hair mask into 2 categories using KMeans clustering.
 
-Since the primary root hair sections should have a much larger area than all other objects, the main cluster will contain the area(s) of the primary root hair sections, while the other cluster will contain the areas of all other objects I would like to ignore. Alternatively, you could use the `remove_small_objects()` function from `skimage.morphology`. However, that approach would likely require manual tweaking of the `crit` threshold depending on different images and species. I think the K-means clustering approach is more robust. 
+Since the primary root hair sections should have a much larger area than all other objects, the main cluster will contain the area(s) of the primary root hair sections, while the other cluster will contain the areas of all other objects I would like to ignore. Alternatively, you could use the `remove_small_objects()` function from `skimage.morphology`. However, that approach would likely require manual tweaking of the `min_size` threshold depending on different images and species. I think the K-means clustering approach is more robust. 
 
 Next, I extract the area of the main root hair segment, and iterate over each object's region. For each area that has been clustered into the main root hair cluster, I add that corresponding section into the `new_rh_mask`, which generates a mask of just the primary root hair.
 
@@ -464,6 +464,157 @@ if rh_count > 2:
 plt.imshow(rh_mask)
 ```
 ![alt text](demo/clean_rh_mask.png)
+
+Now that I have a cleaned root hair mask, I can split the root hair segment into 2 sections, corresponding to the left and right sides. To do this, I will use the previously calculated root tip co-ordinate by padding 50 pixels around the root tip in both the x and y direction. Next, this square region is set to False in the binary root hair mask, which ensures that the left and right root hair sections are split.
+
+```python
+padding = 50
+
+if found_tip:
+    root_tip_y_max, root_tip_y_min = root_tip_y + padding, root_tip_y - padding
+    root_tip_x_max, root_tip_x_min = root_tip_x + padding, root_tip_x - padding
+
+    root_start_y_max, root_start_y_min = root_start_y + padding, root_start_y - padding
+    root_start_x_max, root_start_x_min = root_start_x + padding, root_start_x - padding 
+
+    rh_mask[root_tip_y_min:root_tip_y_max, root_tip_x_min:root_tip_x_max] = False # apply coords to mask
+    rh_mask[root_start_y_min:root_start_y_max, root_start_x_min:root_start_x_max] = False
+
+final_rh_mask_labeled, count = label(rh_mask, connectivity=2, return_num=True)
+
+fig, ax = plt.subplots()
+ax.imshow(final_rh_mask_labeled)
+```
+![alt text](image.png)
+
+The root hair mask has now been split at the root tip into 2 sections. 
+
+Finally, the mask is cropped to ensure that each section is of even length. This is done automatically by calculating all the co-ordinates of the root hair mask, then cropping based on the min and max y co-ordinate values.
+
+```python
+def get_region_coords(mask) -> list:
+
+    props = regionprops(mask)
+    coords = [i.coords for i in props]
+    return coords
+
+coords = get_region_coords(final_rh_mask_labeled)
+
+crop_start = max(np.min(coords[0][:,0]), np.min(coords[1][:,0]))
+cropped_rh_mask = final_rh_mask_labeled[crop_start:,:] # crop the final root hair section to the start of the shorter root hair segment for uniform calculation
+
+coords = get_region_coords(cropped_rh_mask) # re-calculate coordinates of cropped image
+
+crop_end = min(np.max(coords[0][:,0]), np.max(coords[1][:,0])) # crop ends of root hair sections
+final_rh_mask = cropped_rh_mask[:crop_end, :]
+
+plt.imshow(final_rh_mask)
+```
+![alt text](demo/clean_rh_mask_split_crop.png)
+
+### Extracting traits from the root hair mask
+
+Now, I have a cleaned, separated mask of both root hair segments. To extract traits from the masks, I first calculate the area of each segment and the maximum height of the mask, which is used to set the maximum height of the sliding window:
+
+```python
+root_hair_segment_props = regionprops(final_rh_mask)
+root_hair_coords = [i.coords for i in root_hair_segment_props] # all coordinates of root hair segments
+max_height = max(np.max(root_hair_coords[0][:,0]), np.max(root_hair_coords[1][:,0])) # get max height of root hair segment
+```
+
+Next, I define the bin size required to perform measurements, and initialize empty lists for length, area, and bin positions for each segment:
+
+```python
+height_bin_size = 50
+horizontal_rh_list_1, horizontal_rh_list_2 = [], []
+rh_area_list_1, rh_area_list_2 = [], []
+bin_end_list_1, bin_end_list_2 = [], []
+```
+Afterwards, I iterate over each root hair segment, and calculate the bounding box around each root hair segment to mask each segment. Then, for each segment, based on `height_bin_size`, a sliding window slides down each segment vertically, and calculates the area of each bin. I also calculate the bounding box of each binned root hair section, and calculate the horizontal root hair length from the bounding box co-ordinates. Finally, the length and area, along with the corresponding bin position, are added to respective lists for the left and right sections.
+
+```python
+height_bin_size = 100
+horizontal_rh_list_1, horizontal_rh_list_2 = [], []
+rh_area_list_1, rh_area_list_2 = [], []
+bin_end_list_1, bin_end_list_2 = [], []
+max_col_list_2 = []
+
+for index, segment in enumerate(root_hair_segment_props): # loop over each root hair section (left and right side)
+    min_row, min_col, max_row, max_col = segment.bbox # calculate binding box coords of each segment
+    segment_mask = final_rh_mask[min_row:max_row, min_col:max_col] # mask each root hair segment
+    # segment_mask = remove_small_objects(segment_mask, connectivity=2, min_size=200)
+    
+    for bin_start in range(0, max_height, height_bin_size): # sliding window down each section
+
+        bin_end = bin_start + height_bin_size # calculate bin end
+        rh_segment = segment_mask[bin_start:bin_end, :] # define mask for sliding window for root hairs
+        _, rh_segment_measured = clean_root_chunk(rh_segment) 
+        rh_segment_area = [segment['area'] for segment in rh_segment_measured] # area of each segment
+        
+        for region in rh_segment_measured: # get 
+            _, min_segment_col, _, max_segment_col = region.bbox 
+            horizontal_rh_length = max_segment_col - min_segment_col 
+            
+
+        if index == 0:
+            horizontal_rh_list_1.append(horizontal_rh_length)
+            rh_area_list_1.append(rh_segment_area)
+            bin_end_list_1.append(bin_end)
+
+                
+        elif index == 1:
+            horizontal_rh_list_2.append(horizontal_rh_length)
+            rh_area_list_2.append(rh_segment_area)
+            bin_end_list_2.append(bin_end) 
+            max_col_list_2.append(max_segment_col)
+ 
+```
+
+The red lines illustrate the maximum root hair length within each bin. Each bin is defined as the region between each red line (height = 100px in this demonstration).
+
+```python
+plt.imshow(segment_mask)
+
+for idx, point in enumerate(bin_end_list_1[:-1]):
+    plt.plot((0, max_col_list_2[idx]), (point, point), 'r-')
+```
+![alt text](demo/rh_segment_mask_bins.png)
+
+Now, I will apply thresholds for length and area if the measured parameter in each bin is small. These thresholds are adjustable via the `--length_filt` and ``--area_filt`` arguments.
+
+```python
+length_filt = 14
+area_filt = 180
+
+horizontal_rh_list_1 = [0 if i < length_filt else i for i in horizontal_rh_list_1]
+horizontal_rh_list_2 = [0 if i < length_filt else i for i in horizontal_rh_list_2]
+
+rh_area_list_1 = [0 if float(i[0]) < area_filt else float(i[0]) for i in rh_area_list_1]           
+rh_area_list_2 = [0 if float(i[0]) < area_filt else float(i[0]) for i in rh_area_list_2]   
+```
+
+Currently, data is stored as number of pixels (length) and pixel area (area). Here, I convert the pixel data to milimetres. First, the `_check_zeros()` function prevents any division by 0 error:
+
+```python
+def _check_zeros(value, conv) -> float: 
+            return value / conv if value != 0 else 0
+```
+
+Now, the data is converted to mm/mm$^{2}$ based on a pixel:mm conversion factor, which can be adjusted by `--conv`:
+
+```python
+conv = 125
+
+horizontal_rh_list_1 = [_check_zeros(i, conv) for i in horizontal_rh_list_1]
+horizontal_rh_list_2 = [_check_zeros(i, conv) for i in horizontal_rh_list_2]
+
+rh_area_list_1 = [_check_zeros(i, conv * conv) for i in rh_area_list_1]
+rh_area_list_2 = [_check_zeros(i, conv * conv) for i in rh_area_list_2]
+
+# reverse the order of bin_list to reflect distance from root tip/base of the root
+bin_list = [_check_zeros(i, conv) for i in bin_end_list_1]
+bin_list.reverse()
+```
 
 
 
