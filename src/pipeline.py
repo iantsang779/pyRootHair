@@ -92,9 +92,8 @@ class Pipeline(CheckArgs):
         sk_y, sk_x = skeleton.skeletonize(clean_root)
         sk_spline, sk_start, sk_end = skeleton.skeleton_params(sk_x, sk_y)
         med_x, med_y = skeleton.calc_skeleton_midline(sk_start, sk_end, sk_spline)
-        rotated_mask = skeleton.calc_rotation(med_x, med_y, init_mask) 
-
-        rotated_root_mask = (rotated_mask == 2) 
+        rotated_root_mask = skeleton.calc_rotation(med_x, med_y, root_mask) 
+        rotated_mask = skeleton.calc_rotation(med_x, med_y, init_mask)
 
         clean_root_rotated = skeleton.extract_root(rotated_root_mask)
         sk_r_y, sk_r_x = skeleton.skeletonize(clean_root_rotated)
@@ -108,6 +107,7 @@ class Pipeline(CheckArgs):
         rt = Root(straight_mask)
         final_root = rt.check_root_tip()
         rt.find_root_tip()
+        rt.process_rh_mask()
         rt.split_root_coords(self.args.padding)
         root_hairs = rt.trim_rh_mask()
         root_hairs_cropped = rt.crop_rh_mask(root_hairs)
