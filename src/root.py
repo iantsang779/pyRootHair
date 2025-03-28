@@ -93,7 +93,7 @@ class Root(Skeleton):
             self.rh_mask = new_rh_mask
         
 
-    def split_root_coords(self, padding: int) -> None:
+    def split_root_coords(self, padding: int) -> 'NDArray':
         """
         Split the root hair mask around the location of root tip and root start 
         """
@@ -112,23 +112,25 @@ class Root(Skeleton):
 
         self.rh_mask_labeled, self.count = label(self.rh_mask, connectivity=2, return_num=True)
 
-    def trim_rh_mask(self) -> 'NDArray':
-        """
-        Remove fragments from root hair mask, and remove any non-primary root hair masks
-        """
+        return self.rh_mask_labeled
     
-        check_root_hair = regionprops(self.rh_mask_labeled) # measure area of root hair masks
+    # def trim_rh_mask(self) -> 'NDArray':
+    #     """
+    #     Remove fragments from root hair mask, and remove any non-primary root hair masks
+    #     """
+    
+    #     check_root_hair = regionprops(self.rh_mask_labeled) # measure area of root hair masks
         
-        rh_regions = sorted(check_root_hair, key = lambda x: x.area, reverse=True) # sort all root hair regions in desc order by size
+    #     rh_regions = sorted(check_root_hair, key = lambda x: x.area, reverse=True) # sort all root hair regions in desc order by size
 
-        area_1_label = rh_regions[0].label # get label of largest RH area
-        area_2_label = rh_regions[1].label # get label of second largest RH area
+    #     area_1_label = rh_regions[0].label # get label of largest RH area
+    #     area_2_label = rh_regions[1].label # get label of second largest RH area
         
-        cleaned_rh = np.logical_or(self.rh_mask_labeled == area_1_label, self.rh_mask_labeled == area_2_label) # set mask to retain only primary hair sections
+    #     cleaned_rh = np.logical_or(self.rh_mask_labeled == area_1_label, self.rh_mask_labeled == area_2_label) # set mask to retain only primary hair sections
         
-        self.rh_mask_labeled, _ = label(cleaned_rh, connectivity=2, return_num=True) 
+    #     self.rh_mask_labeled, _ = label(cleaned_rh, connectivity=2, return_num=True) 
 
-        return self.rh_mask_labeled 
+    #     return self.rh_mask_labeled 
 
     def crop_rh_mask(self, root_hair_mask: 'NDArray') -> 'NDArray':
         """
