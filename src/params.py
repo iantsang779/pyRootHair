@@ -103,18 +103,15 @@ class GetParams(Root):
         """
         Convert pixel data into mm via a conversion factor.
         """
-
-        def _check_zeros(value, conv) -> float: # helper function to avoid dividing by zero 
-            return value / conv if value != 0 else 0
         
-        self.horizontal_rh_list_1 = [_check_zeros(i, conv) for i in self.horizontal_rh_list_1]
-        self.horizontal_rh_list_2 = [_check_zeros(i, conv) for i in self.horizontal_rh_list_2]
+        self.horizontal_rh_list_1 = [i/conv for i in self.horizontal_rh_list_1]
+        self.horizontal_rh_list_2 = [i/conv for i in self.horizontal_rh_list_2]
         
-        self.rh_area_list_1 = [_check_zeros(i, conv * conv) for i in self.rh_area_list_1]
-        self.rh_area_list_2 = [_check_zeros(i, conv * conv) for i in self.rh_area_list_2]
+        self.rh_area_list_1 = [i/(conv * conv)  for i in self.rh_area_list_1]
+        self.rh_area_list_2 = [i/(conv * conv)  for i in self.rh_area_list_2]
         
         # reverse the order of bin_list to reflect distance from root tip/base of the root
-        self.bin_list = [_check_zeros(i, conv) for i in self.bin_list]
+        self.bin_list = [i/conv for i in self.bin_list]
         self.bin_list.reverse()
         
     def calculate_avg_root_thickness(self, final_root_labeled: 'NDArray', conv: int) -> None:
