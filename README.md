@@ -189,7 +189,7 @@ ax.yaxis.set_inverted(True)
 
 ### Rotating the root
 
-Now that Ihave the median co-ordinates to approximate the root midline, Ican calculate the angle required to rotate the root such that the root tip/end of the root in frame is pointing downwards.
+Now that I have the median co-ordinates to approximate the root midline, I can calculate the angle required to rotate the root such that the root tip/end of the root in frame is pointing downwards.
 
 Here, I calculate the change in y and change in x of the endpoints of the root midline:
 ```python
@@ -589,26 +589,19 @@ rh_area_list_1 = [0 if float(i[0]) < area_filt else float(i[0]) for i in rh_area
 rh_area_list_2 = [0 if float(i[0]) < area_filt else float(i[0]) for i in rh_area_list_2]   
 ```
 
-Currently, data is stored as number of pixels (length) and pixel area (area). Here, I convert the pixel data to milimetres. First, the `_check_zeros()` function prevents any division by 0 error:
-
-```python
-def _check_zeros(value, conv) -> float: 
-            return value / conv if value != 0 else 0
-```
-
-Now, the data is converted to mm/mm<sup>2</sup> based on a pixel:mm conversion factor, which can be adjusted by `--conv`:
+Currently, data is stored as number of pixels (length) and pixel area (area). Here, I convert the pixel data to milimetres.  The data is converted to mm/mm<sup>2</sup> based on a pixel:mm conversion factor, which can be adjusted by `--conv`:
 
 ```python
 conv = 125
 
-horizontal_rh_list_1 = [_check_zeros(i, conv) for i in horizontal_rh_list_1]
-horizontal_rh_list_2 = [_check_zeros(i, conv) for i in horizontal_rh_list_2]
+horizontal_rh_list_1 = [i/conv for i in horizontal_rh_list_1]
+horizontal_rh_list_2 = [i/conv for i in horizontal_rh_list_2]
 
-rh_area_list_1 = [_check_zeros(i, conv * conv) for i in rh_area_list_1]
-rh_area_list_2 = [_check_zeros(i, conv * conv) for i in rh_area_list_2]
+rh_area_list_1 = [i/(conv * conv) for i in rh_area_list_1]
+rh_area_list_2 = [i/(conv * conv) for i in rh_area_list_2]
 
 # reverse the order of bin_list to reflect distance from root tip/base of the root
-bin_list = [_check_zeros(i, conv) for i in bin_end_list_1]
+bin_list = [i/conv for i in bin_end_list_1]
 bin_list.reverse()
 ```
 
