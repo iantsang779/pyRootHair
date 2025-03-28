@@ -485,7 +485,7 @@ final_rh_mask_labeled, count = label(rh_mask, connectivity=2, return_num=True)
 fig, ax = plt.subplots()
 ax.imshow(final_rh_mask_labeled)
 ```
-![alt text](image.png)
+![alt text](demo/clean_rh_mask_split.png)
 
 The root hair mask has now been split at the root tip into 2 sections. 
 
@@ -522,15 +522,7 @@ root_hair_coords = [i.coords for i in root_hair_segment_props] # all coordinates
 max_height = max(np.max(root_hair_coords[0][:,0]), np.max(root_hair_coords[1][:,0])) # get max height of root hair segment
 ```
 
-Next, I define the bin size required to perform measurements, and initialize empty lists for length, area, and bin positions for each segment:
-
-```python
-height_bin_size = 50
-horizontal_rh_list_1, horizontal_rh_list_2 = [], []
-rh_area_list_1, rh_area_list_2 = [], []
-bin_end_list_1, bin_end_list_2 = [], []
-```
-Afterwards, I iterate over each root hair segment, and calculate the bounding box around each root hair segment to mask each segment. Then, for each segment, based on `height_bin_size`, a sliding window slides down each segment vertically, and calculates the area of each bin. I also calculate the bounding box of each binned root hair section, and calculate the horizontal root hair length from the bounding box co-ordinates. Finally, the length and area, along with the corresponding bin position, are added to respective lists for the left and right sections.
+Next, I define the bin size required to perform measurements, and initialize empty lists for root hair length (RHL), root hair density (RHD), and bin positions for each segment:
 
 ```python
 height_bin_size = 100
@@ -538,6 +530,10 @@ horizontal_rh_list_1, horizontal_rh_list_2 = [], []
 rh_area_list_1, rh_area_list_2 = [], []
 bin_end_list_1, bin_end_list_2 = [], []
 max_col_list_2 = []
+```
+Afterwards, I iterate over each root hair segment, and calculate the bounding box around each root hair segment to mask each segment. Then, for each segment, based on `height_bin_size`, a sliding window slides down each segment vertically, and calculates the area of each bin. I also calculate the bounding box of each binned root hair section, and calculate the horizontal root hair length from the bounding box co-ordinates. Finally, the length and area, along with the corresponding bin position, are added to respective lists for the left and right sections.
+
+```python
 
 for index, segment in enumerate(root_hair_segment_props): # loop over each root hair section (left and right side)
     min_row, min_col, max_row, max_col = segment.bbox # calculate binding box coords of each segment
@@ -600,7 +596,7 @@ def _check_zeros(value, conv) -> float:
             return value / conv if value != 0 else 0
 ```
 
-Now, the data is converted to mm/mm$^{2}$ based on a pixel:mm conversion factor, which can be adjusted by `--conv`:
+Now, the data is converted to mm/mm<sup>2</sup> based on a pixel:mm conversion factor, which can be adjusted by `--conv`:
 
 ```python
 conv = 125
@@ -615,6 +611,179 @@ rh_area_list_2 = [_check_zeros(i, conv * conv) for i in rh_area_list_2]
 bin_list = [_check_zeros(i, conv) for i in bin_end_list_1]
 bin_list.reverse()
 ```
+
+### Calculating average root thickness
+
+To calculate the average thickness of the root, a simple sliding window is deployed down the cleaned, straightened root mask.
+
+```python
+width_list = []
+
+root_measured = regionprops(final_root_labeled)
+root_params = [i.bbox for i in root_measured]
+root_start, _, root_end, _ = root_params[0]
+
+for start in range(root_start, root_end, 100):
+
+    end = start + 100
+    root_section = final_root_labeled[start:end, :]
+    _, root_section_measured = clean_root_chunk(root_section) 
+    root_binned_params =  [i.bbox for i in root_section_measured]
+    _, min_col, _, max_col = root_binned_params[0] # get bounding box for min and max col of root per bin
+    root_width = max_col - min_col
+
+    width_list.append(root_width)
+
+root_thickness = np.mean(width_list) / conv
+
+print(f'Average root thickness: {root_thickness:.4f} mm')
+```
+```Average root thickness: 0.3978 mm
+```
+
+### Calculating uniformity between left and right root hair segments
+
+Given that root hair morphology is quite a plastic trait, I thought it would be a good idea to quantify the plasticity within an individual plant. The 'uniformity' is a way of quantifying how different the left and right sides of the root hair profile are.
+
+Quantifying uniformity involves calculating the difference in RHL and RHD at each bin position along the root:
+
+```python
+delta_length = [abs(x - y) for x, y in zip(horizontal_rh_list_1, horizontal_rh_list_2)]
+delta_area = [abs(x - y) for x, y in zip(rh_area_list_1, rh_area_list_2)]
+len_d, len_pos = max(list(zip(delta_length, bin_list)))
+area_d, area_pos = max(list(zip(delta_area, bin_list)))
+
+print(f'Greatest delta in RHL ({len_d:.2f}) at {len_pos} mm from the root tip.')
+print(f'Greatest delta in RHD ({area_d:.2f}) at {area_pos} mm from the root tip.')
+```
+```
+Greatest delta in RHL (0.58) at 22.4 mm from the root tip.
+Greatest delta in RHD (0.26) at 17.6 mm from the root tip.
+```
+
+### Calculating the position, size and gradient of the root hair elongation zone
+
+This is probably my favourite chunk of code in pyRootHair. The objective of this section is to attempt to quantify how long the elongation zone is in an individual plant, which I can infer root hair growth rate from. Essentially, this is an attempt to quantify the 'shape' of the root hair profile.
+
+First, I calculate the average (between the 2 segments) root hair length and density along the root:
+
+```python
+avg_rhl_list = [(x + y) / 2 for x, y in zip(horizontal_rh_list_1, horizontal_rh_list_2)]
+avg_rhd_list = [(x + y) / 2 for x, y in zip(rh_area_list_1, rh_area_list_2)]
+```
+
+Now, I apply a locally weighted scatterplot smoothing (LOWESS) line through the average root hair length and density for the input image. The LOWESS line models the 'shape' of the root hairs in the image. A LOWESS line is modelled for average RHL, average RHD, as well as the RHL and RHD of each section (left and right). The degree of smoothing of the LOWESS curve is controled by `--frac`:
+
+```python
+frac = 0.15
+smooth_avg_rhl = lowess(avg_rhl_list, bin_list, frac=frac) # avg rhl
+smooth_avg_rhd = lowess(avg_rhd_list, bin_list, frac=frac) # avg rhl
+smooth_1_rhl = lowess(horizontal_rh_list_1, bin_list, frac=frac)
+smooth_2_rhl = lowess(horizontal_rh_list_2, bin_list, frac=frac)
+smooth_1_rhd = lowess(rh_area_list_1, bin_list, frac=frac)
+smooth_2_rhd = lowess(rh_area_list_2, bin_list, frac=frac)
+```
+
+Here is a demonstration of what the RHL LOWESS lines look like for each root hair section:
+```python
+fig, ax = plt.subplots()
+ax.scatter(x=bin_list, y=horizontal_rh_list_1, color='darkmagenta', marker='*', alpha=0.3)
+ax.scatter(x=bin_list, y=horizontal_rh_list_1, color='darkmagenta', marker='*', alpha=0.3)
+ax.scatter(x=bin_list, y=horizontal_rh_list_2, color='lightseagreen', marker='X', alpha=0.3)
+ax.plot(smooth_1_rhl[:, 0], smooth_1_rhl[:, 1], color='darkmagenta', linewidth=4, linestyle='dashed', label='RHL 1')
+ax.plot(smooth_2_rhl[:, 0], smooth_2_rhl[:, 1], color='lightseagreen', linewidth=4, linestyle='dashdot', label='RHL 2')
+ax.legend(loc='upper right')
+ax.set_ylim(0, max(horizontal_rh_list_2) * 2)
+ax.set_xlabel('Distance From Root Tip (mm)')
+ax.set_ylabel('Root Hair Length (mm)')
+```
+![alt text](demo/rhl_lowess.png)
+
+To estimate the elongation zone properties, I use the lowess line fitted to the average RHL. Next, I calculate the gradient of the average RHL, and retain regions of positive growth (where gradient > 0) in a boolean array. The array is then labeled, where regions with a '0' label indicate negative growth, and regions with a label of 1 or above indicate different regions of positive growth. Next, the regions of positive growth are grouped according to the label classes. The largest region of positive growth is determined via the `max()` function:
+
+```python
+from scipy.ndimage import label
+
+labels, n_features = label(pos_regions) # label regions of bool array
+regions = [smooth_avg_rhl[labels == i] for i in range(1, n_features + 1)]
+longest_region = max(regions, key=len) # keep the longest growth region
+```
+Here is the `longest_region` array. This is the region where the root hairs are experiencing the largest increase in length down the root, which serves as a good estimate of the root hair elongation zone. The left column are values corresponding to the positions along the root of the region of steepest RHL growth, while the right column are values corresponding to the average RHL within this region:
+
+```python
+array([[ 0.8       , -0.02285198],
+       [ 1.6       ,  0.05720767],
+       [ 2.4       ,  0.16897322],
+       [ 3.2       ,  0.24404293],
+       [ 4.        ,  0.30158258],
+       [ 4.8       ,  0.47107839],
+       [ 5.6       ,  0.69792395],
+       [ 6.4       ,  0.83708458],
+       [ 7.2       ,  0.92053598],
+       [ 8.        ,  1.02900866]])
+```
+
+Here is the elongation zone visualized:
+
+```python
+plt.plot(longest_region[:,0], longest_region[:,1])
+plt.title('Longest region of positive RH growth')
+```
+![alt text](demo/longest_region.png)
+
+Within the elongation zone, the gradient of the zone can be calculated from the `longest_region` array. First, I get the index corresponding to the maximum RHL within this region:
+```python
+max_y_idx = np.argmax(longest_region[:, 1]) # get index max rhl
+max_y = longest_region[max_y_idx, 1] # get max rhl value
+max_x = longest_region[max_y_idx, 0] # get position along root corresponding to max rhl value
+``` 
+Next, I get the index corresponding to the minimum RHL within this region:
+```python
+min_y_idx = np.argmin(np.abs(longest_region[:, 1])) # same as above but get index where abs difference is closest to 0
+min_y = longest_region[min_y_idx, 1]
+min_x = longest_region[min_y_idx, 0]
+```
+
+Finally, the gradient of the elongation zone can be calculated as follows:
+```python
+elongation_gradient = (max_y - min_y) / (max_x - min_x)
+
+print(f'Elongation zone gradient: {gradient:.2f}')
+print(f'The elongation zone starts at: {min_x} mm from the root tip')
+print(f'The elongation zone ends at: {max_x} mm from the root tip')
+print(f'The length of the elongation zone is: {max_x - min_x} mm')
+```
+```
+Elongation zone gradient: 0.15
+The elongation zone starts at: 0.8 mm from the root tip
+The elongation zone ends at: 8.0 mm from the root tip
+The length of the elongation zone is: 7.2 mm
+```
+### Summary Plots
+
+Finally, here is a summary plot displaying some of the previous calculations:
+```python
+fig, ax = plt.subplots()
+ax.fill_between(smooth_avg_rhl[:, 0], min(gradient) * 1.1, max(avg_rhl_list) * 2, where=pos_regions, color='cyan', alpha=0.5, label='RH Growth Regions')        
+ax.scatter(x=bin_list, y=avg_rhl_list, color='orangered')
+ax.plot(smooth_avg_rhl[:, 0], smooth_avg_rhl[:, 1], color='darkviolet', linewidth=3, label='Avg RHL')
+ax.plot((min_x, min_x), (-1, 10), color='lime', linewidth=2, linestyle='dashed', label='Primary Elongation Zone')
+ax.plot((max_x, max_x),(-1, 10), color='lime', linewidth=2, linestyle='dashed')
+ax.plot(smooth_avg_rhl[:, 0], gradient, color='yellow', alpha=0.8, linestyle='dashdot', label='Avg RH Gradient')
+
+ax.set_ylim(min(gradient) * 1.1, max(avg_rhl_list) * 2)
+ax.set_xlabel('Distance From Root Tip (mm)')
+ax.set_ylabel('Average Root Hair Length (mm)')
+ax.legend(loc='upper right')
+```
+![alt text](demo/summary_plot.png)
+
+
+
+
+
+
+
 
 
 
