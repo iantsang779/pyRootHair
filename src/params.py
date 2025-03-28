@@ -54,20 +54,20 @@ class GetParams(Root):
                 rh_segment = segment_mask[bin_start:bin_end, :] # define mask for sliding window for root hairs
                 _, rh_segment_measured = self.clean_root_chunk(rh_segment) 
                 rh_segment_area = [segment['area'] for segment in rh_segment_measured] # area of each segment
-
+                
                 for region in rh_segment_measured: # for each root hair section on either side of the root
                     _, min_segment_col, _, max_segment_col = region.bbox 
                     horizontal_rh_length = max_segment_col - min_segment_col 
 
-                    if index == 0:
-                        self.horizontal_rh_list_1.append(horizontal_rh_length)
-                        self.rh_area_list_1.append(rh_segment_area)
-                        self.bin_end_list_1.append(bin_end)
-                           
-                    elif index == 1:
-                        self.horizontal_rh_list_2.append(horizontal_rh_length)
-                        self.rh_area_list_2.append(rh_segment_area)
-                        self.bin_end_list_2.append(bin_end) 
+                if index == 0:
+                    self.horizontal_rh_list_1.append(horizontal_rh_length)
+                    self.rh_area_list_1.append(rh_segment_area)
+                    self.bin_end_list_1.append(bin_end)
+                        
+                elif index == 1:
+                    self.horizontal_rh_list_2.append(horizontal_rh_length)
+                    self.rh_area_list_2.append(rh_segment_area)
+                    self.bin_end_list_2.append(bin_end) 
 
 
     def clean_data(self, area_filt: float, length_filt: float) -> None:
@@ -81,21 +81,23 @@ class GetParams(Root):
         self.rh_area_list_1 = [0 if float(i[0]) < area_filt else float(i[0]) for i in self.rh_area_list_1]           
         self.rh_area_list_2 = [0 if float(i[0]) < area_filt else float(i[0]) for i in self.rh_area_list_2]   
         
+
         # see if bin lists are different in length 
         if len(self.bin_end_list_1) != len(self.bin_end_list_2):
-            if len(self.bin_end_list_1) > len(self.bin_end_list_2):
-                self.bin_list = self.bin_end_list_1 # set bin_list as length of longer list
-            else:
-                self.bin_list = self.bin_end_list_2
+            # if len(self.bin_end_list_1) > len(self.bin_end_list_2):
+            #     self.bin_list = self.bin_end_list_1 # set bin_list as length of longer list
+            # else:
+            #     self.bin_list = self.bin_end_list_2
+            raise ValueError(f'Bin positions differ in length for each segment, length {len(self.bin_end_l1)} for list 1, and length {len(self.bin_end_list_2)} for list 2.')
         else:
             self.bin_list = self.bin_end_list_1
 
-        # pad lists together, set Nones to 0s, and unpack back into lists
-        pad_lists = list(zip_longest(self.horizontal_rh_list_1, self.horizontal_rh_list_2, self.rh_area_list_1, self.rh_area_list_2, self.bin_list))
-        # set Nones to 0s in pad_lists
-        pad_lists = [tuple(0 if x is None else x for x in tup) for tup in pad_lists]
-        # unpack tuples back into lists for each, now all of equal length 
-        self.horizontal_rh_list_1, self.horizontal_rh_list_2, self.rh_area_list_1, self.rh_area_list_2, self.bin_list = map(list, zip(*pad_lists))
+        # # pad lists together, set Nones to 0s, and unpack back into lists
+        # pad_lists = list(zip_longest(self.horizontal_rh_list_1, self.horizontal_rh_list_2, self.rh_area_list_1, self.rh_area_list_2, self.bin_list))
+        # # set Nones to 0s in pad_lists
+        # pad_lists = [tuple(0 if x is None else x for x in tup) for tup in pad_lists]
+        # # unpack tuples back into lists for each, now all of equal length 
+        # self.horizontal_rh_list_1, self.horizontal_rh_list_2, self.rh_area_list_1, self.rh_area_list_2, self.bin_list = map(list, zip(*pad_lists))
 
     def calibrate_data(self, conv: int) -> None:
         """
