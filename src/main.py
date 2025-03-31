@@ -32,7 +32,7 @@ def parse_args():
     parser.add_argument('--split_segments', help='Padding around root tip/end of root in image (in pixels) to split root hair fragments. Default = 50px.', type=int, nargs='?', dest='padding', default=50)
     parser.add_argument('--rhd_filt', help='Area threshold to remove small areas from area list; sets area for a particular bin to 0 when below the value. Default = 180 px^2)', type=int, nargs='?', dest='area_filt', default=180)
     parser.add_argument('--rhl_filt', help='Length threshold to remove small lengths from length list; sets length for a particular bin to 0 when below the value. Default = 14 px', type=int, nargs='?', dest='length_filt', default=14)
-    parser.add_argument('--conv', help='The number of pixels corresponding to 1mm in the original input images. Default = 127.5 px', type=int, nargs='?', dest='conv', default=127.5)
+    parser.add_argument('--conv', help='The number of pixels corresponding to 1mm in the original input images. Default = 127.5 px', nargs='?', dest='conv', default=127.5)
     parser.add_argument('--frac', help='Degree of smoothing of lowess regression line to model average root hair length per input image. Value must be between 0 and 1. See statsmodels.nonparametric.smoothers_lowess.lowess for more details. Default = 0.15', type=float, nargs='?', dest='frac', default=0.15)
     parser.add_argument('-o','--output', help='Filepath to save data. Must be a different directory relative to the input image directory.', type=str, dest='save_path')
     parser.add_argument('--plot_segmentation', help='Save model segmentation results in --output directory. Useful for debugging.', dest='show_segmentation', action='store_true')
