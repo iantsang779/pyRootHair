@@ -94,7 +94,7 @@ class Pipeline(CheckArgs):
         med_x, med_y = skeleton.calc_skeleton_midline(sk_start, sk_end, sk_spline)
         rotated_root_mask = skeleton.calc_rotation(med_x, med_y, root_mask) 
         rotated_mask = skeleton.calc_rotation(med_x, med_y, init_mask)
-
+        
         clean_root_rotated = skeleton.extract_root(rotated_root_mask)
         sk_r_y, sk_r_x = skeleton.skeletonize(clean_root_rotated)
         sk_r_spline, sk_r_start, sk_r_end = skeleton.skeleton_params(sk_r_x, sk_r_y)
@@ -109,9 +109,8 @@ class Pipeline(CheckArgs):
         rt.find_root_tip()
         rt.process_rh_mask()
         root_hairs = rt.split_root_coords(self.args.padding)
-        # root_hairs = rt.trim_rh_mask()
         root_hairs_cropped = rt.crop_rh_mask(root_hairs)
-        
+
         data = GetParams(root_hairs_cropped)
         data.sliding_window(self.args.height_bin_size)
         data.clean_data(self.args.area_filt, self.args.length_filt)
@@ -119,7 +118,6 @@ class Pipeline(CheckArgs):
         data.calculate_avg_root_thickness(final_root, self.args.conv)
         data.calculate_uniformity()
         data.calculate_growth(self.args.frac)
-        # datetime = data.get_metadata(image.image_metadata)
     
         summary_df, raw_df = data.generate_table(filename.split('.')[0], self.args.batch_id)
 
