@@ -146,7 +146,7 @@ class nnUNetv2():
             self.predictor.initialize_from_trained_model_folder(
                 join(os.environ.get('nnUNet_results'), 'Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d'),
                 use_folds=('all'),
-                checkpoint_name='checkpoint_final_no_opt.pth')
+                checkpoint_name='checkpoint_final_no_opt_new.pth')
 
         else: # if user specifies custom model path, load that model instead
             self.predictor.initialize_from_trained_model_folder(
