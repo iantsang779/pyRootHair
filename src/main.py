@@ -29,7 +29,7 @@ def parse_args():
                         3 - Directly extract traits from a user generated binary mask. No segmentation is performed.""", 
                         default=1, choices=[1,2,3], type=int, nargs='?', dest='pipeline_choice')
     parser.add_argument('--resolution', help='Bin size defining measurement intervals along each root hair segment. Default = 20 px', type=int, nargs='?', dest='height_bin_size', default=20)
-    parser.add_argument('--split_segments', help='Padding around root tip/end of root in image (in pixels) to split root hair fragments. Default = 20px.', type=int, nargs='?', dest='padding', default=20)
+    parser.add_argument('--split_segments', help='Padding around root tip/end of root in image (in pixels) to split root hair fragments. Default = 20px.', type=int, nargs='?', dest='padding', default=35)
     parser.add_argument('--rhd_filt', help='Area threshold to remove small areas from area list; sets area for a particular bin to 0 when below the value. Default = 180 px^2)', type=int, nargs='?', dest='area_filt', default=180)
     parser.add_argument('--rhl_filt', help='Length threshold to remove small lengths from length list; sets length for a particular bin to 0 when below the value. Default = 14 px', type=int, nargs='?', dest='length_filt', default=14)
     parser.add_argument('--conv', help='The number of pixels corresponding to 1mm in the original input images. Default = 127 px', nargs='?', type=int, dest='conv', default=127)
@@ -108,8 +108,8 @@ def main():
         print(f'\n{raw}')
 
         if args.save_path:
-            summary.to_csv(f'{args.batch_id}_summary.csv')
-            raw.to_csv(f'{args.batch_id}_raw.csv')
+            summary.to_csv(os.path.join(args.save_path, f'{args.batch_id}_summary.csv'))
+            raw.to_csv(os.path.join(args.save_path, f'{args.batch_id}_raw.csv'))
 
         print(f'\nTotal runtime for batch_id {args.batch_id}: {time.perf_counter()-start:.2f} seconds.')
 
