@@ -173,7 +173,6 @@ class GetParams(Root):
         self.avg_rhl_list = [(x + y) / 2 for x, y in zip(self.horizontal_rh_list_1, self.horizontal_rh_list_2)]
         self.avg_rhd_list = [(x + y) / 2 for x, y in zip(self.rh_area_list_1, self.rh_area_list_2)]
 
-        
         # lowess regression to average list
         self.smooth_avg_rhl = lowess(self.avg_rhl_list, self.bin_list, frac=frac) # avg rhl
         self.smooth_avg_rhd = lowess(self.avg_rhd_list, self.bin_list, frac=frac) # avg rhl
@@ -181,7 +180,6 @@ class GetParams(Root):
         self.smooth_2_rhl = lowess(self.horizontal_rh_list_2, self.bin_list, frac=frac)
         self.smooth_1_rhd = lowess(self.rh_area_list_1, self.bin_list, frac=frac)
         self.smooth_2_rhd = lowess(self.rh_area_list_2, self.bin_list, frac=frac)
-
         self.gradient = np.gradient(self.smooth_avg_rhl[:, 1], self.smooth_avg_rhd[:, 0])
         self.pos_regions = self.gradient > 0 # retain regions of positive gradient (increasing RHL)
 
