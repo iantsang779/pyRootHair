@@ -24,12 +24,18 @@ Here is a breakdown of the required arguments for running pyRootHair with a GPU:
 -i/--input: the filepath to the directory containing the images you want to process  
 -b/--batch_id: a unique ID associated with each batch of images you are processing per run. Can be species/genotype name, or date, or anything that is easily identifiable for you.
 ```
-The full command is as follows:
+An example of a basic command is as follows:
 
 ```bash
-python main.py -i <<PATH_TO_INPUT_IMAGE_DIRECTORY>> -b <<MY_BATCH_ID>>
+python main.py -i ~/Images/Wheat/soissons/ -b soissons
 ```
-Running the above command will simply print the output data to your screen. To save the output, you will need to specify an filepath for the ```bash --output``` option.
+Running the above command will simply print the output data to your screen. To save the output, you will need to specify an filepath for the ```--output``` option.
+
+The ```--plot_segmentation``` flag will save 3 binary masks for each image, one of the straightened mask, one of just the root hair segments, and one of the cropped root hair segments. ```--plot_summary``` saves a set of summary plots describing RHL and RHD along the root for each image. ```--plot_transformation``` saves a diagnostic plot illustrating the series of co-ordinates that have been mapped during image warping for root straightening. By toggling any of these flags, you must specify a valid filepath for ```--output```:
+
+```bash
+python main.py -i ~/Images/Wheat/soissons/ -b soissons --plot_segmentation --plot_summary --plot_transformation --output ~/Data/Output
+```
 
 
 
