@@ -9,13 +9,29 @@ Please do not hesitate to submit a pull-request, or get in touch via email if yo
 
 ## Installation instructions
 
+ADD DOCKER/CONDA STUFF HERE 
 `mkdir ~/pyroothair`  
 `git clone https://github.com/iantsang779/pyRootHair`  
 `cd pyroothair`  
 
 ## How to use pyRootHair
 
-WIP.
+### Using a GPU
+
+Here is a breakdown of the required arguments for running pyRootHair with a GPU:
+
+```bash
+-i/--input: the filepath to the directory containing the images you want to process  
+-b/--batch_id: a unique ID associated with each batch of images you are processing per run. Can be species/genotype name, or date, or anything that is easily identifiable for you.
+```
+The full command is as follows:
+
+```bash
+python main.py -i <<PATH_TO_INPUT_IMAGE_DIRECTORY>> -b <<MY_BATCH_ID>>
+```
+Running the above command will simply print the output data to your screen. To save the output, you will need to specify an filepath for the ```bash --output``` option.
+
+
 
 ## Dependencies
 
