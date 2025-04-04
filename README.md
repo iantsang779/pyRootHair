@@ -16,10 +16,11 @@ ADD DOCKER/CONDA STUFF HERE
 
 ## How to use pyRootHair
 
-### Using a GPU
+### Arguments
 
-Here is a breakdown of the required arguments for running pyRootHair with a GPU:
+Here is a breakdown of the basic required arguments for running pyRootHair with a GPU:
 
+#### GPU Arguments
 ```bash
 -i/--input: the filepath to the directory containing the images you want to process  
 -b/--batch_id: a unique ID associated with each batch of images you are processing per run. Can be species/genotype name, or date, or anything that is easily identifiable for you.
@@ -29,13 +30,17 @@ An example of a basic command is as follows:
 ```bash
 python main.py -i ~/Images/Wheat/soissons/ -b soissons
 ```
-Running the above command will simply print the output data to your screen. To save the output, you will need to specify an filepath for the ```--output``` option.
 
-The ```--plot_segmentation``` flag will save 3 binary masks for each image, one of the straightened mask, one of just the root hair segments, and one of the cropped root hair segments. ```--plot_summary``` saves a set of summary plots describing RHL and RHD along the root for each image. ```--plot_transformation``` saves a diagnostic plot illustrating the series of co-ordinates that have been mapped during image warping for root straightening. By toggling any of these flags, you must specify a valid filepath for ```--output```:
+#### Plotting Arguments (Optional)
 
-```bash
-python main.py -i ~/Images/Wheat/soissons/ -b soissons --plot_segmentation --plot_summary --plot_transformation --output ~/Data/Output
-```
+`--output`: [option] specify a filepath to store output data tables and plots (if plotting flags are enabled).
+`--plot_segmentation`: [flag] toggle plotting of predicted binary masks for each image (straightened mask, root hair segments, and cropped root hair segments). Must provide a valid filepath for `--output`.
+`--plot_summary`: [flag] toggle plotting of summary plots describing RHL and RHD for each image. Must provide a valid filepath for `--output`.
+`--plot_transformation`: [flag] toggle plotting of co-ordinates illustrating how each input image is warped and straightened. Useful for debugging any strangely warped masks. Must provide a valid filepath for `--output`.
+
+#### Data Arguments (Optional)
+`--resolution`: [option] change bin size (in pixels) for sliding window down each root hair segment. See [this](#extracting-traits-from-the-root-hair-mask) section for more details.
+`--split_segments`: [option] change the rectangular area of pixels to set as 'False' around the located root tip to ensure separation of the root hair mask into 2 sections, left and right. By default, the boundary of the rectangular area is 20px (width) by 60px (height). By default, the height of the rectangle is calculated by multiplying the user input/default value by 3 [reference](#https://github.com/iantsang779/pyRootHair/blob/2e7782b3f083e2eddd05c6599dd9ca6aa1497440/src/root.py#L104-L109) to ensure any thick root hair mask section around the root tip can still be split.
 
 
 
