@@ -38,7 +38,16 @@ python main.py -i ~/Images/Wheat/soissons/ -b soissons
 
 ### Data Arguments (Optional)
 `--resolution`: [option] change bin size (in pixels) for sliding window down each root hair segment. See [this](#extracting-traits-from-the-root-hair-mask) section for more details.  
-`--split_segments`: [option] change the rectangular area of pixels to set as 'False' around the located root tip to ensure separation of the root hair mask into 2 sections, left and right. By default, the boundary of the rectangular area is 20px (width) by 60px (height). By default, the height of the rectangle is calculated by multiplying the user input/default value by 3 ([source])(https://github.com/iantsang779/pyRootHair/blob/2e7782b3f083e2eddd05c6599dd9ca6aa1497440/src/root.py#L104-L109) to ensure any thick root hair mask section around the root tip can still be split.  
+`--split_segments`: [option] change the rectangular area of pixels to set as 'False' around the located root tip to ensure separation of the root hair mask into 2 sections, left and right. By default, the boundary of the rectangular area is 20px (width) by 60px (height). By default, the height of the rectangle is calculated by multiplying the user input/default value by 3 to ensure any thick root hair mask section around the root tip can still be split.  
+`--rhd_filt`: [option] change the threshold used to filter out small RHL values calculated along the root. The predicted binary masks for each image can sometimes predict a moderately thick section of root hair around the root tip and regions where there are no visible root hairs. As such, you can manually adjust this value to ensure that bald sections of roots have 0 RHL!  
+`--rhd_filt`: [option] change the threshold used to filter out small RHD values calculated along the root. Same as `--rhd_filt`.  
+`--conv`: [option] conversion factor to translate pixel data to mm. Since you can only adjust the value of `--conv` once per run, you must only run pyRootHair on a batch of images that has been captured at the same magnification! If you have different images caputed at different magnification/zoom distances, you will need to split them into separate batches, and manually adjust the value for `--conv`.  
+`--frac`: [option] control the degree of LOWESS smoothing of lines for average RHL, RHD, and individual segment RHL and RHD. Larger values will increase smoothing factor, while smaller values decrease the smoothing factor of the line. See [this](#summary-plots) for a visual representation of the regression lines. Value must be between 0 and 1!  
+
+### Alternative Pipeline Options (Optional)
+
+The following arguments are available for users that do not have access to a GPU or users that do not want to use the default segmentation model with a CPU:
+
 
 
 
