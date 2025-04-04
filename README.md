@@ -38,7 +38,7 @@ python main.py -i ~/Images/Wheat/soissons/ -b soissons
 
 ### Data Arguments (Optional)
 `--resolution`: [option] change bin size (in pixels) for sliding window down each root hair segment. See [this](#extracting-traits-from-the-root-hair-mask) section for more details.  
-`--split_segments`: [option] change the rectangular area of pixels to set as 'False' around the located root tip to ensure separation of the root hair mask into 2 sections, left and right. By default, the boundary of the rectangular area is 20px (width) by 60px (height). By default, the height of the rectangle is calculated by multiplying the user input/default value by 3 [reference](https://github.com/iantsang779/pyRootHair/blob/2e7782b3f083e2eddd05c6599dd9ca6aa1497440/src/root.py#L104-L109) to ensure any thick root hair mask section around the root tip can still be split.  
+`--split_segments`: [option] change the rectangular area of pixels to set as 'False' around the located root tip to ensure separation of the root hair mask into 2 sections, left and right. By default, the boundary of the rectangular area is 20px (width) by 60px (height). By default, the height of the rectangle is calculated by multiplying the user input/default value by 3 ([source])(https://github.com/iantsang779/pyRootHair/blob/2e7782b3f083e2eddd05c6599dd9ca6aa1497440/src/root.py#L104-L109) to ensure any thick root hair mask section around the root tip can still be split.  
 
 
 
