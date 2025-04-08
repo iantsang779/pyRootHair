@@ -70,16 +70,19 @@ class GetParams(Root):
                     self.bin_end_list_2.append(bin_end) 
 
 
-    def clean_data(self, area_filt: float, length_filt: float) -> None:
+    def clean_data(self, area_filt: float, length_filt: float, conv:int) -> None:
         """
         Filter raw data and pad lists
         """
 
-        self.horizontal_rh_list_1 = [0 if i < length_filt else i for i in self.horizontal_rh_list_1]
-        self.horizontal_rh_list_2 = [0 if i < length_filt else i for i in self.horizontal_rh_list_2]
+        length_filt_mm = length_filt * conv
+        area_filt_mm = area_filt * conv ** 2
 
-        self.rh_area_list_1 = [0 if float(i[0]) < area_filt else float(i[0]) for i in self.rh_area_list_1]           
-        self.rh_area_list_2 = [0 if float(i[0]) < area_filt else float(i[0]) for i in self.rh_area_list_2]   
+        self.horizontal_rh_list_1 = [0 if i < length_filt_mm else i for i in self.horizontal_rh_list_1]
+        self.horizontal_rh_list_2 = [0 if i < length_filt_mm else i for i in self.horizontal_rh_list_2]
+
+        self.rh_area_list_1 = [0 if float(i[0]) < area_filt_mm else float(i[0]) for i in self.rh_area_list_1]           
+        self.rh_area_list_2 = [0 if float(i[0]) < area_filt_mm else float(i[0]) for i in self.rh_area_list_2]   
         
 
         # see if bin lists are different in length 
