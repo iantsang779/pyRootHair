@@ -24,8 +24,8 @@ class ImageLoader():
         """
         # check each input image is a PNG 
         if magic.from_file(os.path.join(img_dir, img), mime=True) != 'image/png':
-            raise TypeError(f'Incorrect file format for {img}. Input images must of PNG format.')
-
+            raise TypeError(f'Incorrect file format for {img}. Image must be a PNG!')
+        
         self.image = iio.imread(os.path.join(img_dir, img))
         self.image_name = img
         print(f'\n...Loading {img}...')
@@ -79,15 +79,17 @@ class ImageLoader():
         if self.adjust_height or self.adjust_channel:
             
             self.image = img_as_ubyte(self.image)
-       
-        if not img_name.endswith('_0000.png'):    
-            iio.imwrite(os.path.join(self.sub_dir_path, f'{img_name}_0000.png'), self.image)
-            print(f'\n...Renaming image {img_name} to {img_name}_0000.png in {self.sub_dir_path}...\n')
 
-        else:
-            pref_name = img_name.split('_0000')[0]
-            iio.imwrite(os.path.join(self.sub_dir_path, f'{pref_name}_resized_0000.png'), self.image)
-            print(f'\n...Saving resized image: {pref_name}_resized_0000.png, in {self.sub_dir_path}...\n')
+        if not img_name.endswith('_0000.png'):
+            new_img_name = os.path.join(self.sub_dir_path, f'{img_name}_0000.png')
+
+            if not Path(new_img_name).exists(): # check if renamed image exists to avoid re-saving
+                iio.imwrite(new_img_name, self.image)
+                print(f'\n...Renaming image {img_name} to {img_name}_0000.png in {self.sub_dir_path} for inference...\n')
+
+        else: # if images already have _0000 suffix, save them in 
+            iio.imwrite(os.path.join(self.sub_dir_path, img_name), self.image)
+            print(f'\n...Saving a copy of {img_name} in {self.sub_dir_path} for inference...\n')
 
 
         
