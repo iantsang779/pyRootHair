@@ -7,7 +7,7 @@ Here, you will find all necessary information on how to install and setup pyRoot
 Please do not hesitate to submit a pull-request, or get in touch via email if you have any questions, suggestions or concerns!
 
 
-- [pyRootHair](#pyroothair)
+## Table of Contents
   - [Installation instructions](#installation-instructions)
   - [How to use pyRootHair](#how-to-use-pyroothair)
     - [GPU Arguments](#gpu-arguments)
@@ -74,7 +74,6 @@ The following arguments are available for users that do not have access to a GPU
 - torch: 2.5.1
 
 You will need a GPU with at least 20GB VRAM to utilize pyRootHair to it's fullest extent. 
-
 
 
 ## pyRootHair Workflow
