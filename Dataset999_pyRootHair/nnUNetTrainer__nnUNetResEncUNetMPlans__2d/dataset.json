@@ -1,0 +1,15 @@
+{
+    "channel_names": {
+        "0": "R",
+        "1": "G",
+        "2": "B"
+    },
+    "labels": {
+        "background": 0,
+        "roothair": 1,
+        "root": 2
+    },
+    "numTraining": 72,
+    "file_ending": ".png",
+    "name": "Dataset999_pyRootHair"
+}
