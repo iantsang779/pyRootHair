@@ -1,0 +1,85 @@
+Run_ID,variable,value
+dakter,Avg RHL (mm),1.1756285443555616
+dakter,Elongation Zone Distance (mm),6.42156862745098
+dakter,Elongation Zone Gradient,0.22236661808134583
+dakter,Elongation Zone Start (mm),1.0784313725490196
+dakter,Elongation Zone Stop (mm),7.5
+dakter,Max RHD Segment Delta (mm),0.205137447135717
+dakter,Max RHD Segment Pos (mm),13.063725490196079
+dakter,Max RHL (mm),1.8455882352941178
+dakter,Max RHL Segment Delta (mm),1.0588235294117647
+dakter,Max RHL Segment Pos (mm),12.745098039215687
+dakter,Min RHL (mm),0.0661764705882353
+dakter,Root Length (mm),13.872549019607844
+dakter,Root Thickness (mm),0.6924193973040702
+dakter,Total RHD (mm^{2}),30.922577854671278
+hereward,Avg RHL (mm),1.614855162112281
+hereward,Elongation Zone Distance (mm),7.426470588235294
+hereward,Elongation Zone Gradient,0.241219002909801
+hereward,Elongation Zone Start (mm),2.598039215686274
+hereward,Elongation Zone Stop (mm),10.02450980392157
+hereward,Max RHD Segment Delta (mm),0.25712466359092656
+hereward,Max RHD Segment Pos (mm),16.911764705882355
+hereward,Max RHL (mm),2.455269607843137
+hereward,Max RHL Segment Delta (mm),1.3848039215686274
+hereward,Max RHL Segment Pos (mm),13.774509803921568
+hereward,Min RHL (mm),0.06066176470588234
+hereward,Root Length (mm),22.009803921568626
+hereward,Root Thickness (mm),0.9680668560623804
+hereward,Total RHD (mm^{2}),65.31585207612457
+kofa,Avg RHL (mm),0.8866828899475154
+kofa,Elongation Zone Distance (mm),7.901960784313725
+kofa,Elongation Zone Gradient,0.16376632653564538
+kofa,Elongation Zone Start (mm),3.607843137254902
+kofa,Elongation Zone Stop (mm),11.509803921568627
+kofa,Max RHD Segment Delta (mm),0.14933679354094573
+kofa,Max RHD Segment Pos (mm),16.3921568627451
+kofa,Max RHL (mm),1.8382352941176472
+kofa,Max RHL Segment Delta (mm),0.919607843137255
+kofa,Max RHL Segment Pos (mm),15.27450980392157
+kofa,Min RHL (mm),0.0
+kofa,Root Length (mm),17.647058823529413
+kofa,Root Thickness (mm),0.5467075408251879
+kofa,Total RHD (mm^{2}),26.739840445982317
+robigus,Avg RHL (mm),1.3202497527666444
+robigus,Elongation Zone Distance (mm),6.007130124777183
+robigus,Elongation Zone Gradient,0.2567309353260365
+robigus,Elongation Zone Start (mm),1.7112299465240641
+robigus,Elongation Zone Stop (mm),7.718360071301247
+robigus,Max RHD Segment Delta (mm),0.19241725210583338
+robigus,Max RHD Segment Pos (mm),10.962566844919786
+robigus,Max RHL (mm),2.052584670231729
+robigus,Max RHL Segment Delta (mm),1.0980392156862744
+robigus,Max RHL Segment Pos (mm),14.973262032085563
+robigus,Min RHL (mm),0.0124777183600713
+robigus,Root Length (mm),20.962566844919788
+robigus,Root Thickness (mm),0.8551543862818373
+robigus,Total RHD (mm^{2}),48.50101359616931
+slejpner,Avg RHL (mm),1.5220125346539146
+slejpner,Elongation Zone Distance (mm),5.098039215686274
+slejpner,Elongation Zone Gradient,0.30519981810082675
+slejpner,Elongation Zone Start (mm),0.196078431372549
+slejpner,Elongation Zone Stop (mm),5.294117647058823
+slejpner,Max RHD Segment Delta (mm),0.20857362552864284
+slejpner,Max RHD Segment Pos (mm),6.549019607843138
+slejpner,Max RHL (mm),2.135294117647059
+slejpner,Max RHL Segment Delta (mm),1.0666666666666667
+slejpner,Max RHL Segment Pos (mm),5.019607843137256
+slejpner,Min RHL (mm),0.17058823529411762
+slejpner,Root Length (mm),19.098039215686278
+slejpner,Root Thickness (mm),1.0417283149794057
+slejpner,Total RHD (mm^{2}),52.45899653979238
+soissons,Avg RHL (mm),1.4660603360507944
+soissons,Elongation Zone Distance (mm),4.042232277526395
+soissons,Elongation Zone Gradient,0.3415682790552917
+soissons,Elongation Zone Start (mm),0.9351432880844646
+soissons,Elongation Zone Stop (mm),4.97737556561086
+soissons,Max RHD Segment Delta (mm),0.2511534025374856
+soissons,Max RHD Segment Pos (mm),11.87028657616893
+soissons,Max RHL (mm),2.082956259426848
+soissons,Max RHL Segment Delta (mm),1.3137254901960784
+soissons,Max RHL Segment Pos (mm),10.226244343891402
+soissons,Min RHL (mm),0.1975867269984917
+soissons,Root Length (mm),15.535444947209651
+soissons,Root Thickness (mm),0.9975542046682174
+soissons,Total RHD (mm^{2}),40.64656345192677
