@@ -102,7 +102,11 @@ If you are interested in learning how pyRootHair works behind the scenes, please
 
 ## Generating Binary Masks
 
+<<<<<<< HEAD
 pyRootHair will accept binary masks of any images as long as they are arrays of 0s, 1s and 2s.
+=======
+
+>>>>>>> 3ad096fa3829ad351136a7bbc5e8e185a4ea4dad
 
 
 
