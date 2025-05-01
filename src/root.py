@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 from skimage.measure import label, regionprops
 from skimage.morphology import remove_small_objects, skeletonize
 from scipy.ndimage import convolve
@@ -7,7 +6,6 @@ from sklearn.cluster import KMeans
 from numpy.typing import NDArray
 
 from skeleton import Skeleton
-
 
 class Root(Skeleton):
 
@@ -21,6 +19,10 @@ class Root(Skeleton):
         self.rh_mask = (self.straight_mask > 0.4) & (self.straight_mask <= 1.4) 
         self.rh_mask_labeled = None
         self.count = None
+        self.root_thickness = None
+        self.split_root = None
+        self.error = False
+
 
     def check_root_tip(self) -> None:
         """
@@ -39,6 +41,32 @@ class Root(Skeleton):
             self.found_tip = True 
         return self.final_labeled_root
     
+    def calculate_avg_root_thickness(self, final_root_labeled: 'NDArray') -> None:
+        """
+        Calculate average root thickness from root mask via sliding window
+        """
+        width_list = []
+
+        root_measured = regionprops(final_root_labeled)
+        root_params = [i.bbox for i in root_measured]
+        root_start, _, root_end, _ = root_params[0]
+
+        for start in range(root_start, root_end, 100):
+
+            end = start + 100
+            root_section = final_root_labeled[start:end, :]
+            _, root_section_measured = self.clean_root_chunk(root_section) # remove any small fragments from binning
+            root_binned_params =  [i.bbox for i in root_section_measured]
+            _, min_col, _, max_col = root_binned_params[0] # get bounding box for min and max col of root per bin
+            root_width = max_col - min_col
+
+            width_list.append(root_width)
+
+        self.root_thickness = np.mean(width_list) # mean root thickness in px
+        self.split_root = np.percentile(width_list, 20) # get 20th percentile of root thickness to use as padding
+
+        return self.root_thickness
+
     def find_root_tip(self) -> None:
         """
         Find location of root tip from skeletonized root
@@ -94,19 +122,21 @@ class Root(Skeleton):
             self.rh_mask = new_rh_mask
         
 
-    def split_root_coords(self, padding: int) -> 'NDArray':
+    def split_root_coords(self) -> 'NDArray':
         """
-        Split the root hair mask around the location of root tip and root start 
+        Split the root hair mask around the location of root tip and root start based on mean root thickness
         """
      
         # self.rh_mask = self.extract_root(self.rh_mask) # keep the largest RH chunk (pre-tip splitting)
 
-        if self.found_tip:
-            root_tip_y_max, root_tip_y_min = self.root_tip_y + 3*padding, self.root_tip_y - 3*padding
-            root_tip_x_max, root_tip_x_min = self.root_tip_x + padding//2, self.root_tip_x - padding//2
+        padding = int(self.split_root // 2.65)
 
-            root_start_y_max, root_start_y_min = self.root_start_y + 3*padding, self.root_start_y - 3*padding
-            root_start_x_max, root_start_x_min = self.root_start_x + padding//2, self.root_start_x - padding//2 
+        if self.found_tip:
+            root_tip_y_max, root_tip_y_min = self.root_tip_y + padding*2, self.root_tip_y - padding*2
+            root_tip_x_max, root_tip_x_min = self.root_tip_x + padding, self.root_tip_x - int(padding*0.7)
+
+            root_start_y_max, root_start_y_min = self.root_start_y + padding*2, self.root_start_y - padding*2
+            root_start_x_max, root_start_x_min = self.root_start_x + padding//2, self.root_start_x - int(padding//3) 
             
             if root_start_y_min <= 0:
                 root_start_y_min = 0
@@ -152,21 +182,26 @@ class Root(Skeleton):
             root_hair_mask = remove_small_objects(root_hair_mask, connectivity=2, min_size=500)
             coords = get_region_coords(root_hair_mask)
 
-        # assert len(coords) == 2; f'There should only be 2 root hair sections left. Got {len(coords)} sections.'
+        print(f'...Found {len(coords)} root hair segment masks...')
 
-        crop_start = max(np.min(coords[0][:,0]), np.min(coords[1][:,0]))
-        cropped_rh_mask = root_hair_mask[crop_start:,:] # crop the final root hair section to the start of the shorter root hair segment for uniform calculation
-        
-        coords = get_region_coords(cropped_rh_mask) # re-calculate coordinates of cropped image
-        
-        crop_end = min(np.max(coords[0][:,0]), np.max(coords[1][:,0])) # crop ends of root hair sections
-        final_rh_mask = cropped_rh_mask[:crop_end, :]
+        if len(coords) != 2: # if there are not 2 sections, set is_ok to False and skip to the next image.
+            self.error = True
+            
+        if not self.error:
+            crop_start = max(np.min(coords[0][:,0]), np.min(coords[1][:,0]))
+            cropped_rh_mask = root_hair_mask[crop_start:,:] # crop the final root hair section to the start of the shorter root hair segment for uniform calculation
+            
+            coords = get_region_coords(cropped_rh_mask) # re-calculate coordinates of cropped image
+            
+            crop_end = min(np.max(coords[0][:,0]), np.max(coords[1][:,0])) # crop ends of root hair sections
+            final_rh_mask = cropped_rh_mask[:crop_end, :]
 
-        return final_rh_mask
+            return final_rh_mask
+
+        else: # if there are not 2 sections, e.g if the tip wasn't split properly
+
+            return np.empty([1,1]) # return empty array
 
 
 
-
-        
-        
-   
+    

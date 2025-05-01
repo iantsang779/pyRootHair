@@ -29,11 +29,10 @@ def parse_args():
                         3 - Directly extract traits from a user generated binary mask. No segmentation is performed.""", 
                         default=1, choices=[1,2,3], type=int, nargs='?', dest='pipeline_choice')
     parser.add_argument('--resolution', help='Bin size defining measurement intervals along each root hair segment. Default = 20 px', type=int, nargs='?', dest='height_bin_size', default=20)
-    parser.add_argument('--split_segments', help='Padding around root tip/end of root in image (in pixels) to split root hair fragments. Default = 20 px.', type=int, nargs='?', dest='padding', default=20)
-    parser.add_argument('--rhd_filt', help='Area threshold to remove small areas from area list; sets area for a particular bin to 0 when below the value. Default = 0.03 mm^2)', type=float, nargs='?', dest='area_filt', default=0.03)
-    parser.add_argument('--rhl_filt', help='Length threshold to remove small lengths from length list; sets length for a particular bin to 0 when below the value. Default = 0.2 mm', type=float, nargs='?', dest='length_filt', default=0.2)
+    # parser.add_argument('--rhd_filt', help='Area threshold to remove small areas from area list; sets area for a particular bin to 0 when below the value. Default = 0.03 mm^2)', type=float, nargs='?', dest='area_filt', default=0.03)
+    # parser.add_argument('--rhl_filt', help='Length threshold to remove small lengths from length list; sets length for a particular bin to 0 when below the value. Default = 0.2 mm', type=float, nargs='?', dest='length_filt', default=0.2)
     parser.add_argument('--conv', help='The number of pixels corresponding to 1mm in the original input images. Default = 102 px', nargs='?', type=int, dest='conv', default=102)
-    parser.add_argument('--frac', help='Degree of smoothing of lowess regression line to model average root hair length per input image. Value must be between 0 and 1. See statsmodels.nonparametric.smoothers_lowess.lowess for more details. Default = 0.15', type=float, nargs='?', dest='frac', default=0.15)
+    parser.add_argument('--frac', help='Degree of smoothing of lowess regression line to model average root hair length per input image. Value must be between 0 and 1. See statsmodels.nonparametric.smoothers_lowess.lowess for more details. Default = 0.1', type=float, nargs='?', dest='frac', default=0.1)
     parser.add_argument('-o','--output', help='Filepath to save data. Must be a different directory relative to the input image directory.', type=str, dest='save_path')
     parser.add_argument('--plot_segmentation', help='Save model segmentation results in --output directory. Useful for debugging.', dest='show_segmentation', action='store_true')
     parser.add_argument('--plot_transformation', help='Save diagnostic plot showing root straightening in --output directory. Useful for debugging.', dest='show_transformation', action='store_true')
@@ -94,22 +93,31 @@ def main():
 
         mask_path = Path(args.img_dir).parent/'masks'/args.batch_id
 
+        failed_images = []
+
         for mask_file in os.listdir(mask_path): # loop through each predicted mask
             if mask_file.endswith('.png'):
                 main = Pipeline(check_args)
                 init_mask = iio.imread(os.path.join(mask_path, mask_file))
                 print(f'\n...Processing {mask_file}...')
                 s, r = main.run_pipeline(init_mask, mask_file) # run pipeline for each image
-                
-                summary = pd.concat([s,summary]) # add data from each image to the correct data frame
-                raw = pd.concat([r,raw])
+                if isinstance(s, pd.DataFrame):
+                    summary = pd.concat([s,summary]) # add data from each image to the correct data frame
+                    raw = pd.concat([r,raw])
+                else:  
+                    failed_images.append(mask_file)
         
         print(f'\n{summary}')
         print(f'\n{raw}')
 
         if args.save_path:
+            if not Path(args.save_path).exists():
+                Path(args.save_path).mkdir(parents=True, exist_ok=True)
             summary.to_csv(os.path.join(args.save_path, f'{args.batch_id}_summary.csv'))
             raw.to_csv(os.path.join(args.save_path, f'{args.batch_id}_raw.csv'))
+        
+        if failed_images:
+            print(f'\nAn error occured with the following image(s) and were skipped: {failed_images}')
 
         print(f'\nTotal runtime for batch_id {args.batch_id}: {time.perf_counter()-start:.2f} seconds.')
 
@@ -119,22 +127,29 @@ def main():
         rf = ForestTrainer()
         model = rf.load_model(args.rfc_model_path) # load trained random forest model
     
+        failed_images = []
+
         for img in os.listdir(args.img_dir): 
             if img.endswith('.png'):
                 mask = rf.predict(args.img_dir, img, args.sigma_min, args.sigma_max, model)
                 init_mask = rf.reconvert_mask_class(mask) # check mask classes are 0, 1, 2
                 main = Pipeline(check_args)
                 s, r = main.run_pipeline(init_mask, img)
-
-                summary = pd.concat([s,summary]) # add data from each image to the correct data frame
-                raw = pd.concat([r,raw])
+                if isinstance(s, pd.DataFrame):
+                    summary = pd.concat([s,summary]) # add data from each image to the correct data frame
+                    raw = pd.concat([r,raw])
 
         print(f'\n{summary}')
         print(f'\n{raw}')
 
         if args.save_path:
+            if not Path(args.save_path).exists():
+                Path(args.save_path).mkdir(parents=True, exist_ok=True)
             summary.to_csv(f'{args.batch_id}_summary.csv')
             raw.to_csv(f'{args.batch_id}_raw.csv')
+
+        if failed_images:
+            print(f'\nAn error occured with the following image(s), and have been skipped: {failed_images}')
 
         print(f'\nTotal runtime for batch_id {args.batch_id}: {time.perf_counter()-start:.2f} seconds.')
 
@@ -159,6 +174,8 @@ def main():
         print(f'\n{raw}')
 
         if args.save_path:
+            if not Path(args.save_path).exists():
+                Path(args.save_path).mkdir(parents=True, exist_ok=True)
             summary.to_csv(Path(f'{args.save_path}/{fname}_summary.csv'))
             raw.to_csv(Path(f'{args.save_path}/{fname}_raw.csv'))
 

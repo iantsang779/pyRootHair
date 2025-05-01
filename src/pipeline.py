@@ -7,6 +7,7 @@ from numpy.typing import NDArray
 from params import GetParams
 from root import Root
 from skeleton import Skeleton
+from pathlib import Path
 
 class CheckArgs():
     def __init__(self, args, parser) -> None:
@@ -80,6 +81,10 @@ class Pipeline(CheckArgs):
         self.check_args = check_args
         self.args = check_args.args
         self.parser = check_args.parser
+        if self.args.save_path:
+            if not Path(self.args.save_path).exists():
+                    Path(self.args.save_path).mkdir(parents=True, exist_ok=True)
+        
 
     def run_pipeline(self, init_mask: 'NDArray', filename:'str') -> tuple[pd.DataFrame, pd.DataFrame]:
         """
@@ -106,34 +111,38 @@ class Pipeline(CheckArgs):
 
         rt = Root(straight_mask)
         final_root = rt.check_root_tip()
+        root_thickness = rt.calculate_avg_root_thickness(final_root)
         rt.find_root_tip()
         rt.process_rh_mask()
-        root_hairs = rt.split_root_coords(self.args.padding)
+        root_hairs = rt.split_root_coords()
         root_hairs_cropped = rt.crop_rh_mask(root_hairs)
 
-        data = GetParams(root_hairs_cropped)
-        data.sliding_window(self.args.height_bin_size)
-        data.clean_data(self.args.area_filt, self.args.length_filt)
-        data.calibrate_data(self.args.conv)
-        data.calculate_avg_root_thickness(final_root, self.args.conv)
-        data.calculate_uniformity()
-        data.calculate_growth(self.args.frac)
+        if root_hairs_cropped.shape != (1,1):
+            data = GetParams(root_hairs_cropped)
+            data.sliding_window(self.args.height_bin_size)
+            data.clean_data()
+            data.calibrate_data(self.args.conv)
+            data.calculate_uniformity()
+            data.calculate_growth(self.args.frac)
     
-        summary_df, raw_df = data.generate_table(filename.split('.')[0], self.args.batch_id)
+            summary_df, raw_df = data.generate_table(filename.split('.')[0], self.args.batch_id, root_thickness, self.args.conv)
 
 
-        if self.args.show_transformation:
-            self.check_args.check_arguments_output()
-            skeleton.visualize_transformation(rotated_mask, self.args.save_path, filename.split('.')[0]) 
+            if self.args.show_transformation:
+                self.check_args.check_arguments_output()
+                skeleton.visualize_transformation(rotated_mask, self.args.save_path, filename.split('.')[0]) 
 
-        if self.args.show_segmentation:
-            self.check_args.check_arguments_output()
-            plt.imsave(os.path.join(self.args.save_path,f'{filename.split('.')[0]}_mask.png'), straight_mask)
-            plt.imsave(os.path.join(self.args.save_path,f'{filename.split('.')[0]}_root_hair_mask.png'), root_hairs)
-            plt.imsave(os.path.join(self.args.save_path,f'{filename.split('.')[0]}_root_hair_mask_cropped.png'), root_hairs_cropped)
+            if self.args.show_segmentation:
+                self.check_args.check_arguments_output()
+                plt.imsave(os.path.join(self.args.save_path,f'{filename.split('.')[0]}_mask.png'), straight_mask)
+                plt.imsave(os.path.join(self.args.save_path,f'{filename.split('.')[0]}_root_hair_mask.png'), root_hairs)
+                plt.imsave(os.path.join(self.args.save_path,f'{filename.split('.')[0]}_root_hair_mask_cropped.png'), root_hairs_cropped)
 
-        if self.args.show_summary:
-            self.check_args.check_arguments_output()
-            data.plot_summary(self.args.save_path, filename.split('.')[0])
+            if self.args.show_summary:
+                self.check_args.check_arguments_output()
+                data.plot_summary(self.args.save_path, filename.split('.')[0])
 
-        return summary_df, raw_df
+            return summary_df, raw_df
+
+        else:
+            return [], []
