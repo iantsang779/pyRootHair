@@ -83,11 +83,11 @@ To train a random forest model, you will need to train the model on a single rep
 - numpy: 2.0.2
 - pandas: 2.2.3
 - matplotlib: 3.9.0
-- imageiov3: 2.36.1
+- imageio: 2.36.1
 - scikit-image: 0.24.0
 - scipy: 1.14.1
 - statsmodels: 0.14.4
-- sklearn: 1.5.2
+- scikit-learn: 1.5.2
 - nnUNetv2: 2.5.1
 - torch: 2.5.1
 
@@ -101,12 +101,7 @@ If you are interested in learning how pyRootHair works behind the scenes, please
 
 
 ## Generating Binary Masks
-
-<<<<<<< HEAD
 pyRootHair will accept binary masks of any images as long as they are arrays of 0s, 1s and 2s.
-=======
-
->>>>>>> 3ad096fa3829ad351136a7bbc5e8e185a4ea4dad
 
 
 

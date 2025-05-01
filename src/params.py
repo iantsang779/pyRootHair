@@ -77,9 +77,6 @@ class GetParams(Root):
         min1_rhd = np.percentile(self.rh_area_list_1, 10)
         min2_rhd = np.percentile(self.rh_area_list_2, 10)
 
-        # length_filt_mm = length_filt * conv
-        # area_filt_mm = area_filt * conv ** 2
-
         self.horizontal_rh_list_1 = [0 if i <= min1_rhl else i for i in self.horizontal_rh_list_1]
         self.horizontal_rh_list_2 = [0 if i <= min2_rhl else i for i in self.horizontal_rh_list_2]
 
