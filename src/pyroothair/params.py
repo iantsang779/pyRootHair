@@ -8,7 +8,7 @@ from numpy.typing import NDArray
 from scipy.ndimage import label
 from skimage.measure import regionprops
 from statsmodels.nonparametric.smoothers_lowess import lowess
-from pyroothair.root import Root
+from root import Root
 
 class GetParams(Root):
     def __init__(self, root_hairs: 'NDArray') -> None:

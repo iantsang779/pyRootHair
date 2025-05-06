@@ -4,6 +4,7 @@ import requests
 
 from pathlib import Path
 from nnunetv2.inference.predict_from_raw_data import nnUNetPredictor
+from batchgenerators.utilities.file_and_folder_operations import join
 
 
 class nnUNetv2():
@@ -12,7 +13,6 @@ class nnUNetv2():
         self.in_dir = in_dir # user input directory containing raw images
         self.run_id = run_id
         self.predictor=None
-        self.model_path = os.path.join(Path(__file__).parent, 'model')
 
         print('#########################################')
         print('     Thank you for using pyRootHair!     ')
@@ -43,8 +43,12 @@ class nnUNetv2():
             with open(model, 'wb') as f:
                 f.write(r.content)
             
-            print('\n...Model successfully installed...')
-
+         
+            
+    #         print(f'\n...nnUNet results path has been set up...\n')
+    #     else:
+    #         raise ValueError('Missing master folder pyroothair. Please create the folder in your home directory!')
+    ### ! Can replace this function by just having the correct directories on github (nnUNet_`results/Dataset..../nnUNet_trainer....)`
 
     def initialize_model(self, device, override_model_path: str = None, override_model_checkpoint: str = None):
         # https://github.com/MIC-DKFZ/nnUNet/blob/f8f5b494b7226b8b0b1bca34ad3e9b68facb52b8/nnunetv2/inference/predict_from_raw_data.py#L39
@@ -53,15 +57,10 @@ class nnUNetv2():
 
         if override_model_path or override_model_checkpoint is None: # if using default model 
             # initialize network and load checkpoint
-            # self.predictor.initialize_from_trained_model_folder(
-            #     join(os.environ.get('nnUNet_results'), 'Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d'),
-            #     use_folds=('all'),
-            #     checkpoint_name='checkpoint_final_no_opt_new.pth')
             self.predictor.initialize_from_trained_model_folder(
-                self.model_path,
+                join(os.environ.get('nnUNet_results'), 'Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d'),
                 use_folds=('all'),
-                checkpoint_name='model.pth'
-            )
+                checkpoint_name='checkpoint_final_no_opt_new.pth')
 
         else: # if user specifies custom model path, load that model instead
             self.predictor.initialize_from_trained_model_folder(
@@ -70,8 +69,10 @@ class nnUNetv2():
                 checkpoint_name=override_model_checkpoint)
     
     def run_inference(self):
-    
+
         adjusted_img_dir = Path(self.in_dir).parent / 'adjusted_images' / self.run_id # directory containing modified images for nnUNet input
+        print('Adjusted img dir', adjusted_img_dir)
+
         parent_path = Path(self.in_dir).parent
         mask_dir = parent_path / 'masks'
         mask_dir.mkdir(parents=True, exist_ok=True) # make dir to store masks
@@ -80,6 +81,7 @@ class nnUNetv2():
         sub_dir.mkdir(exist_ok=True)
 
         print(f'\n...Setting up a new directory {Path(sub_dir)} to store the predicted masks ...\n')
+
         self.predictor.predict_from_files(str(adjusted_img_dir),
                                           str(Path(sub_dir)),
                                           save_probabilities=False,

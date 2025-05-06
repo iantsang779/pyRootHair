@@ -5,11 +5,11 @@ import imageio.v3 as iio
 import os
 import torch
 
+from cnn import nnUNetv2
+from images import ImageLoader
 from pathlib import Path
-from pyroothair.cnn import nnUNetv2
-from pyroothair.images import ImageLoader
-from pyroothair.random_forest import ForestTrainer
-from pyroothair.pipeline import CheckArgs, Pipeline
+from random_forest import ForestTrainer
+from pipeline import CheckArgs, Pipeline
 
 def parse_args():
     parser = argparse.ArgumentParser(prog='pyRootHair',
@@ -29,6 +29,8 @@ def parse_args():
                         3 - Directly extract traits from a user generated binary mask. No segmentation is performed.""", 
                         default=1, choices=[1,2,3], type=int, nargs='?', dest='pipeline_choice')
     parser.add_argument('--resolution', help='Bin size defining measurement intervals along each root hair segment. Default = 20 px', type=int, nargs='?', dest='height_bin_size', default=20)
+    # parser.add_argument('--rhd_filt', help='Area threshold to remove small areas from area list; sets area for a particular bin to 0 when below the value. Default = 0.03 mm^2)', type=float, nargs='?', dest='area_filt', default=0.03)
+    # parser.add_argument('--rhl_filt', help='Length threshold to remove small lengths from length list; sets length for a particular bin to 0 when below the value. Default = 0.2 mm', type=float, nargs='?', dest='length_filt', default=0.2)
     parser.add_argument('--conv', help='The number of pixels corresponding to 1mm in the original input images. Default = 102 px', nargs='?', type=int, dest='conv', default=102)
     parser.add_argument('--frac', help='Degree of smoothing of lowess regression line to model average root hair length per input image. Value must be between 0 and 1. See statsmodels.nonparametric.smoothers_lowess.lowess for more details. Default = 0.1', type=float, nargs='?', dest='frac', default=0.1)
     parser.add_argument('-o','--output', help='Filepath to save data. Must be a different directory relative to the input image directory.', type=str, dest='save_path')
@@ -66,8 +68,7 @@ def main():
         model = nnUNetv2(args.img_dir, args.batch_id)
         model.check_gpu() # determine which model to load depending on GPU availability
         check_args.check_arguments_gpu()
-        model.download_model()
-        
+
         if model.gpu_exists: # set device to available GPU or CPU
             device = torch.device('cuda',0) 
         else:

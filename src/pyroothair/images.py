@@ -14,7 +14,6 @@ class ImageLoader():
         self.adjust_height, self.adjust_channel = (False, False)
         self.image = None
         self.image_name = None
-        self.input_path = None
         self.sub_dir_path = None
 
     def read_images(self, img_dir:str, img:str) -> None:
@@ -53,7 +52,7 @@ class ImageLoader():
         """
         if self.adjust_channel:
             self.image = self.image[:,:,:3]
-
+            
     def setup_dir(self, img_dir:str, run_id:str) -> None:
         """ 
         Setup adjusted_images folder in the same directory as the input images folder.
@@ -91,4 +90,7 @@ class ImageLoader():
         else: # if images already have _0000 suffix, save them in 
             iio.imwrite(os.path.join(self.sub_dir_path, img_name), self.image)
             print(f'\n...Saving a copy of {img_name} in {self.sub_dir_path} for inference...\n')
+
+
+        
 
