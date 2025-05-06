@@ -62,7 +62,7 @@ class ImageLoader():
         input_path = Path(img_dir) # path of the input image directory
         parent_dir = input_path.parent # get parent of the image directory
 
-        adjusted_dir = parent_dir / 'renamed_images'
+        adjusted_dir = parent_dir / 'adjusted_images'
         adjusted_dir.mkdir(parents=True, exist_ok=True) # make dir to store adjusted images if it doesn't exist
         
         sub_dir = adjusted_dir / run_id
