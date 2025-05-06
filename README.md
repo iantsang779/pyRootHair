@@ -20,10 +20,11 @@ Please do not hesitate to submit a pull-request, or get in touch via email if yo
 
 ## Installation instructions
 
-ADD DOCKER/CONDA STUFF HERE 
-`mkdir ~/pyroothair`  
-`git clone https://github.com/iantsang779/pyRootHair`  
-`cd pyroothair`  
+```bash
+mkdir ~/pyRootHair  
+cd ~/pyRootHair
+pip install -i https://test.pypi.org/simple/ pyRootHair==0.0.1
+```  
 
 ## How to use pyRootHair
 
@@ -68,13 +69,8 @@ To train a random forest model, you will need to train the model on a single rep
 
 ### Data Arguments (Optional)
 **`--resolution`**: [option] change bin size (in pixels) for sliding window down each root hair segment. See [this](https://github.com/iantsang779/pyRootHair/blob/main/workflow.md#extracting-traits-from-the-root-hair-mask) section for more details.  
-**`--split_segments`**: [option] change the rectangular area of pixels to set as 'False' around the located root tip to ensure separation of the root hair mask into 2 sections, left and right. By default, the boundary of the rectangular area is 20px (width) by 60px (height). By default, the height of the rectangle is calculated by multiplying the user input/default value by 3 to ensure any thick root hair mask section around the root tip can still be split.  
-**`--rhd_filt`**: [option] change the threshold (in mm) used to filter out small RHL values calculated along the root. The predicted binary masks for each image can sometimes predict a moderately thick section of root hair around the root tip and regions where there are no visible root hairs. As such, you can manually adjust this value to ensure that bald sections of roots have 0 RHL!  
-**`--rhd_filt`**: [option] change the threshold (in mm$^{2}$) used to filter out small RHD values calculated along the root. Same as **`--rhd_filt`**.  
 **`--conv`**: [option] conversion factor to translate pixel data to mm. Since you can only adjust the value of **`--conv`** once per run, you must only run pyRootHair on a batch of images that has been captured at the same magnification! If you have different images caputed at different magnification/zoom distances, you will need to split them into separate batches, and manually adjust the value for **`--conv`**.  
 **`--frac**`: [option] control the degree of LOWESS smoothing of lines for average RHL, RHD, and individual segment RHL and RHD. Larger values will increase smoothing factor, while smaller values decrease the smoothing factor of the line. See [this](https://github.com/iantsang779/pyRootHair/blob/main/workflow.md#summary-plots) for a visual representation of the regression lines. Value must be between 0 and 1!  
-
-
 
 
 ## Dependencies
@@ -88,6 +84,7 @@ To train a random forest model, you will need to train the model on a single rep
 - scipy: 1.14.1
 - statsmodels: 0.14.4
 - scikit-learn: 1.5.2
+- python-magic: 0.4.27
 - nnUNetv2: 2.5.1
 - torch: 2.5.1
 
