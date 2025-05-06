@@ -32,15 +32,15 @@ class nnUNetv2():
     def download_model(self) -> None:
         
         model_fold_path = Path(self.model_path) / 'fold_all'
-
-        model = os.path.join(self.model_path, 'fold_all/model.pth')
+        model_fold_path.mkdir(parents=True, exist_ok=True)
+        model = os.path.join(model_fold_path, 'model.pth')
         
         if not Path(model).exists(): # check if model already exists
-            print('\n...Could not find an existing instalation of the model...')
+            print('\n...Could not find an existing installation of the model...')
             print('\n...Downloading segmentation model from huggingface...')
             r = requests.get('https://huggingface.co/iantsang779/pyroothair_v1/resolve/main/model.pth')
 
-            with open(os.path.join(model_fold_path, 'model.pth'), 'wb') as f:
+            with open(model, 'wb') as f:
                 f.write(r.content)
             
             print('\n...Model successfully installed...')

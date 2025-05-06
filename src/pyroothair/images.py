@@ -53,11 +53,6 @@ class ImageLoader():
         """
         if self.adjust_channel:
             self.image = self.image[:,:,:3]
-        
-    
-    def check_image_class(self) -> None: # raise error if the input image does not contain the correct px classes 
-        if not np.array_equal(np.unique(self.image), [0,1,2]):
-            raise ValueError(f'Could not find pixels belonging to all 3 classes (background, root, root hair) in {self.image}. Please ensure the input image is correct.')
 
     def setup_dir(self, img_dir:str, run_id:str) -> None:
         """ 
@@ -67,7 +62,7 @@ class ImageLoader():
         input_path = Path(img_dir) # path of the input image directory
         parent_dir = input_path.parent # get parent of the image directory
 
-        adjusted_dir = parent_dir / 'renamed_images'
+        adjusted_dir = parent_dir / 'adjusted_images'
         adjusted_dir.mkdir(parents=True, exist_ok=True) # make dir to store adjusted images if it doesn't exist
         
         sub_dir = adjusted_dir / run_id
