@@ -5,7 +5,7 @@ from scipy.ndimage import convolve
 from sklearn.cluster import KMeans
 from numpy.typing import NDArray
 
-from skeleton import Skeleton
+from pyroothair.skeleton import Skeleton
 
 class Root(Skeleton):
 

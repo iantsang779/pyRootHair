@@ -3,11 +3,11 @@ import os
 import pandas as pd
 import numpy as np
 
-from numpy.typing import NDArray
-from params import GetParams
-from root import Root
-from skeleton import Skeleton
 from pathlib import Path
+from numpy.typing import NDArray
+from pyroothair.params import GetParams
+from pyroothair.root import Root
+from pyroothair.skeleton import Skeleton
 
 class CheckArgs():
     def __init__(self, args, parser) -> None:
