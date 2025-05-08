@@ -123,7 +123,13 @@ This section is not a tutorial on how to use ilastik, rather, a demonstration on
 
 5.) After generating the mask, select `Source: Simple Segmentation` under `4. Prediction Export`. Click on `Choose Export Image Settings`, and set the output file format to `.png`, then hit `Export All`. 
 
-6.) Once generated, the mask should be converted such that each pixel is a 0, 1 or 2 in the array. By default, ilastik saves each pixel associated with the background as 1, root hair as 2, and root as 3. To convert your mask, run: `pyroothair
+6.) Once generated, the mask should be converted such that each pixel is a 0, 1 or 2 in the array. By default, ilastik saves each pixel associated with the background as 1, root hair as 2, and root as 3. To convert the mask:
+
+`pyroothair_convert_mask -i path/to/your/generated/mask`
+
+You should see a the following message if the conversion has been successful: `...Saved converted input mask XXX in ZZZ...`. You can now use this mask to either train a random forest model, or process as a standalone mask.
+
+
 
 
 
