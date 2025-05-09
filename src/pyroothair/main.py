@@ -11,9 +11,23 @@ from pyroothair.images import ImageLoader
 from pyroothair.random_forest import ForestTrainer
 from pyroothair.pipeline import CheckArgs, Pipeline
 
+description = '''
+Thank you for using pyRootHair!
+-------------------------------
+Please read the tutorial documentation on the github repository: https://github.com/iantsang779/pyRootHair
+
+Basic usage: pyroothair -i /path/to/image/folder -b unique_ID_for_folder -o /path/to/output/folder
+
+Please cite the following paper when using pyRootHair: xxxxxx
+
+Author: Ian Tsang
+Contact: ian.tsang@niab.com
+''' 
+
 def parse_args():
     parser = argparse.ArgumentParser(prog='pyRootHair',
-                                     description='pyRootHair Arguments')
+                                     description=description,
+                                     formatter_class=argparse.RawDescriptionHelpFormatter)
 
     ### Required Arguments    
     parser.add_argument('-i', '--input', help='Filepath to directory containing input image(s).', type=str, nargs='?', dest='img_dir')
@@ -26,7 +40,7 @@ def parse_args():
 
                         1 - Perform segmentation using pre-trained nnUNet model. Can be run with or without GPU. This is the default option. 
                         2 - Perform segmentation using a trained random forest classifier. Does not require a GPU. 
-                        3 - Directly extract traits from a user generated binary mask. No segmentation is performed.""", 
+                        3 - Directly extract traits from a user generated binary mask. No inference is run.""", 
                         default=1, choices=[1,2,3], type=int, nargs='?', dest='pipeline_choice')
     parser.add_argument('--resolution', help='Bin size defining measurement intervals along each root hair segment. Default = 20 px', type=int, nargs='?', dest='height_bin_size', default=20)
     parser.add_argument('--conv', help='The number of pixels corresponding to 1mm in the original input images. Default = 102 px', nargs='?', type=int, dest='conv', default=102)
@@ -68,10 +82,7 @@ def main():
         check_args.check_arguments_gpu()
         model.download_model()
         
-        if model.gpu_exists: # set device to available GPU or CPU
-            device = torch.device('cuda',0) 
-        else:
-            device = 'cpu'
+        device = torch.device('cuda', 0) if model.gpu_exists else torch.device('cpu')
         
         for img in os.listdir(args.img_dir): # loop through all input images, modify and save with nnUNet prefix
             im_loader = ImageLoader()

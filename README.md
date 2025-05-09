@@ -21,10 +21,31 @@ Please do not hesitate to submit a pull-request, or get in touch via email if yo
 ## Installation instructions
 
 ```bash
-conda create -n pyroothair
+conda create --no-default-packages -n pyroothair python # create fresh conda environment
+conda activate pyroothair # activate environment
+conda env config vars set nnUNet_raw='~/nnUNet_raw' nnUNet_preprocessed='~/nnUNet_preprocessed' nnUNet_results='~/nnUNet_results' # optional: set nnUNet environment variables to conda env to avoid warning when running pyRootHair. Ignore if you already have nnUNet paths setup
+
+conda deactivate pyroothair
 conda activate pyroothair
-pip install -i https://test.pypi.org/simple/ pyRootHair==0.0.1
+python -m pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ pyroothair
 ```  
+After installation, run `pyroothair`. You should be greeted with this output:
+
+```
+#########################################
+     Thank you for using pyRootHair!     
+#########################################
+
+
+...No GPU Detected...
+
+usage: pyRootHair [-h] [-i [IMG_DIR]] [-b [BATCH_ID]] [-p [{1,2,3}]] [--resolution [HEIGHT_BIN_SIZE]]
+                  [--conv [CONV]] [--frac [FRAC]] [-o SAVE_PATH] [--plot_segmentation] [--plot_transformation]
+                  [--plot_summary] [--override_model_path OVERRIDE_MODEL_PATH]
+                  [--override_model_checkpoint OVERRIDE_MODEL_CHKPOINT] [--rfc_model_path RFC_MODEL_PATH]
+                  [--sigma_min SIGMA_MIN] [--sigma_max SIGMA_MAX] [--input_mask [INPUT_MASK]]
+pyRootHair: error: The following arguments are required when running pyRootHair using the main pipeline: ['-i/--input', '-b/--batch_id']
+```
 
 ## How to use pyRootHair
 
@@ -81,7 +102,7 @@ To train a random forest model, you will need to train the model on a single rep
 ### Data Arguments (Optional)
 **`--resolution`**: [option] change bin size (in pixels) for sliding window down each root hair segment. See [this](https://github.com/iantsang779/pyRootHair/blob/main/workflow.md#extracting-traits-from-the-root-hair-mask) section for more details.  
 **`--conv`**: [option] conversion factor to translate pixel data to mm. Since you can only adjust the value of **`--conv`** once per run, you must only run pyRootHair on a batch of images that has been captured at the same magnification! If you have different images caputed at different magnification/zoom distances, you will need to split them into separate batches, and manually adjust the value for **`--conv`**.  
-**`--frac**`**: [option] control the degree of LOWESS smoothing of lines for average RHL, RHD, and individual segment RHL and RHD. Larger values will increase smoothing factor, while smaller values decrease the smoothing factor of the line. See [this](https://github.com/iantsang779/pyRootHair/blob/main/workflow.md#summary-plots) for a visual representation of the regression lines. Value must be between 0 and 1!  
+**`--frac`**: [option] control the degree of LOWESS smoothing of lines for average RHL, RHD, and individual segment RHL and RHD. Larger values will increase smoothing factor, while smaller values decrease the smoothing factor of the line. See [this](https://github.com/iantsang779/pyRootHair/blob/main/workflow.md#summary-plots) for a visual representation of the regression lines. Value must be between 0 and 1!  
 
 
 ## Dependencies
@@ -98,8 +119,6 @@ To train a random forest model, you will need to train the model on a single rep
 - nnUNetv2: 2.5.1
 - torch: 2.5.1
 
-You will need a GPU with at least 20GB VRAM to utilize pyRootHair to it's fullest extent. 
-
 
 ## pyRootHair Workflow
 
@@ -112,8 +131,8 @@ pyRootHair will accept binary masks of any images as long as they are arrays of 
 This section is not a tutorial on how to use ilastik, rather, a demonstration on what the masks need to look like if you wish to generate your own masks suitable for pyroothair.
 
 1.) Under the `1. Input Data` tab, upload your raw image(s). Ensure that the input image only has 3 channels! 
-2.) Select all features under the `Feature Selection` tab.
-3.) Specify the following label categories. The label order **must** be as shown!
+2.) Select all features under the `Feature Selection` tab.  
+3.) Specify the following label categories. The label order **must** be as shown!  
 
 ![alt text](demo/ilastik_classes.png)
 

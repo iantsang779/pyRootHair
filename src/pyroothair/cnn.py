@@ -12,6 +12,7 @@ class nnUNetv2():
         self.run_id = run_id
         self.predictor=None
         self.model_path = os.path.join(Path(__file__).parent, 'model')
+        self.gpu_exists=False
 
         print('#########################################')
         print('     Thank you for using pyRootHair!     ')
@@ -29,20 +30,71 @@ class nnUNetv2():
             print(f'\n...No GPU Detected...\n')
 
     def download_model(self) -> None:
-        
+        """
+        Install pyroothair segmentation model + necessary json files from huggingface
+        Compare metadata etag to check whether a new model has been pushed to huggingface, get new model/JSONs if true
+        """
         model_fold_path = Path(self.model_path) / 'fold_all'
         model_fold_path.mkdir(parents=True, exist_ok=True)
-        model = os.path.join(self.model_path, 'fold_all/model.pth')
-        
-        if not Path(model).exists(): # check if model already exists
-            print('\n...Could not find an existing instalation of the model...')
-            print('\n...Downloading segmentation model from huggingface...')
-            r = requests.get('https://huggingface.co/iantsang779/pyroothair_v1/resolve/main/model.pth')
+        # model = os.path.join(self.model_path, 'fold_all/model.pth')
 
-            with open(model, 'wb') as f:
-                f.write(r.content)
-            
-            print('\n...Model successfully installed...')
+        files = [os.path.join(self.model_path, 'fold_all/model.pth'),
+                 os.path.join(self.model_path, 'dataset.json'),
+                 os.path.join(self.model_path, 'dataset_fingerprint.json'),
+                 os.path.join(self.model_path, 'plans.json')]
+        model_metadata = os.path.join(self.model_path, 'fold_all/model_metadata.txt')
+        url_dict = {'model_url': 'https://huggingface.co/iantsang779/pyroothair_v1/resolve/main/model.pth',
+                    'dataset_json_url': 'https://huggingface.co/iantsang779/pyroothair_v1/resolve/main/dataset.json',
+                    'dataset_fingerprint_url': 'https://huggingface.co/iantsang779/pyroothair_v1/resolve/main/dataset_fingerprint.json',
+                    'plans_url': 'https://huggingface.co/iantsang779/pyroothair_v1/resolve/main/plans.json'}
+      
+        for url, model_file in zip(url_dict, files):
+ 
+            if not Path(model_file).exists(): # check if file (model/model json) already exists
+                download_model = True
+                print(f'\n...Could not find an existing local installation of {model_file.split('/')[-1]}...')
+
+            else: # if file already exists
+                local_etag = None  
+
+                if Path(model_metadata).exists(): 
+                    with open(model_metadata, 'r') as f:
+                        local_etag = f[url]['etag'].strip('"') # get local etag value for each file from metadata.txt
+                try:
+                    response = requests.get(url_dict[url]) # get remote etag
+                    response.raise_for_status()
+                    remote_etag = response.headers.get('ETag')
+                    print('URL', url, 'Local Etag', local_etag, 'Remote Etag', remote_etag)
+
+                except requests.RequestException as e:
+                    print(f'...Error checking for updates on huggingface: {e}...')
+                    remote_etag = None
+                
+                download_model = remote_etag != local_etag # set download_model to True if remote etag mismatches with local etag
+
+            if download_model:
+                print(f'\n...Downloading the latest {model_file.split('/')[-1]} from: {url_dict[url]}...')
+
+                try:
+                    r = requests.get(url_dict[url])
+                    r.raise_for_status()
+
+                    with open(model_file, 'wb') as f: # download model
+                        f.write(r.content)
+                    
+                    # save metadata
+                    field = {'etag': r.headers.get('Etag')}
+
+                    with open(model_metadata, 'a') as f:
+                        f.write({url: field})
+
+                except requests.RequestException as e:
+                    print(f'\n...Download failed: {e}...')
+                    if not Path(model_file).exists():
+                        raise RuntimeError(f'\n...Download failed and no local installation of {url} can be found...')
+                    print(f'\n...Using existing file: {url}...')
+        
+        print(f'\n...pyRootHair model and JSON files have been successfully installed from Huggingface in: {self.model_path}...')
 
 
     def initialize_model(self, device, override_model_path: str = None, override_model_checkpoint: str = None):
@@ -51,11 +103,6 @@ class nnUNetv2():
         self.predictor = nnUNetPredictor(device=device) # instantiate nnUNet predictor
 
         if override_model_path or override_model_checkpoint is None: # if using default model 
-            # initialize network and load checkpoint
-            # self.predictor.initialize_from_trained_model_folder(
-            #     join(os.environ.get('nnUNet_results'), 'Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d'),
-            #     use_folds=('all'),
-            #     checkpoint_name='checkpoint_final_no_opt_new.pth')
             self.predictor.initialize_from_trained_model_folder(
                 self.model_path,
                 use_folds=('all'),
