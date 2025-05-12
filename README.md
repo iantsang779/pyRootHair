@@ -1,5 +1,5 @@
 # pyRootHair
-[text](demo/pyroothair_logo.pdf)
+![alt text](demo/pyroothair_logo.pdf)
 
 Welcome to the pyRootHair github repository! 
 
