@@ -14,16 +14,16 @@ Please do not hesitate to submit a pull-request, or get in touch via email if yo
   - [User Guide](#user-guide)
     - [Default Pipeline](#default-pipeline)
       - [Flags/Arguments](#flagsarguments)
-        - [`-i/--input` (REQUIRED - ARGUMENT - STRING)](#-i--input-required---argument---string)
-        - [`-o/--output` (REQUIRED - ARGUMENT - STRING)](#-o--output-required---argument---string)
-        - [`--batch_id/-b` (REQUIRED - ARGUMENT - STRING/INT/FLOAT)](#--batch_id-b-required---argument---stringintfloat)
-        - [`--conv` (OPTIONAL - ARGUMENT - INT)](#--conv-optional---argument---int)
-        - [`--resolution` (OPTIONAL - ARGUMENT - INT)](#--resolution-optional---argument---int)
-        - [`--frac` (OPTIONAL - ARGUMENT - FLOAT)](#--frac-optional---argument---float)
-        - [`--plot_segmentation` (OPTIONAL - FLAG)](#--plot_segmentation-optional---flag)
-        - [`--plot_transformation` (OPTIONAL - FLAG)](#--plot_transformation-optional---flag)
-        - [`--plot_summary` (OPTIONAL - FLAG)](#--plot_summary-optional---flag)
-        - [`-p/--pipeline` (OPTIONAL - ARGUMENT - STR)](#-p--pipeline-optional---argument---str)
+        - [`-i/--input`](#-i--input-required---argument---string)
+        - [`-o/--output`](#-o--output-required---argument---string)
+        - [`--batch_id/-b`](#--batch_id-b-required---argument---stringintfloat)
+        - [`--conv` ](#--conv-optional---argument---int)
+        - [`--resolution`](#--resolution-optional---argument---int)
+        - [`--frac`](#--frac-optional---argument---float)
+        - [`--plot_segmentation`](#--plot_segmentation-optional---flag)
+        - [`--plot_transformation`](#--plot_transformation-optional---flag)
+        - [`--plot_summary`](#--plot_summary-optional---flag)
+        - [`-p/--pipeline`](#-p--pipeline-optional---argument---str)
     - [Random Forest Pipeline](#random-forest-pipeline)
       - [Training the Random Forest Model](#training-the-random-forest-model)
       - [Deploying the Random Forest Model](#deploying-the-random-forest-model)
@@ -89,13 +89,13 @@ pyroothair -i ~/Images/Wheat/Soissons/ -b Soissons -o ~/Output/Soissons
 To view options/help messages for each flag, enter `pyroothair -h`
 
 ##### `-i/--input` (REQUIRED - ARGUMENT - STRING)
-Filepath containing your input images. You can split your images into folders depending on what makes sense for your inputs. Images can be split by genotype, species, condition, treatment, timestamp etc.
+Filepath containing your input images. You can split your images into folders depending on what makes sense for your inputs. Images can be split by genotype, species, condition, treatment, timestamp etc. Required if using the main pipeline or the random forest pipeline.
 
 ##### `-o/--output` (REQUIRED - ARGUMENT - STRING)
-Filepath to store outputs. By default, only the raw and summary data tables will be saved to this path. Any additional outputs (e.g. with `--plot_segmentation`) will be stored here as well.
+Filepath to store outputs. By default, only the raw and summary data tables will be saved to this path. Any additional outputs (e.g. with `--plot_segmentation`) will be stored here as well. Required if using the main pipeline or the random forest pipeline.
 
 ##### `--batch_id/-b` (REQUIRED - ARGUMENT - STRING/INT/FLOAT)
-In the above example, the renamed images will be stored in `~/images/wheat/adjusted_images/Soissons`, and segmentation masks will be stored in `~/images/wheat/masks/Soissons`. The `--batch_id/-b` argument assigns a unique ID to the entire batch of images given by `-i`. This could be an ID for a particular genotype (e.g. Soissons, a wheat variety), or a timestamp (e.g. each batch of images are from a specific timepoint). You must assign a unique ID for each run of new images!
+In the above example, the renamed images will be stored in `~/images/wheat/adjusted_images/Soissons`, and segmentation masks will be stored in `~/images/wheat/masks/Soissons`. The `--batch_id/-b` argument assigns a unique ID to the entire batch of images given by `-i`. This could be an ID for a particular genotype (e.g. Soissons, a wheat variety), or a timestamp (e.g. each batch of images are from a specific timepoint). You must assign a unique ID for each run of new images! Required if using the main pipeline or the random forest pipeline.
 
 ##### `--conv` (OPTIONAL - ARGUMENT - INT)
 You must ensure that all input images for each batch were taken using at the same magnification setting. You will need to adjust the pixel to mm conversion factor for your input images, which you can determine from measuring a scale bar on your images using the FIJI (ImageJ) 'Analyze' > 'Set Scale' option. You must set the number of pixels per mm using `--conv` each time you run pyRootHair. If you have images taken at different magnification settings, you will need to split them into separate batches, and manually adjust the value of `--conv`.
@@ -104,7 +104,7 @@ You must ensure that all input images for each batch were taken using at the sam
 Your input images can be of different shapes, as long as they are relatively consistent in size and have only 3 channels (R,G,B). pyRootHair computes a sliding window down the root, and takes measurement from bins. Using `--resolution`, you can tweak the bin size (in pixels) of the sliding window. For example, if your input images have the shape 800 (width) x 1500 (height), there will be 75 data points ($\frac{1500}{20} = 75$) for RHL and RHD for each side root hair segment using the default `--resolution` value of 20 pixels. 
 
 ##### `--frac` (OPTIONAL - ARGUMENT - FLOAT)
-Controls the degree of LOWESS smoothing for the lines used to model average RHL and RHD for each image. Since measurements from each bin in the sliding window is noisy, a smoothed line over these points reduces the effect of variation between bin measurements. A smaller value for `--frac` decreases the smoothing effect, i.e. the line will better fit the RHL/RHD data for each bin, but will fluctuate significantly. A larger value for `--frac` increases the smoothing effect, i.e the line will be much smoother through the RHL/RHD data for each bin, but be a worse fit. See [this] (https://github.com/iantsang779/pyRootHair/blob/main/workflow.md#summary-plots) for a visual representation of the regression lines. Value must be a floating point number (e.g. 0.15) between 0 and 1. The default value is recommended. 
+Controls the degree of LOWESS smoothing for the lines used to model average RHL and RHD for each image. Since measurements from each bin in the sliding window is noisy, a smoothed line over these points reduces the effect of variation between bin measurements. A smaller value for `--frac` decreases the smoothing effect, i.e. the line will better fit the RHL/RHD data for each bin, but will fluctuate significantly. A larger value for `--frac` increases the smoothing effect, i.e the line will be much smoother through the RHL/RHD data for each bin, but be a worse fit. See [this](https://github.com/iantsang779/pyRootHair/blob/main/workflow.md#summary-plots) for a visual representation of the regression lines. Value must be a floating point number (e.g. 0.15) between 0 and 1. The default value is recommended. 
 
 ##### `--plot_segmentation` (OPTIONAL - FLAG)
 Toggle plotting of segmented masks for each image. For each input image, `--plot_segmentation` saves the straightened mask, a mask of just the root hair segments, and the cropped root hair segments. Masks are saved in filepath specified in `--output`
@@ -118,6 +118,13 @@ Toggle plotting of summary plots describing RHL and RHD for each input image. Pl
 ##### `-p/--pipeline` (OPTIONAL - ARGUMENT - STR)
 Specify which pyRootHair pipeline to run. By default, the main pipeline (`-p cnn`) uses a CNN to segment input images, with or without a GPU (GPU preferred, of course!). If you wish to use a random forest model instead to perform image segmentation, you must specify `-p random_forest`. If you wish to process a single input binary mask with pyRootHair, you must specify `-p single`. 
 
+##### A Full Example
+
+Here is a full command example, saving all diagnostic/summary plots, with a pixel:mm conversion factor of 100, 0.1 smoothing factor, and a bin size of 50 px:
+
+`pyroothair -i /path/to/image/folder -b batch_id -o /path/to/output/folder --plot_segmentation --plot_summary --plot_transformation --conv 100 --frac 0.1 --resolution 50`
+
+
 ### Random Forest Pipeline
 If you do not have access to a GPU, it is possible to train your own random forest segmentation model. The random forest segmentation model is nowhere near as powerful as the CNN, and as such, will struggle with image anomalies or noise. Please note this is an experimental feature, and should be used with caution.
 
@@ -130,7 +137,7 @@ Once you have generated a suitable mask, you can train a random forest model lik
 
 `pyroothair_train_rf_model --train_img /path/to/representative/training/image/example --train_mask /path/to/generated/binary/mask --model_output /path/to/output/rf_model/`
 
-If successful, you should see `...RFC model saved as /path/to/output/rf_model.joblib...`, indicating the random forest model has been saved in `--model_output`. There are some additional flags/arguments that allow you to toggle the behaviour of how the random forest model is trained, please see the [documentation] (https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html) from scikit-learn on the `RandomForestClassifier` for more information. 
+If successful, you should see `...RFC model saved as /path/to/output/rf_model.joblib...`, indicating the random forest model has been saved in `--model_output`. There are some additional flags/arguments that allow you to toggle the behaviour of how the random forest model is trained, please see the [documentation](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html) from scikit-learn on the `RandomForestClassifier` for more information. 
 
 **`--sigma_min`**: Minimum sigma (blurring factor) for feature extraction from the input image. Default = 1
 **`--sigma_max`**: Maximum sigma (blurring factor) for feature extraction from input image. Default = 4
@@ -146,7 +153,7 @@ Once your random forest model is trained, you can deploy it like so:
 The command is the same as before, but you specify to run the random forest pipeline with `-p random_forest`, and provide the path to the trained model for `--rfc_model_path`.
 
 ### Single Mask Pipeline
-If you wish, you can also run pyRootHair on a single, user generated binary mask of an input image. See [this] (https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#generating-binary-masks) for instructions on generating binary masks. 
+If you wish, you can also run pyRootHair on a single, user generated binary mask of an input image. See [this](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#generating-binary-masks) for instructions on generating binary masks. 
 
 To run pyRootHair on a single binary mask (with classes converted!):
 
@@ -155,7 +162,7 @@ To run pyRootHair on a single binary mask (with classes converted!):
 Note that you no longer require `-i` or `-b` when using this pipeline option.
 
 ## Generating Binary Masks
-pyRootHair will accept binary masks of any images as long as they are arrays of 0s, 1s and 2s. It is recommended that you use the ilastik software (https://www.ilastik.org/) to generate the masks, as it is simple and requires minimal expertise to use.
+pyRootHair will accept binary masks of any images as long as they are arrays of 0s, 1s and 2s. It is recommended that you use the [ilastik](https://www.ilastik.org/) software to generate the masks, as it is simple and requires minimal expertise to use.
 
 This section is not a tutorial on how to use ilastik, rather, a demonstration on what the masks need to look like if you wish to generate your own masks suitable for pyroothair.
 
@@ -183,7 +190,7 @@ You should see a the following message if the conversion has been successful: `.
 
 ## pyRootHair Workflow
 
-If you are interested in learning how pyRootHair works behind the scenes, please check out [this] (https://github.com/iantsang779/pyRootHair/blob/main/workflow.md) in-depth walk through.
+If you are interested in learning how pyRootHair works behind the scenes, please check out [this](https://github.com/iantsang779/pyRootHair/blob/main/workflow.md) in-depth walk through.
 
 
 
