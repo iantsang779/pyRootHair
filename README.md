@@ -122,7 +122,9 @@ Specify which pyRootHair pipeline to run. By default, the main pipeline (`-p cnn
 
 Here is a full command example, saving all diagnostic/summary plots, with a pixel:mm conversion factor of 100, 0.1 smoothing factor, and a bin size of 50 px:
 
-`pyroothair -i /path/to/image/folder -b batch_id -o /path/to/output/folder --plot_segmentation --plot_summary --plot_transformation --conv 100 --frac 0.1 --resolution 50`
+```bash
+pyroothair -i /path/to/image/folder -b batch_id -o /path/to/output/folder --plot_segmentation --plot_summary --plot_transformation --conv 100 --frac 0.1 --resolution 50
+```
 
 
 ### Random Forest Pipeline
@@ -135,20 +137,24 @@ To train a random forest model, you will need to train the model on a single rep
 
 Once you have generated a suitable mask, you can train a random forest model like so:
 
-`pyroothair_train_rf_model --train_img /path/to/representative/training/image/example --train_mask /path/to/generated/binary/mask --model_output /path/to/output/rf_model/`
+```bash
+pyroothair_train_rf_model --train_img /path/to/representative/training/image/example --train_mask /path/to/generated/binary/mask --model_output /path/to/output/rf_model/
+```
 
 If successful, you should see `...RFC model saved as /path/to/output/rf_model.joblib...`, indicating the random forest model has been saved in `--model_output`. There are some additional flags/arguments that allow you to toggle the behaviour of how the random forest model is trained, please see the [documentation](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html) from scikit-learn on the `RandomForestClassifier` for more information. 
 
-**`--sigma_min`**: Minimum sigma (blurring factor) for feature extraction from the input image. Default = 1
-**`--sigma_max`**: Maximum sigma (blurring factor) for feature extraction from input image. Default = 4
-**`--n_estimators`**: Number of trees in the Random Forest Classifier. Default = 50
-**`--max_depth`**: Maximum depth of the Random Forest Classifier. Default = 10
-**`--max_samples`**: Number of samples extracted from image features to train each estimator. Default = 0.05
+**`--sigma_min`**: Minimum sigma (blurring factor) for feature extraction from the input image. Default = 1  
+**`--sigma_max`**: Maximum sigma (blurring factor) for feature extraction from input image. Default = 4  
+**`--n_estimators`**: Number of trees in the Random Forest Classifier. Default = 50  
+**`--max_depth`**: Maximum depth of the Random Forest Classifier. Default = 10  
+**`--max_samples`**: Number of samples extracted from image features to train each estimator. Default = 0.05  
 
 #### Deploying the Random Forest Model
 Once your random forest model is trained, you can deploy it like so:
 
-`pyroothair -i /path/to/input/image/folder -b batch_id -o /path/to/output/folder -p random_forest -rfc_model_path /path/to/rf_model.joblib` 
+```bash
+pyroothair -i /path/to/input/image/folder -b batch_id -o /path/to/output/folder -p random_forest -rfc_model_path /path/to/rf_model.joblib
+```
 
 The command is the same as before, but you specify to run the random forest pipeline with `-p random_forest`, and provide the path to the trained model for `--rfc_model_path`.
 
@@ -157,7 +163,9 @@ If you wish, you can also run pyRootHair on a single, user generated binary mask
 
 To run pyRootHair on a single binary mask (with classes converted!):
 
-`pyroothair --input_mask /path/to/converted/binary/mask -p single -o /path/to/output`
+```bash
+pyroothair --input_mask /path/to/converted/binary/mask -p single -o /path/to/output
+```
 
 Note that you no longer require `-i` or `-b` when using this pipeline option.
 
@@ -184,7 +192,9 @@ If you are using the generated mask to train a random forest model, ***IGNORE th
 
 You will need to convert the pixel classes of the generated binary mask as follows: 
 
-`pyroothair_convert_mask -i path/to/your/generated/mask`
+```bash
+pyroothair_convert_mask -i path/to/your/generated/mask
+```
 
 You should see a the following message if the conversion has been successful: `...Saved converted input mask XXX in ZZZ...`. You can now process this mask with pyRootHair: `pyroothair -p 3 --input_mask /path/to/converted/mask`.
 
