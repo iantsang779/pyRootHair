@@ -1,11 +1,13 @@
 # pyRootHair
-![alt text](demo/pyroothair_logo.pdf)
+![Alt text](demo/pyroothair_logo.pdf)
 
 Welcome to the pyRootHair github repository! 
 
 Here, you will find all necessary information on how to install and setup pyRootHair, detailed information about the various pipelines and options available, and an in-depth tutorial on how pyRootHair works.
 
-Please do not hesitate to submit a pull-request, or get in touch via email if you have any questions, suggestions or concerns!
+Please do not hesitate to submit a pull-request, or get in touch via email if you have any questions, suggestions or concerns.
+
+If you have used pyRootHair in your work, please cite the following paper: XXX
 
 
 ## Table of Contents
@@ -71,13 +73,14 @@ pyRootHair: error: The following arguments are required when running pyRootHair 
 ## User Guide
 
 ### Default Pipeline
-The default segmentation pipeline in pyRootHair uses a CNN to perform image segmentation. As such, a GPU is almost certainly required to maximize segmentation speed and performance. However, it is still possible to run the default segmentation pipeline without a GPU, if you do not have access to one. Segmentation performance will be **extremely** slow when using a CPU, and will very likely produce out-of-memory crashes unless your images are very small in size.
+The default segmentation pipeline in pyRootHair uses a CNN to perform image segmentation. As such, a GPU is required to maximize segmentation speed and performance. However, it is still possible to run the default segmentation pipeline without a GPU, if you do not have access to one. Segmentation performance will be **extremely** slow when using a CPU, and will very likely produce out-of-memory crashes unless your images are very small in size.
 
 The following arguments are required to run the standard segmentation pipeline:
 
 ```bash
 -i/--input: the filepath to the directory containing the images you want to process  
--b/--batch_id: a unique ID associated with each batch of images you are processing per run. Can be species/genotype name, or date, or anything that is easily identifiable for you.
+-b/--batch_id: a unique ID associated with each batch of images you are processing per run. Can be species/genotype name, or date, or anything that is easily identifiable for you
+-o/--output: filepath to location to store data, plots and segmentation masks
 ```
 Request a GPU on your cluster. On a SLURM system, this requests a single GPU with 30GB VRAM:
 
