@@ -187,7 +187,7 @@ class GetParams(Root):
         
         print('...Generating tables...\n')
         summary_df = pd.DataFrame({'Name': [img_name],
-                                   'Run_ID': [run_id],
+                                   'Batch_ID': [run_id],
                                    'Avg RHL (mm)': [np.mean(self.avg_rhl_list)],
                                    'Max RHL (mm)': [np.max(self.avg_rhl_list)],
                                    'Min RHL (mm)': [np.min(self.avg_rhl_list)],

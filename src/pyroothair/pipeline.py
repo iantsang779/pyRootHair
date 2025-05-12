@@ -24,6 +24,8 @@ class CheckArgs():
             missing_args.append('-i/--input')
         if self.args.batch_id is None:
             missing_args.append('-b/--batch_id')
+        if self.args.save_path is None:
+            missing_args.append('-o/--output')
         if missing_args:
             self.parser.error(f'The following arguments are required when running pyRootHair using the main pipeline: {missing_args}')
 
@@ -34,14 +36,14 @@ class CheckArgs():
 
         if self.args.rfc_model_path is None:
             self.parser.error('The following argument is required if using a Random Forest Classifier: --rfc_model_path.')
-        if self.args.override_model_chkpoint or self.args.override_model_path:
-            self.parser.error('Conflicting arguments: --rfc_model_path does not require any --override arguments.')
         if self.args.img_dir is None:
             self.parser.error('Missing argument for the input image directory -i/--input.')
         if self.args.input_mask:
-            self.parser.error('Conflicting arguments: --input_mask is not compatbile with --rfc_model_path.')
+            self.parser.error('Conflicting arguments: --input_mask is not compatible with --rfc_model_path.')
         if self.args.batch_id is None:
             self.parser.error('Missing argument for batch_id: -b/--batch_id')
+        if self.args.save_path is None:
+            self.parser.error('Missing argument for output: -o/--output')
 
     def check_arguments_output(self) -> None:
         """
@@ -57,10 +59,12 @@ class CheckArgs():
         """
         if self.args.rfc_model_path:
             self.parser.error('Conflicting arguments: --input_mask was specified, which is not compatible with --rfc_model_path.')
-        if self.args.override_model_chkpoint or self.args.override_model_path:
-            self.parser.error('Conflicting arguments: --input_mask does not require any model path or checkpoint.')
         if self.args.img_dir:
             self.parser.error('Conflicting arguments: -i/--input is for a directory containing a batch of images intended for GPU processing. Please use --input_mask instead for a single mask.')
+        if self.args.batch_id:
+            self.parser.error('Conflicting arguments: -b/--batch_id is not necessary, as you are processing a single input binary mask.')
+        if self.args.save_path is None:
+            self.parser.error('Missing argument for output: -o/--output')
     
     def convert_mask(self, mask: 'NDArray') -> 'NDArray':
 
@@ -127,20 +131,22 @@ class Pipeline(CheckArgs):
     
             summary_df, raw_df = data.generate_table(filename.split('.')[0], self.args.batch_id, root_thickness, self.args.conv)
 
+            plots_path = Path(self.args.save_path) / 'plots' / self.args.batch_id
+            plots_path.mkdir(exist_ok=True, parents=True)
 
             if self.args.show_transformation:
                 self.check_args.check_arguments_output()
-                skeleton.visualize_transformation(rotated_mask, self.args.save_path, filename.split('.')[0]) 
+                skeleton.visualize_transformation(rotated_mask, plots_path, filename.split('.')[0]) 
 
             if self.args.show_segmentation:
                 self.check_args.check_arguments_output()
-                plt.imsave(os.path.join(self.args.save_path,f'{filename.split('.')[0]}_mask.png'), straight_mask)
-                plt.imsave(os.path.join(self.args.save_path,f'{filename.split('.')[0]}_root_hair_mask.png'), root_hairs)
-                plt.imsave(os.path.join(self.args.save_path,f'{filename.split('.')[0]}_root_hair_mask_cropped.png'), root_hairs_cropped)
+                plt.imsave(os.path.join(plots_path,f'{filename.split('.')[0]}_mask.png'), straight_mask)
+                plt.imsave(os.path.join(plots_path,f'{filename.split('.')[0]}_root_hair_mask.png'), root_hairs)
+                plt.imsave(os.path.join(plots_path,f'{filename.split('.')[0]}_root_hair_mask_cropped.png'), root_hairs_cropped)
 
             if self.args.show_summary:
                 self.check_args.check_arguments_output()
-                data.plot_summary(self.args.save_path, filename.split('.')[0])
+                data.plot_summary(plots_path, filename.split('.')[0])
 
             return summary_df, raw_df
 

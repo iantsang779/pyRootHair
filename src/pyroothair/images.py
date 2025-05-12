@@ -54,15 +54,16 @@ class ImageLoader():
         if self.adjust_channel:
             self.image = self.image[:,:,:3]
 
-    def setup_dir(self, img_dir:str, run_id:str) -> None:
+    def setup_dir(self, out_dir: str, run_id:str) -> None:
         """ 
-        Setup adjusted_images folder in the same directory as the input images folder.
+        Setup folders such that renamed images are in .../output/adjusted_images/batch_id
         """
 
-        input_path = Path(img_dir) # path of the input image directory
-        parent_dir = input_path.parent # get parent of the image directory
+        # input_path = Path(img_dir) # path of the input image directory
+        # parent_dir = input_path.parent # get parent of the image directory
 
-        adjusted_dir = parent_dir / 'adjusted_images'
+        output_path = Path(out_dir)
+        adjusted_dir = output_path / 'adjusted_images'
         adjusted_dir.mkdir(parents=True, exist_ok=True) # make dir to store adjusted images if it doesn't exist
         
         sub_dir = adjusted_dir / run_id

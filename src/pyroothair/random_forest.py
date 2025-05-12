@@ -9,9 +9,28 @@ from numpy.typing import NDArray
 from skimage.feature import multiscale_basic_features
 from sklearn.ensemble import RandomForestClassifier
 
+description = '''
+Thank you for using pyRootHair!
+-------------------------------
+
+Train a RFC segmentation model.
+
+Please read the tutorial documentation on the github repository: https://github.com/iantsang779/pyRootHair
+
+Basic command to train the model: pyroothair_train_rf_model --train_img /path/to/representative/training/image/example --train_mask /path/to/generated/binary/mask --model_output /path/to/output/rf_model/
+
+Basic command to deploy the model: pyroothair -i /path/to/input/image/folder -b batch_id -o /path/to/output/folder -p random_forest -rfc_model_path /path/to/rf_model.joblib
+
+Please cite the following paper when using pyRootHair: xxxxxx
+
+Author: Ian Tsang
+Contact: ian.tsang@niab.com
+''' 
+
 def parse_args():
     parser = argparse.ArgumentParser(prog='pyRootHair Random Forest Classifier',
-                                     description='Train a RFC segmentation model for non-GPU users.')
+                                     description=description,
+                                     formatter_class=argparse.RawDescriptionHelpFormatter)
     
     parser.add_argument('--train_img', help='Path to image to train the Random Forest Classifier on.', dest='train_img_path', type=str, required=True)
     parser.add_argument('--train_mask', help='Path to binary mask corresponding to the training image.', dest='train_mask_path', type=str, required=True)
@@ -93,7 +112,7 @@ class ForestTrainer():
 
     def train(self, sigma_min: int, sigma_max:int, n_estimators:int, max_depth:int, max_samples:int, model_path:str) -> None:
         """
-        Train a Random Forest Classsifier on a representative example of an image.
+        Train a Random Forest Classifier on a representative example of an image.
 
         https://github.com/scikit-image/scikit-image/blob/v0.25.2/skimage/future/trainable_segmentation.py#L90-L119
         """
