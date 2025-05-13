@@ -48,12 +48,37 @@ If you have used pyRootHair in your work, please cite the following paper: XXX
 ```bash
 conda create --no-default-packages -n pyroothair python # create fresh conda environment
 conda activate pyroothair # activate environment
-conda env config vars set nnUNet_raw='~/nnUNet_raw' nnUNet_preprocessed='~/nnUNet_preprocessed' nnUNet_results='~/nnUNet_results' # optional: set nnUNet environment variables to conda env to avoid warning when **running** pyRootHair. Ignore if you already have nnUNet paths setup
+```
 
+This step is optional, the sole purpose it serves is to remove the nnUNet warning messages that print whenever you run pyRootHair. You can either follow the step below to eliminate the warning messages, or see [nnUNet's documentation](https://github.com/MIC-DKFZ/nnUNet/blob/master/documentation/set_environment_variables.md) on how set variables to prevent the warning message.
+
+```bash
+# create activate and deactivate directories
+mkdir -p $CONDA_PREFIX/etc/conda/activate.d
+mkdir -p $CONDA_PREFIX/etc/conda/deactivate.d
+
+# activate.sh
+echo '#!/bin/sh' > $CONDA_PREFIX/etc/conda/activate.d/set_env_vars.sh
+echo 'export nnUNet_raw=$HOME/nnUNet_raw' >> $CONDA_PREFIX/etc/conda/activate.d/set_env_vars.sh
+echo 'export nnUNet_preprocessed=$HOME/nnUNet_preprocessed' >> $CONDA_PREFIX/etc/conda/activate.d/set_env_vars.sh
+echo 'export nnUNet_results=$HOME/nnUNet_results' >> $CONDA_PREFIX/etc/conda/activate.d/set_env_vars.sh
+
+# deactivate.sh
+echo '#!/bin/sh' > $CONDA_PREFIX/etc/conda/deactivate.d/unset_env_vars.sh
+echo 'unset nnUNet_raw' >> $CONDA_PREFIX/etc/conda/deactivate.d/unset_env_vars.sh
+echo 'unset nnUNet_preprocessed' >> $CONDA_PREFIX/etc/conda/deactivate.d/unset_env_vars.sh
+echo 'unset nnUNet_results' >> $CONDA_PREFIX/etc/conda/deactivate.d/unset_env_vars.sh
+
+# make scripts executable
+chmod +x $CONDA_PREFIX/etc/conda/activate.d/set_env_vars.sh
+chmod +x $CONDA_PREFIX/etc/conda/deactivate.d/unset_env_vars.sh
+
+# deactivate, then reactivate environment
+# nnUNet variables are now bound to this current conda environment
 conda deactivate
 conda activate pyroothair
-python -m pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ pyroothair
-```  
+```
+
 After installation, run `pyroothair`. You should be greeted with this output:
 
 ```
