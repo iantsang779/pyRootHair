@@ -1,5 +1,5 @@
 # pyRootHair
-![Alt text](demo/pyroothair_logo.svg)
+![Alt text](demo/pyroothair_logo_bgrmv.png)
 
 Welcome to the pyRootHair github repository! 
 
@@ -38,6 +38,7 @@ If you have used pyRootHair in your work, please cite the following paper: XXX
     - [Naming Images](#naming-images)
     - [Image Format](#image-format)
     - [Image Dimensions](#image-dimensions)
+    - [Model](#model)
   - [pyRootHair Workflow](#pyroothair-workflow)
 
 
@@ -49,7 +50,7 @@ conda create --no-default-packages -n pyroothair python # create fresh conda env
 conda activate pyroothair # activate environment
 conda env config vars set nnUNet_raw='~/nnUNet_raw' nnUNet_preprocessed='~/nnUNet_preprocessed' nnUNet_results='~/nnUNet_results' # optional: set nnUNet environment variables to conda env to avoid warning when **running** pyRootHair. Ignore if you already have nnUNet paths setup
 
-conda deactivate pyroothair
+conda deactivate
 conda activate pyroothair
 python -m pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ pyroothair
 ```  
@@ -73,7 +74,7 @@ pyRootHair: error: The following arguments are required when running pyRootHair 
 ## User Guide
 
 ### Default Pipeline
-The default segmentation pipeline in pyRootHair uses a CNN to perform image segmentation. As such, a GPU is required to maximize segmentation speed and performance. However, it is still possible to run the default segmentation pipeline without a GPU, if you do not have access to one. Segmentation performance will be **extremely** slow when using a CPU, and will very likely produce out-of-memory crashes unless your images are very small in size.
+The default segmentation pipeline in pyRootHair uses a CNN to perform image segmentation. As such, a GPU is required to maximize segmentation speed and performance. However, it is still possible to run the default segmentation pipeline without a GPU, if you do not have access to one. Segmentation performance will be **extremely** slow when using a CPU, and will very likely produce out-of-memory crashes unless your images are very small in size. The following section assumes you are running pyRootHair on a cluster with a GPU. Please check the sections on deploying a [random forest model](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#random-forest-pipeline) or [loading a single binary mask](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#single-mask-pipeline) if you don't have this available.
 
 The following arguments are required to run the standard segmentation pipeline:
 
@@ -179,10 +180,10 @@ If you wish, you can also run pyRootHair on a single, user generated binary mask
 To run pyRootHair on a single binary mask (with classes converted!):
 
 ```bash
-pyroothair --input_mask /path/to/converted/binary/mask -p single -o /path/to/output
+pyroothair --input_mask /path/to/converted/binary/mask -p single -b batch_id -o /path/to/output
 ```
 
-Note that you no longer require `-i` or `-b` when using this pipeline option.
+Note that you no longer require `-i` when using this pipeline option.
 
 ## Generating Binary Masks
 pyRootHair will accept binary masks of any images as long as they are arrays of 0s, 1s and 2s. It is recommended that you use the [ilastik](https://www.ilastik.org/) software to generate the masks, as it is simple and requires minimal expertise to use.
@@ -263,6 +264,9 @@ Images **must** be PNG files, as the model will not work with non-PNG file forma
 
 ### Image Dimensions
 Input images can be of varying shapes as long as they are relatively consistent in size and have only 3 channels (R,G,B). However, it is best to keep the image shapes relatively consistent. Larger images will take more time to segment, and require significantly more GPU VRAM. 
+
+## Model
+pyRootHair will automatically download the latest segmentation model (model.pth) from the [this](https://huggingface.co/iantsang779/pyroothair_v1/tree/main) repository when you first run the software. In subsequent runs, pyRootHair will compare the metadata of your local model installation against the metadata of the latest model on Hugging Face. If a mismatch is detected, the latest model is automatically downloaded. 
 
 ## pyRootHair Workflow
 
