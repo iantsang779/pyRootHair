@@ -45,11 +45,12 @@ If you have used pyRootHair in your work, please cite the following paper: XXX
 
 ## Installation instructions
 
+### Creating Conda Environment
 ```bash
 conda create --no-default-packages -n pyroothair python # create fresh conda environment
 conda activate pyroothair # activate environment
 ```
-
+### Setting Up Environment Variables
 This step is optional, the sole purpose it serves is to remove the nnUNet warning messages that print whenever you run pyRootHair. You can either follow the step below to eliminate the warning messages, or see [nnUNet's documentation](https://github.com/MIC-DKFZ/nnUNet/blob/master/documentation/set_environment_variables.md) on how set variables to prevent the warning message.
 
 ```bash
@@ -79,6 +80,13 @@ conda deactivate
 conda activate pyroothair
 ```
 
+### Installing pyRootHair
+
+Finally, pyRootHair can now be installed:
+
+```bash
+python -m pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ pyroothair
+```
 After installation, run `pyroothair`. You should be greeted with this output:
 
 ```
