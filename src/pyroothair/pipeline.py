@@ -57,15 +57,21 @@ class CheckArgs():
         """
         Check necessary arguments if processing a single binary mask
         """
+        missing_args = []
         if self.args.rfc_model_path:
             self.parser.error('Conflicting arguments: --input_mask was specified, which is not compatible with --rfc_model_path.')
         if self.args.img_dir:
-            self.parser.error('Conflicting arguments: -i/--input is for a directory containing a batch of images intended for GPU processing. Please use --input_mask instead for a single mask.')
-        if self.args.batch_id:
-            self.parser.error('Conflicting arguments: -b/--batch_id is not necessary, as you are processing a single input binary mask.')
+            self.parser.error('Conflicting arguments: -i/--input is for a directory containing a batch of images intended for batch processing. Please use --input_mask instead for a single mask.')
         if self.args.save_path is None:
-            self.parser.error('Missing argument for output: -o/--output')
-    
+            missing_args.append('-o/--output')
+        if self.args.batch_id is None:
+            missing_args.append('-b/--batch_id')
+        if self.args.input_mask is None:
+            missing_args.append('--input_mask')
+        if missing_args:
+            self.parser.error(f'The following arguments are required when using `-p single` for processing an individual mask: {missing_args}')
+        
+
     def convert_mask(self, mask: 'NDArray') -> 'NDArray':
 
         newmask = mask.copy()
