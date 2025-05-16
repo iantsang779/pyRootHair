@@ -92,7 +92,7 @@ def main():
         model.initialize_model(device)
         model.run_inference(args.save_path)
 
-        mask_path = Path(args.img_dir).parent/'masks'/args.batch_id
+        mask_path = Path(args.save_path)/'masks'/args.batch_id
 
         failed_images = []
 
@@ -140,6 +140,8 @@ def main():
                 if isinstance(s, pd.DataFrame):
                     summary = pd.concat([s,summary]) # add data from each image to the correct data frame
                     raw = pd.concat([r,raw])
+                else:  
+                    failed_images.append(init_mask)
 
         print(f'\n{summary}')
         print(f'\n{raw}')
@@ -159,6 +161,9 @@ def main():
     else:
         check_args.check_arguments_single_mask()
         
+        if not Path(args.save_path).exists():
+            Path(args.save_path).mkdir(parents=True, exist_ok=True)
+
         if '/' in args.input_mask: # get image name
             fname = args.input_mask.split('/')[-1].split('.')[0]
         else:
@@ -175,10 +180,11 @@ def main():
         print(f'\n{summary}')
         print(f'\n{raw}')
 
-        if not Path(args.save_path).exists():
-            Path(args.save_path).mkdir(parents=True, exist_ok=True)
-        summary.to_csv(os.path.join(args.save_path, f'{args.save_path}/{fname}_summary.csv'))
-        raw.to_csv(os.path.join(args.save_path, f'{args.save_path}/{fname}_raw.csv'))
+        data_path = Path(args.save_path) / 'data' / args.batch_id
+        data_path.mkdir(exist_ok=True, parents=True)
+        
+        summary.to_csv(os.path.join(data_path, f'{fname}_summary.csv'))
+        raw.to_csv(os.path.join(data_path, f'{fname}_raw.csv'))
 
         print(f'\nTotal runtime for image {fname}: {time.perf_counter()-start:.2f} seconds.')
         
