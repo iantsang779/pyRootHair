@@ -14,13 +14,16 @@ If you have used pyRootHair in your work, please cite the following paper: XXX
 - [pyRootHair](#pyroothair)
   - [Table of Contents](#table-of-contents)
   - [Installation instructions](#installation-instructions)
+    - [Creating Conda Environment](#creating-conda-environment)
+    - [Setting Up Environment Variables](#setting-up-environment-variables)
+    - [Installing pyRootHair](#installing-pyroothair)
   - [User Guide](#user-guide)
     - [Default Pipeline](#default-pipeline)
       - [Flags/Arguments](#flagsarguments)
         - [`-i/--input`](#-i--input-required---argument---string)
         - [`-o/--output`](#-o--output-required---argument---string)
-        - [`--batch_id/-b` ](#--batch_id-b-required---argument---stringintfloat)
-        - [`--conv`](#--conv-optional---argument---int)
+        - [`--batch_id/-b`](#--batch_id-b-required---argument---stringintfloat)
+        - [`--conv` ](#--conv-optional---argument---int)
         - [`--resolution`](#--resolution-optional---argument---int)
         - [`--frac`](#--frac-optional---argument---float)
         - [`--plot_segmentation`](#--plot_segmentation-optional---flag)
@@ -38,8 +41,9 @@ If you have used pyRootHair in your work, please cite the following paper: XXX
     - [Naming Images](#naming-images)
     - [Image Format](#image-format)
     - [Image Dimensions](#image-dimensions)
-    - [Model](#model)
+  - [Model](#model)
   - [pyRootHair Workflow](#pyroothair-workflow)
+
 
 
 
@@ -299,7 +303,7 @@ Images **must** be PNG files, as the model will not work with non-PNG file forma
 Input images can be of varying shapes as long as they are relatively consistent in size and have only 3 channels (R,G,B). However, it is best to keep the image shapes relatively consistent. Larger images will take more time to segment, and require significantly more GPU VRAM. 
 
 ## Model
-pyRootHair will automatically download the latest segmentation model (model.pth) from the [this](https://huggingface.co/iantsang779/pyroothair_v1/tree/main) repository when you first run the software. In subsequent runs, pyRootHair will compare the metadata of your local model installation against the metadata of the latest model on Hugging Face. If a mismatch is detected, the latest model is automatically downloaded. 
+pyRootHair will automatically download the latest segmentation model (model.pth), and all corresponding model JSON files from the [this](https://huggingface.co/iantsang779/pyroothair_v1/tree/main) repository when you first run `pyroothair`. In subsequent runs, pyRootHair will compare the metadata of your local model installation against the metadata of the latest model on Hugging Face. If a mismatch is detected, the latest model is automatically downloaded. 
 
 ## pyRootHair Workflow
 
