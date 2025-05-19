@@ -17,19 +17,20 @@ If you have used pyRootHair in your work, please cite the following paper: XXX
     - [Creating Conda Environment](#creating-conda-environment)
     - [Setting Up Environment Variables](#setting-up-environment-variables)
     - [Installing pyRootHair](#installing-pyroothair)
+  - [Uninstalling pyRootHair](#uninstalling-pyroothair)
   - [User Guide](#user-guide)
     - [Default Pipeline](#default-pipeline)
       - [Flags/Arguments](#flagsarguments)
-        - [`-i/--input`](#-i--input-required---argument---string)
-        - [`-o/--output`](#-o--output-required---argument---string)
-        - [`--batch_id/-b`](#--batch_id-b-required---argument---stringintfloat)
-        - [`--conv` ](#--conv-optional---argument---int)
-        - [`--resolution`](#--resolution-optional---argument---int)
-        - [`--frac`](#--frac-optional---argument---float)
-        - [`--plot_segmentation`](#--plot_segmentation-optional---flag)
-        - [`--plot_transformation`](#--plot_transformation-optional---flag)
-        - [`--plot_summary`](#--plot_summary-optional---flag)
-        - [`-p/--pipeline`](#-p--pipeline-optional---argument---str)
+        - [`-i/--input`](#-i--input)
+        - [`-o/--output`](#-o--output)
+        - [`--batch_id/-b`](#--batch_id-b)
+        - [`--conv`](#--conv)
+        - [`--resolution`](#--resolution)
+        - [`--frac`](#--frac)
+        - [`--plot_segmentation`](#--plot_segmentation)
+        - [`--plot_transformation`](#--plot_transformation)
+        - [`--plot_summary`](#--plot_summary)
+        - [`-p/--pipeline`](#-p--pipeline)
         - [A Full Example](#a-full-example)
     - [Random Forest Pipeline](#random-forest-pipeline)
       - [Training the Random Forest Model](#training-the-random-forest-model)
@@ -42,10 +43,7 @@ If you have used pyRootHair in your work, please cite the following paper: XXX
     - [Image Format](#image-format)
     - [Image Dimensions](#image-dimensions)
   - [Model](#model)
-  - [pyRootHair Workflow](#pyroothair-workflow)
-
-
-
+  - [Workflow](#workflow)
 
 ## Installation instructions
 
@@ -55,7 +53,7 @@ conda create --no-default-packages -n pyroothair python # create fresh conda env
 conda activate pyroothair # activate environment
 ```
 ### Setting Up Environment Variables
-This step is optional, the sole purpose it serves is to remove the nnUNet warning messages that print whenever you run pyRootHair. You can either follow the step below to eliminate the warning messages, or see [nnUNet's documentation](https://github.com/MIC-DKFZ/nnUNet/blob/master/documentation/set_environment_variables.md) on how set variables to prevent the warning message.
+This step is optional, the sole purpose it serves is to remove the nnUNet warning messages that print whenever you run pyRootHair. You can either follow the step below to eliminate the warning messages, or see [nnUNet's documentation](https://github.com/MIC-DKFZ/nnUNet/blob/master/documentation/set_environment_variables.md) on how set variables to prevent the warning message, or ignore this step entirely if you don't care about the warning messages each time you run pyRootHair.
 
 ```bash
 # create activate and deactivate directories
@@ -89,7 +87,7 @@ conda activate pyroothair
 Finally, pyRootHair can now be installed:
 
 ```bash
-python -m pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ pyroothair
+python -m pip install pyroothair
 ```
 After installation, run `pyroothair`. You should be greeted with this output:
 
@@ -105,7 +103,25 @@ usage: pyRootHair [-h] [-i [IMG_DIR]] [-b [BATCH_ID]] [-p [{cnn,random_forest,si
                   [--conv [CONV]] [--frac [FRAC]] [-o SAVE_PATH] [--plot_segmentation] [--plot_transformation]
                   [--plot_summary] [--rfc_model_path RFC_MODEL_PATH]
                   [--sigma_min SIGMA_MIN] [--sigma_max SIGMA_MAX] [--input_mask [INPUT_MASK]]
-pyRootHair: error: The following arguments are required when running pyRootHair using the main pipeline: ['-i/--input', '-b/--batch_id']
+pyRootHair: error: The following arguments are required when running pyRootHair using the main pipeline: ['-i/--input', '-b/--batch_id', '-o/--output']
+```
+
+## Uninstalling pyRootHair
+
+```bash
+conda activate pyroothair
+pip uninstall pyroothair  
+```
+This will fully uninstall pyRootHair. If you want to delete the segmentation model, this will delete the 'model' directory in the source installation.
+
+```bash
+rm $CONDA_PREFIX/lib/python3.13/site-packages/pyroothair/model
+```
+You can now remove the conda environment:
+
+```bash
+conda deactivate
+conda remove -n pyroothair --all
 ```
 
 ## User Guide
@@ -116,14 +132,14 @@ The default segmentation pipeline in pyRootHair uses a CNN to perform image segm
 The following arguments are required to run the standard segmentation pipeline:
 
 ```bash
--i/--input: the filepath to the directory containing the images you want to process  
--b/--batch_id: a unique ID associated with each batch of images you are processing per run. Can be species/genotype name, or date, or anything that is easily identifiable for you
--o/--output: filepath to location to store data, plots and segmentation masks
+-i/--input: The filepath to the directory containing the images you want to process  
+-b/--batch_id: A unique ID associated with each batch of images you are processing per run. Can be species/genotype name, or date, or anything that is easily identifiable for you
+-o/--output: The filepath to location to store data, plots and segmentation masks. Directory will be automatically created if it does not already exist.
 ```
-Request a GPU on your cluster. On a SLURM system, this requests a single GPU with 30GB VRAM:
+If GPUs are available on your cluster, this command this requests a single GPU with 10GB VRAM on a SLURM system:
 
 ```bash
-srsh --partition=gpu --gpus=1 --mem=30G
+srsh --partition=gpu --gpus=1 --mem=10G
 ```
 
 To verify a GPU has been correctly requested, run `nvidia-smi`. You should get some information about the GPU printed to your screen.
@@ -133,14 +149,19 @@ A basic command to run pyRootHair is as follows:
 ```bash
 pyroothair -i ~/Images/Wheat/Brompton/ -b Brompton -o ~/Output/
 ```
+In this example, all images in the `~/Images/Wheat/Brompton` will be copied to `~/Output/adjusted_images/Brompton` and renamed for inference. Inference will then be run on these renamed images, and masks will be saved to `~/Output/masks/Brompton`. The value provided to `-b/--batch_id` is used to name the sub folder in Output, which is 'Brompton' in this case. After inference, pyRootHair will post-process the binary masks, and compute traits. The output data will be stored in `~/Output/data`.
+
+
 #### Flags/Arguments
 
-To view options/help messages for each flag, enter `pyroothair -h`
+A list of all available arguments can be found using `pyroothair -h`
 
-##### `-i/--input` (REQUIRED - ARGUMENT - STRING)
+##### `-i/--input` 
+*REQUIRED - ARGUMENT - STRING*  
 Filepath containing your input images. You can split your images into folders depending on what makes sense for your inputs. Images can be split by genotype, species, condition, treatment, timestamp etc. Required if using the main pipeline or the random forest pipeline. See [more](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#input-images) about image requirements.
 
-##### `-o/--output` (REQUIRED - ARGUMENT - STRING)
+##### `-o/--output` 
+*REQUIRED - ARGUMENT - STRING*  
 Filepath to store outputs. By default, only the raw and summary data tables will be saved to this path. Any additional outputs (e.g. with `--plot_segmentation`) will be stored here as well. Required if using the main pipeline or the random forest pipeline. The structure of the output directory is as follows:
 
 - `adjusted_images`: A copy of the raw input images provided with `-i`, but images are renamed with a suffix  
@@ -148,28 +169,36 @@ Filepath to store outputs. By default, only the raw and summary data tables will
 - `plots`: Location of stored plots for `--plot_segmentation`, `--plot_summary` and `--plot_transformation`.
 - `data`: Location of stored data tables for each batch of images, including summary and raw tables. See [this](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#data-output) section for more information on the summary data tables.
 
-##### `--batch_id/-b` (REQUIRED - ARGUMENT - STRING/INT/FLOAT)
+##### `--batch_id/-b` 
+*REQUIRED - ARGUMENT - STRING/INT/FLOAT*  
 In the above example, the renamed images will be stored in `~/Output/adjusted_images/Brompton`, and segmentation masks will be stored in `~/Output/masks/Brompton`. The `--batch_id/-b` argument assigns a unique ID to the entire batch of images given by `-i`. This could be an ID for a particular genotype (e.g. Brompton, a wheat variety), or a timestamp (e.g. each batch of images are from a specific timepoint). You must assign a unique ID for each run of new images! Required if using the main pipeline or the random forest pipeline.
 
-##### `--conv` (OPTIONAL - ARGUMENT - INT)
+##### `--conv` 
+*OPTIONAL - ARGUMENT - INT*  
 You must ensure that all input images for each batch were taken using at the same magnification setting. You will need to adjust the pixel to mm conversion factor for your input images, which you can determine from measuring a scale bar on your images using the FIJI (ImageJ) 'Analyze' > 'Set Scale' option. You must set the number of pixels per mm using `--conv` each time you run pyRootHair. If you have images taken at different magnification settings, you will need to split them into separate batches, and manually adjust the value of `--conv`.
 
-##### `--resolution` (OPTIONAL - ARGUMENT - INT)
+##### `--resolution` 
+*OPTIONAL - ARGUMENT - INT*  
 pyRootHair computes a sliding window down the root, and takes measurement from bins. Using `--resolution`, you can tweak the bin size (in pixels) of the sliding window. For example, if your input images have the shape 800 (width) x 1500 (height), there will be 75 data points ($\frac{1500}{20} = 75$) for RHL and RHD for each side root hair segment using the default `--resolution` value of 20 pixels. 
 
-##### `--frac` (OPTIONAL - ARGUMENT - FLOAT)
+##### `--frac` 
+*OPTIONAL - ARGUMENT - FLOAT*  
 Controls the degree of LOWESS smoothing for the lines used to model average RHL and RHD for each image. Since measurements from each bin in the sliding window is noisy, a smoothed line over these points reduces the effect of variation between bin measurements. A smaller value for `--frac` decreases the smoothing effect, i.e. the line will better fit the RHL/RHD data for each bin, but will fluctuate significantly. A larger value for `--frac` increases the smoothing effect, i.e the line will be much smoother through the RHL/RHD data for each bin, but be a worse fit. See [this](https://github.com/iantsang779/pyRootHair/blob/main/workflow.md#summary-plots) for a visual representation of the regression lines. Value must be a floating point number (e.g. 0.15) between 0 and 1. The default value is recommended. 
 
-##### `--plot_segmentation` (OPTIONAL - FLAG)
+##### `--plot_segmentation` 
+*OPTIONAL - FLAG*  
 Toggle plotting of segmented masks for each image. For each input image, `--plot_segmentation` saves the straightened mask, a mask of just the root hair segments, and the cropped root hair segments. Masks are saved in filepath specified in `--output` under `output/plots`
 
-##### `--plot_transformation` (OPTIONAL - FLAG)
+##### `--plot_transformation` 
+*OPTIONAL - FLAG*  
 Toggle plotting of co-ordinates illustrating how each root is warped and straightened. Can be helpful to check if an image has been poorly warped. Plots are saved in filepath specified in `--output` under `output/plots`
 
-##### `--plot_summary` (OPTIONAL - FLAG)
+##### `--plot_summary` 
+*OPTIONAL - FLAG*   
 Toggle plotting of summary plots describing RHL and RHD for each input image. Plots are saved in filepath specified in `--output` under `output/plots`
 
-##### `-p/--pipeline` (OPTIONAL - ARGUMENT - STR)
+##### `-p/--pipeline` 
+*OPTIONAL - ARGUMENT - STR*  
 Specify which pyRootHair pipeline to run. By default, the main pipeline (`-p cnn`) uses a CNN to segment input images, with or without a GPU (GPU preferred, of course!). If you wish to use a random forest model instead to perform image segmentation, you must specify `-p random_forest`. If you wish to process a single input binary mask with pyRootHair, you must specify `-p single`. 
 
 ##### A Full Example
