@@ -115,7 +115,7 @@ pip uninstall pyroothair
 This will fully uninstall pyRootHair. If you want to delete the segmentation model, this will delete the 'model' directory in the source installation.
 
 ```bash
-rm $CONDA_PREFIX/lib/python3.13/site-packages/pyroothair/model
+rm -r $CONDA_PREFIX/lib/python3.13/site-packages/pyroothair/model
 ```
 You can now remove the conda environment:
 
@@ -131,10 +131,10 @@ The default segmentation pipeline in pyRootHair uses a CNN to perform image segm
 
 The following arguments are required to run the standard segmentation pipeline:
 
-```bash
--i/--input: The filepath to the directory containing the images you want to process  
--b/--batch_id: A unique ID associated with each batch of images you are processing per run. Can be species/genotype name, or date, or anything that is easily identifiable for you
--o/--output: The filepath to location to store data, plots and segmentation masks. Directory will be automatically created if it does not already exist.
+```
+-i/--input: The filepath to the directory containing the images you want to process. MUST be a folder of images!
+-b/--batch_id: A unique ID associated with each batch of images you are processing per run. Can be species/genotype name, or date, or anything that is easily identifiable by you
+-o/--output: The filepath to location to store data, plots and segmentation masks. Directory will be automatically created should it not already exist.
 ```
 If GPUs are available on your cluster, this command this requests a single GPU with 10GB VRAM on a SLURM system:
 
@@ -144,12 +144,12 @@ srsh --partition=gpu --gpus=1 --mem=10G
 
 To verify a GPU has been correctly requested, run `nvidia-smi`. You should get some information about the GPU printed to your screen.
 
-A basic command to run pyRootHair is as follows:
+A basic command example to run pyRootHair is as follows:
 
 ```bash
 pyroothair -i ~/Images/Wheat/Brompton/ -b Brompton -o ~/Output/
 ```
-In this example, all images in the `~/Images/Wheat/Brompton` will be copied to `~/Output/adjusted_images/Brompton` and renamed for inference. Inference will then be run on these renamed images, and masks will be saved to `~/Output/masks/Brompton`. The value provided to `-b/--batch_id` is used to name the sub folder in Output, which is 'Brompton' in this case. After inference, pyRootHair will post-process the binary masks, and compute traits. The output data will be stored in `~/Output/data`.
+In this example, all images in the `~/Images/Wheat/Brompton` will be copied to `~/Output/adjusted_images/Brompton` and renamed for inference. Inference will then be run on these renamed images, and masks will be saved to `~/Output/masks/Brompton`. The value provided to `-b/--batch_id` is used to name the sub folder in Output, which is 'Brompton' in this case. After inference, pyRootHair will post-process the binary masks, and compute traits. The output data will be stored in `~/Output/data/Brompton`.
 
 
 #### Flags/Arguments
@@ -158,7 +158,7 @@ A list of all available arguments can be found using `pyroothair -h`
 
 ##### `-i/--input` 
 *REQUIRED - ARGUMENT - STRING*  
-Filepath containing your input images. You can split your images into folders depending on what makes sense for your inputs. Images can be split by genotype, species, condition, treatment, timestamp etc. Required if using the main pipeline or the random forest pipeline. See [more](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#input-images) about image requirements.
+Filepath to directory/folder containing your input images. You can split your images into folders depending on what makes sense for your inputs. Images can be split by genotype, species, condition, treatment, timestamp etc. Required if using the main pipeline or the random forest pipeline. See [more](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#input-images) about image requirements.
 
 ##### `-o/--output` 
 *REQUIRED - ARGUMENT - STRING*  
