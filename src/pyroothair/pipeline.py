@@ -94,7 +94,8 @@ class Pipeline(CheckArgs):
         if self.args.save_path:
             if not Path(self.args.save_path).exists():
                     Path(self.args.save_path).mkdir(parents=True, exist_ok=True)
-        
+        self.plots_path = Path(self.args.save_path) / 'plots' / self.args.batch_id
+        self.plots_path.mkdir(exist_ok=True, parents=True)
 
     def run_pipeline(self, init_mask: 'NDArray', filename:'str') -> tuple[pd.DataFrame, pd.DataFrame]:
         """
@@ -137,24 +138,25 @@ class Pipeline(CheckArgs):
     
             summary_df, raw_df = data.generate_table(filename.split('.')[0], self.args.batch_id, root_thickness, self.args.conv)
 
-            plots_path = Path(self.args.save_path) / 'plots' / self.args.batch_id
-            plots_path.mkdir(exist_ok=True, parents=True)
+            if self.args.show_summary:
+                self.check_args.check_arguments_output()
+                data.plot_summary(self.plots_path, filename.split('.')[0])
 
             if self.args.show_transformation:
                 self.check_args.check_arguments_output()
-                skeleton.visualize_transformation(rotated_mask, plots_path, filename.split('.')[0]) 
+                skeleton.visualize_transformation(rotated_mask, self.plots_path, filename.split('.')[0]) 
 
             if self.args.show_segmentation:
                 self.check_args.check_arguments_output()
-                plt.imsave(os.path.join(plots_path,f'{filename.split('.')[0]}_mask.png'), straight_mask)
-                plt.imsave(os.path.join(plots_path,f'{filename.split('.')[0]}_root_hair_mask.png'), root_hairs)
-                plt.imsave(os.path.join(plots_path,f'{filename.split('.')[0]}_root_hair_mask_cropped.png'), root_hairs_cropped)
-
-            if self.args.show_summary:
-                self.check_args.check_arguments_output()
-                data.plot_summary(plots_path, filename.split('.')[0])
+                plt.imsave(os.path.join(self.plots_path,f'{filename.split('.')[0]}_mask.png'), straight_mask)
+                plt.imsave(os.path.join(self.plots_path,f'{filename.split('.')[0]}_root_hair_mask_cropped.png'), root_hairs_cropped)
 
             return summary_df, raw_df
 
         else:
+            if self.args.show_segmentation:
+                self.check_args.check_arguments_output()
+                plt.imsave(os.path.join(self.plots_path,f'{filename.split('.')[0]}_mask.png'), straight_mask)
+                plt.imsave(os.path.join(self.plots_path,f'{filename.split('.')[0]}_root_hair_mask.png'), root_hairs)
+
             return [], []
