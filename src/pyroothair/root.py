@@ -192,11 +192,15 @@ class Root(Skeleton):
             cropped_rh_mask = root_hair_mask[crop_start:,:] # crop the final root hair section to the start of the shorter root hair segment for uniform calculation
             
             coords = get_region_coords(cropped_rh_mask) # re-calculate coordinates of cropped image
-            
-            crop_end = min(np.max(coords[0][:,0]), np.max(coords[1][:,0])) # crop ends of root hair sections
-            final_rh_mask = cropped_rh_mask[:crop_end, :]
 
-            return final_rh_mask
+            if len(coords) != 2:
+                self.error = True # set error to true if root hair segments are not split properly at the top after cropping
+                return np.empty([1,1])
+            else:
+                crop_end = min(np.max(coords[0][:,0]), np.max(coords[1][:,0])) # crop ends of root hair sections
+                final_rh_mask = cropped_rh_mask[:crop_end, :]
+
+                return final_rh_mask
 
         else: # if there are not 2 sections, e.g if the tip wasn't split properly
 
