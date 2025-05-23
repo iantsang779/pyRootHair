@@ -81,7 +81,7 @@ def main():
         
         device = torch.device('cuda', 0) if model.gpu_exists else torch.device('cpu')
         
-        for img in os.listdir(args.img_dir): # loop through all input images, modify and save with nnUNet prefix
+        for img in sorted(os.listdir(args.img_dir)): # loop through all input images, modify and save with nnUNet prefix
             im_loader = ImageLoader()
             im_loader.read_images(args.img_dir, img)
             im_loader.resize_image()
@@ -96,7 +96,7 @@ def main():
 
         failed_images = []
 
-        for mask_file in os.listdir(mask_path): # loop through each predicted mask
+        for mask_file in sorted(os.listdir(mask_path)): # loop through each predicted mask
             if mask_file.endswith('.png'):
                 main = Pipeline(check_args)
                 init_mask = iio.imread(os.path.join(mask_path, mask_file))
@@ -131,7 +131,7 @@ def main():
                 Path(args.save_path).mkdir(parents=True, exist_ok=True)
         failed_images = []
 
-        for img in os.listdir(args.img_dir): 
+        for img in sorted(os.listdir(args.img_dir)): 
             if img.endswith('.png'):
                 mask = rf.predict(args.img_dir, img, args.sigma_min, args.sigma_max, model)
                 init_mask = rf.reconvert_mask_class(mask) # check mask classes are 0, 1, 2
