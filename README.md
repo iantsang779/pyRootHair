@@ -131,7 +131,7 @@ conda remove -n pyroothair --all
 To quickly check whether pyRootHair is working after installation, the `pyroothair_run_demo` command will run pyRootHair on set of five wheat (cultivar: Gladiator) images that have been automatically pre-installed:
 
 ```bash
-pyroothair -b demo -o demo 
+pyroothair_run_demo -b demo -o demo 
 ```
 Data will be saved in the `demo` folder provided to `-o/--output`. For more flag and argument options, please read the [user guide](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#user-guide). Note that you do not need `-i/--input` for `pyroothair_run_demo`, as the input images are already pre-loaded during installation!
 
