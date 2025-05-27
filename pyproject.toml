@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools >= 77.0.3"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyRootHair"
+version = "0.0.10"
+authors = [
+  { name="Ian Tsang", email="ian.tsang@niab.com" },
+]
+maintainers = [
+  { name="Ian Tsang", email="ian.tsang@niab.com" },
+] 
+
+description = "pyRootHair, a python package for automated extraction of root hair traits from images."
+readme = "README.md"
+
+dependencies = [
+    "numpy>=2.0.2",
+    "pandas>=2.2.3",
+    "matplotlib>=3.9.0",
+    "imageio>=2.36.1",
+    "scikit-image>=0.24.0",
+    "scipy>=1.14.1",
+    "statsmodels>=0.14.4",
+    "scikit-learn>=1.5.2",
+    "python-magic>=0.4.27",
+    "nnUnetv2>=2.5.1",
+    "torch>=2.5.1"
+]
+
+requires-python = ">=3.12"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: POSIX :: Linux",
+]
+license = "MIT"
+license-files = ["LICENSE*"]
+
+
+[project.urls]
+Homepage = "https://github.com/iantsang779/pyRootHair"
+Issues = "https://github.com/iantsang779/pyRootHair/issues"
+
+[project.scripts]
+pyroothair = "pyroothair.main:main"
+pyroothair_convert_mask = "pyroothair.mask_converter:main"
+pyroothair_train_rf_model = "pyroothair.random_forest:main"
+pyroothair_run_demo = "pyroothair.demo:main"
+
+[tool.setuptools.package-data]
+pyroothair = ["demo_images/*"]
