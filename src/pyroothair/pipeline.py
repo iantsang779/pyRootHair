@@ -10,6 +10,9 @@ from pyroothair.root import Root
 from pyroothair.skeleton import Skeleton
 
 class CheckArgs():
+    """
+    Check command line arguments for various pipeline configurations.
+    """
     def __init__(self, args, parser) -> None:
         self.args = args
         self.parser = parser
@@ -70,10 +73,25 @@ class CheckArgs():
             missing_args.append('--input_mask')
         if missing_args:
             self.parser.error(f'The following arguments are required when using `-p single` for processing an individual mask: {missing_args}')
+    
+    def check_argument_demo(self) -> None:
+        """
+        Check necessary arguments for pyroothair_run_demo
+        """
+        missing_args = []
+        
+        if self.args.batch_id is None:
+            missing_args.append('-b/--batch_id')
+        if self.args.save_path is None:
+            missing_args.append('-o/--output')
+        if missing_args:
+            self.parser.error(f'The following arguments are required when running pyroothair_run_demo: {missing_args}')
         
 
     def convert_mask(self, mask: 'NDArray') -> 'NDArray':
-
+        """
+        Convert pixel classes in an ilastik generated segmentation mask
+        """
         newmask = mask.copy()
 
         if not np.array_equal(np.unique(mask), [0,1,2]):
@@ -86,7 +104,9 @@ class CheckArgs():
         return newmask
 
 class Pipeline(CheckArgs):
-    
+    """
+    Run core pipeline to mine traits from binary masks generated from inference
+    """
     def __init__(self, check_args) -> None:
         self.check_args = check_args
         self.args = check_args.args

@@ -46,9 +46,9 @@ def parse_args():
     parser.add_argument('--resolution', help='Bin size defining measurement intervals along each root hair segment. Default = 20 px', type=int, nargs='?', dest='height_bin_size', default=20)
     parser.add_argument('--conv', help='The number of pixels corresponding to 1mm in the original input images. Default = 102 px', nargs='?', type=int, dest='conv', default=102)
     parser.add_argument('--frac', help='Degree of smoothing of lowess regression line to model average root hair length per input image. Value must be between 0 and 1. See statsmodels.nonparametric.smoothers_lowess.lowess for more details. Default = 0.1', type=float, nargs='?', dest='frac', default=0.1)
-    parser.add_argument('--plot_segmentation', help='toggle plotting of predicted binary masks for each image (straightened mask, root hair segments, and cropped root hair segments). Must provide a valid filepath for --output', dest='show_segmentation', action='store_true')
-    parser.add_argument('--plot_transformation', help='toggle plotting of co-ordinates illustrating how each input image is warped and straightened. Useful for debugging any strangely warped masks. Must provide a valid filepath for --output', dest='show_transformation', action='store_true')
-    parser.add_argument('--plot_summary', help='toggle plotting of summary plots describing RHL and RHD for each image. Must provide a valid filepath for --output', dest='show_summary', action='store_true')
+    parser.add_argument('--plot_segmentation', help='Toggle plotting of predicted binary masks for each image (straightened mask and root hair segments). Must provide a valid filepath for --output', dest='show_segmentation', action='store_true')
+    parser.add_argument('--plot_transformation', help='Toggle plotting of co-ordinates illustrating how each input image is warped and straightened. Useful for debugging any strangely warped masks. Must provide a valid filepath for --output', dest='show_transformation', action='store_true')
+    parser.add_argument('--plot_summary', help='Toggle plotting of summary plots describing RHL and RHD for each image. Must provide a valid filepath for --output', dest='show_summary', action='store_true')
 
     # Random Forest Pipeline Arguments
     parser.add_argument('--rfc_model_path', help='Filepath to trained Random Forest Classifier model.', type=str, dest='rfc_model_path')

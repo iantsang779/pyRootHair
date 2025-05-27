@@ -194,7 +194,7 @@ class GetParams(Root):
                                    'Total RHD (mm2)': [sum(self.rh_area_list_1) + sum(self.rh_area_list_2)],
                                    'Max RHL Delta (mm)': [self.len_d],
                                    'Max RHL Delta Pos (mm)': [self.len_pos],
-                                   'Max RHD Delta (mm)': [self.area_d],
+                                   'Max RHD Delta (mm2)': [self.area_d],
                                    'Max RHD Delta Pos (mm)': [self.area_pos],
                                    'Elongation Zone Distance (mm)': [self.max_x - self.min_x],
                                    'Elongation Zone Start (mm)': [self.min_x],
