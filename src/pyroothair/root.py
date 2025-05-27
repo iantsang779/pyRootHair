@@ -132,11 +132,11 @@ class Root(Skeleton):
         padding = int(self.split_root // 2.65)
 
         if self.found_tip:
-            root_tip_y_max, root_tip_y_min = self.root_tip_y + padding*2, self.root_tip_y - padding*2
+            root_tip_y_max, root_tip_y_min = self.root_tip_y + padding*5, self.root_tip_y - padding*2
             root_tip_x_max, root_tip_x_min = self.root_tip_x + padding, self.root_tip_x - int(padding*0.7)
 
             root_start_y_max, root_start_y_min = self.root_start_y + padding*2, self.root_start_y - padding*2
-            root_start_x_max, root_start_x_min = self.root_start_x + padding//2, self.root_start_x - int(padding//3) 
+            root_start_x_max, root_start_x_min = self.root_start_x, self.root_start_x - int(padding//3) 
             
             if root_start_y_min <= 0:
                 root_start_y_min = 0
