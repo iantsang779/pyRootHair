@@ -18,6 +18,7 @@ If you have used pyRootHair in your work, please cite the following paper: XXX
     - [Setting Up Environment Variables](#setting-up-environment-variables)
     - [Installing pyRootHair](#installing-pyroothair)
   - [Uninstalling pyRootHair](#uninstalling-pyroothair)
+  - [Quick Demo](#quick-demo)
   - [User Guide](#user-guide)
     - [Default Pipeline](#default-pipeline)
       - [Flags/Arguments](#flagsarguments)
@@ -44,6 +45,7 @@ If you have used pyRootHair in your work, please cite the following paper: XXX
     - [Image Dimensions](#image-dimensions)
   - [Model](#model)
   - [Workflow](#workflow)
+
 
 ## Installation instructions
 
@@ -124,6 +126,15 @@ conda deactivate
 conda remove -n pyroothair --all
 ```
 
+## Quick Demo
+
+To quickly check whether pyRootHair is working after installation, the `pyroothair_run_demo` command will run pyRootHair on set of five wheat (cultivar: Gladiator) images that have been automatically pre-installed:
+
+```bash
+pyroothair -b demo -o demo 
+```
+Data will be saved in the `demo` folder provided to `-o/--output`. For more flag and argument options, please read the [user guide](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#user-guide). Note that you do not need `-i/--input` for `pyroothair_run_demo`, as the input images are already pre-loaded during installation!
+
 ## User Guide
 
 ### Default Pipeline
@@ -187,7 +198,7 @@ Controls the degree of LOWESS smoothing for the lines used to model average RHL 
 
 ##### `--plot_segmentation` 
 *OPTIONAL - FLAG*  
-Toggle plotting of segmented masks for each image. For each input image, `--plot_segmentation` saves the straightened mask, a mask of just the root hair segments, and the cropped root hair segments. Masks are saved in filepath specified in `--output` under `output/plots`
+Toggle plotting of segmented masks for each image. For each input image, `--plot_segmentation` saves the straightened mask,  abd a mask of just the root hair segments. Masks are saved in filepath specified in `--output` under `output/plots`
 
 ##### `--plot_transformation` 
 *OPTIONAL - FLAG*  
