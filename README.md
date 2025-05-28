@@ -13,11 +13,17 @@ If you have used pyRootHair in your work, please cite the following paper: XXX
 ## Table of Contents
 - [pyRootHair](#pyroothair)
   - [Table of Contents](#table-of-contents)
-  - [Installation instructions](#installation-instructions)
+  - [Installation Instructions (Linux/MacOS)](#installation-instructions-linuxmacos)
     - [Creating Conda Environment](#creating-conda-environment)
     - [Setting Up Environment Variables](#setting-up-environment-variables)
     - [Installing pyRootHair](#installing-pyroothair)
-  - [Uninstalling pyRootHair](#uninstalling-pyroothair)
+    - [Uninstalling pyRootHair](#uninstalling-pyroothair)
+  - [Installation Instructions (Windows)](#installation-instructions-windows)
+    - [Install Miniconda](#install-miniconda)
+    - [Setting Environment Variables](#setting-environment-variables)
+    - [Installing pyTorch from source](#installing-pytorch-from-source)
+    - [Installing pyRootHair](#installing-pyroothair-1)
+    - [Uninstalling pyRootHair](#uninstalling-pyroothair-1)
   - [Quick Demo](#quick-demo)
   - [User Guide](#user-guide)
     - [Default Pipeline](#default-pipeline)
@@ -46,8 +52,11 @@ If you have used pyRootHair in your work, please cite the following paper: XXX
   - [Model](#model)
   - [Workflow](#workflow)
 
+## Installation Instructions (Linux/MacOS)
 
-## Installation instructions
+The following section assumes you are installing pyRootHair on a HPC/cluster with conda and CUDA already installed. 
+
+If you do not have CUDA installed, please see the [pyTorch documentation](https://pytorch.org/get-started/locally/) for instructions on how to install pytorch with CUDA support.
 
 ### Creating Conda Environment
 ```bash
@@ -91,7 +100,7 @@ Finally, pyRootHair can now be installed:
 ```bash
 python -m pip install pyroothair
 ```
-After installation, run `pyroothair`. You should be greeted with this output:
+After installation, run `pyroothair`. You should be greeted with this output (if you have not requested a GPU):
 
 ```
 #########################################
@@ -108,7 +117,7 @@ usage: pyRootHair [-h] [-i [IMG_DIR]] [-b [BATCH_ID]] [-p [{cnn,random_forest,si
 pyRootHair: error: The following arguments are required when running pyRootHair using the main pipeline: ['-i/--input', '-b/--batch_id', '-o/--output']
 ```
 
-## Uninstalling pyRootHair
+### Uninstalling pyRootHair
 
 ```bash
 conda activate pyroothair
@@ -125,7 +134,54 @@ You can now remove the conda environment:
 conda deactivate
 conda remove -n pyroothair --all
 ```
+## Installation Instructions (Windows)
+pyRootHair was primarily written for Linux OS. Installation and functionality should still work on Windows 11, but please note testing has been limited.
 
+### Install Miniconda
+
+Please see the [official instructions](https://www.anaconda.com/docs/getting-started/miniconda/install#windows-installation) from miniconda's website on installing miniconda. 
+
+Once installed, open 'Anaconda Prompt', which can be located by searching in the task bar.
+
+### Setting Environment Variables
+
+Please see the [official documentation](https://github.com/MIC-DKFZ/nnUNet/blob/master/documentation/set_environment_variables.md#windows) from nnUNet on how to set environment variables for Windows. This is an optional step which removes the nnUNet warning messages each time you run pyRootHair.
+
+### Installing pyTorch from source
+If you have a GPU and do not have CUDA installed, please follow [these instructions](https://pytorch.org/get-started/locally/) to install pyTorch with CUDA support.
+
+### Installing pyRootHair
+
+In Anaconda Prompt, enter the following:
+
+```bash
+conda create --no-default-packages -n pyroothair python # create fresh conda environment
+conda activate pyroothair 
+```
+
+Next, we can install pyRootHair:
+
+`python -m pip install pyroothair`
+
+After installation, install the `python-magic-bin` package, which is specific to Windows, and thus has not been included in the build dependencies:
+
+`python -m pip install python-magic-bin`
+
+### Uninstalling pyRootHair
+
+```bash
+conda activate pyroothair
+pip uninstall pyroothair  
+```
+To remove the model, remove the files in: `C:\Users\USER\AppData\Local\Programs\Python\Python313\Lib\site-packages\pyroothair\model`
+
+```
+You can now remove the conda environment:
+
+```bash
+conda deactivate
+conda remove -n pyroothair --all
+```
 ## Quick Demo
 
 To quickly check whether pyRootHair is working after installation, the `pyroothair_run_demo` command will run pyRootHair on set of five wheat (cultivar: Gladiator) images that have been automatically pre-installed:
