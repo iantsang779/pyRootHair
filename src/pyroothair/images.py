@@ -76,7 +76,10 @@ class ImageLoader():
         Convert image from float64 to uint8 and save image as XXX_resized.png
         Save images with _0000.png suffix for nnUNet 
         """
-        img_name = self.image_name.split('.')[0]
+
+        x = self.image_name.split('.')
+
+        img_name = f'{'_'.join(x[:-1])}.{x[-1]}' if len(x) > 2 else x[0] # handle if user has '.' separating words in image name
 
         if self.adjust_height or self.adjust_channel:
             
