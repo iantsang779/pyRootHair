@@ -96,8 +96,7 @@ class nnUNetv2():
                         raise RuntimeError(f'\n...Download failed and no local installation of {url} can be found...')
                     print(f'\n...Using existing file: {url}...')
         
-        if download_model:
-            print(f'\n...Updated pyRootHair model and JSON files have been successfully installed from Huggingface in: {self.model_path}...')
+                print(f'\n...Updated pyRootHair model and JSON files have been successfully installed from Huggingface in: {self.model_path}...')
 
 
     def initialize_model(self, device):
@@ -111,7 +110,9 @@ class nnUNetv2():
             )
     
     def run_inference(self, out_dir:str):
-    
+        
+        assert self.predictor is not None
+
         adjusted_img_dir = Path(out_dir) / 'adjusted_images' / self.run_id # directory containing modified images for nnUNet input
         mask_dir = Path(out_dir) / 'masks' / self.run_id
         mask_dir.mkdir(parents=True, exist_ok=True) # make dir to store masks

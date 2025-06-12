@@ -13,13 +13,14 @@ from pyroothair.pipeline import CheckArgs, Pipeline
 description = '''
 Thank you for using pyRootHair!
 -------------------------------
-Please read the tutorial documentation on the github repository: https://github.com/iantsang779/pyRootHair
 
-This command runs pyRootHair on a demonstration set of images that are pre-installed with pyRootHair. 
+Run pyRootHair on a demonstration set of images that are pre-installed with pyRootHair. 
+
+Please read the tutorial documentation on the github repository: https://github.com/iantsang779/pyRootHair
 
 This is useful to run after a fresh pyRootHair installation to ensure everything works, and to check that you have successfully requested a GPU.
 
-Basic usage: pyroothair_run_demo -b demo -o demo
+Basic usage: pyroothair_run_demo -o demo
 
 Please cite the following paper when using pyRootHair: xxxxxx
 
@@ -33,7 +34,6 @@ def parse_args():
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
 
     ### Required Arguments    
-    parser.add_argument('-b', '--batch_id', help='Unique ID for each batch of input images', type=str, nargs='?', dest='batch_id')
     parser.add_argument('-o','--output', help='Filepath to save data. Must be a different directory relative to the input image directory.', type=str, dest='save_path')
 
     ### Optional Arguments
@@ -52,13 +52,15 @@ def main():
     check_args = CheckArgs(args, parser)
     check_args.check_argument_demo()
 
+    args.batch_id = 'demo'
+
     raw = pd.DataFrame() # initialize empty data frames to append to in run_pipeline()
     summary = pd.DataFrame()    
     start = time.perf_counter()
 
     demo_img_dir = os.path.join(Path(__file__).parent, 'demo_images')
-    batch_id = 'gladiator'
-
+    demo_imgs = sorted([i for i in os.listdir(demo_img_dir) if i.endswith('.png')])
+    
     model = nnUNetv2(demo_img_dir, args.batch_id)
     model.check_gpu() # determine which model to load depending on GPU availability
 
@@ -68,7 +70,7 @@ def main():
     
     device = torch.device('cuda', 0) if model.gpu_exists else torch.device('cpu')
     
-    for img in sorted(os.listdir(demo_img_dir)): # loop through all input images, modify and save with nnUNet prefix
+    for img in demo_imgs: # loop through all input images, modify and save with nnUNet prefix
         im_loader = ImageLoader()
         im_loader.read_images(demo_img_dir, img)
         im_loader.resize_image()
@@ -79,20 +81,21 @@ def main():
     model.initialize_model(device)
     model.run_inference(args.save_path)
     mask_path = Path(args.save_path)/'masks'/ args.batch_id
+    mask_files = sorted([i for i in os.listdir(mask_path) if i.endswith('.png')])
 
     failed_images = []
 
-    for mask_file in sorted(os.listdir(mask_path)): # loop through each predicted mask
-        if mask_file.endswith('.png'):
-            main = Pipeline(check_args)
-            init_mask = iio.imread(os.path.join(mask_path, mask_file))
-            print(f'\n...Processing {mask_file}...')
-            s, r = main.run_pipeline(init_mask, mask_file) # run pipeline for each image
-            if isinstance(s, pd.DataFrame):
-                summary = pd.concat([s,summary]) # add data from each image to the correct data frame
-                raw = pd.concat([r,raw])
-            else:  
-                failed_images.append(mask_file)
+    for mask, img in zip(mask_files, demo_imgs): # loop through each predicted mask
+        img_file = iio.imread(os.path.join(demo_img_dir, img))
+        main = Pipeline(check_args, img_file, demo_img_dir)
+        init_mask = iio.imread(os.path.join(mask_path, mask))
+        print(f'\n...Processing {mask}...')
+        s, r = main.run_pipeline(init_mask, mask) # run pipeline for each image
+        if len(s) > 0:
+            summary = pd.concat([s,summary]) # add data from each image to the correct data frame
+            raw = pd.concat([r,raw])
+        else:  
+            failed_images.append(mask)
     
     print(f'\n{summary}')
     print(f'\n{raw}')
