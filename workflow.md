@@ -1,4 +1,4 @@
-## An in-depth dive into the pyRootHair workflow
+## Workflow
 
 This section is for users that are curious about how pyRootHair extracts traits from a given input image. In essence, this is a step by step process of the functions and logic within the source code. For this demonstration, I will be using the demo image `demo/karim_demo.png` and the corresponding binary segmentation mask `demo/karim_demo_mask.png`. 
 
