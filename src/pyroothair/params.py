@@ -1,19 +1,25 @@
 import os
 import numpy as np
-import re
 import pandas as pd
 import matplotlib.pyplot as plt
+import imageio.v3 as iio
 
 from numpy.typing import NDArray
 from scipy.ndimage import label
+from skimage.measure import label as lb
 from skimage.measure import regionprops
 from statsmodels.nonparametric.smoothers_lowess import lowess
+from typing import cast, Tuple
 from pyroothair.root import Root
 
 class GetParams(Root):
-    def __init__(self, root_hairs: 'NDArray') -> None:
+    def __init__(self, root_hairs: 'NDArray', input_image: 'NDArray', input_img_path:str,
+                 original_rh_mask: 'NDArray', original_bg_mask: 'NDArray') -> None:
         self.root_hairs = root_hairs
-        self.height = None
+        self.input_img_path = input_img_path
+        self.input_image = input_image
+        self.original_rh_mask = original_rh_mask
+        self.original_bg_mask = original_bg_mask      
         self.horizontal_rh_list_1, self.horizontal_rh_list_2 = [], []
         self.rh_area_list_1, self.rh_area_list_2 = [], []
         self.bin_end_list_1, self.bin_end_list_2 = [], []
@@ -25,19 +31,48 @@ class GetParams(Root):
         self.min_x, self.max_x = None, None
         self.len_d, self.len_pos = None, None
         self.area_d, self.area_pos = None, None
+        self.height = None
         self.pos_regions = None
         self.gradient = None
+        self.rh_pixel_intensity = None
+        self.bg_pixel_intensity = None
 
+    def clean_for_regionprops_intensity(self, mask: 'NDArray') -> list:
+        """
+        Clean original background, root and root hair masks for calculating pixel intensity.
+        """
+        original_mask_labelled, labs = cast(Tuple[np.ndarray, int], lb(mask, connectivity=2, return_num=True))
+
+        props = regionprops(original_mask_labelled, intensity_image=self.input_image)
+        max_lab = max(props, key=lambda x:x.area).label
+        cleaned_mask = original_mask_labelled == max_lab
+        cleaned_mask_labelled, _ = cast(Tuple[np.ndarray, int], lb(cleaned_mask, connectivity=2, return_num=True))
+        cleaned_props = regionprops(cleaned_mask_labelled, intensity_image=self.input_image)
+
+        return cleaned_props
+
+
+    def calculate_pixel_intensity(self) -> None:
+        """
+        Calculate pixel intensity of the root hair mask and background.
+        """
+        self.input_image = self.input_image[:,:,0] # convert input img to grayscale
+
+        print('...Calculating pixel intensities...')
+        rh_props = self.clean_for_regionprops_intensity(self.original_rh_mask)
+        bg_props = self.clean_for_regionprops_intensity(self.original_bg_mask)
+
+        self.rh_pixel_intensity = float([i.intensity_mean for i in rh_props][0])
+        self.bg_pixel_intensity = float([i.intensity_mean for i in bg_props][0])
 
     def sliding_window(self, height_bin_size: int) -> None:
         """
         Sliding window down root hair sections to compute data
         """
         print('...Calculating root hair parameters...')
-
+        
         root_hair_segments = regionprops(self.root_hairs)
         root_hair_coords = [i.coords for i in root_hair_segments] # all coordinates of root hair segments
-        
         max_height = max(np.max(root_hair_coords[0][:,0]), np.max(root_hair_coords[1][:,0])) # get max height of root hair segment, and set that as max height for sliding window
 
         for index, segment in enumerate(root_hair_segments): # loop over each root hair section (left and right side)
@@ -56,15 +91,15 @@ class GetParams(Root):
                     _, min_segment_col, _, max_segment_col = region.bbox 
                     horizontal_rh_length = max_segment_col - min_segment_col 
 
-                if index == 0:
-                    self.horizontal_rh_list_1.append(horizontal_rh_length)
-                    self.rh_area_list_1.append(rh_segment_area)
-                    self.bin_end_list_1.append(bin_end)
-                        
-                elif index == 1:
-                    self.horizontal_rh_list_2.append(horizontal_rh_length)
-                    self.rh_area_list_2.append(rh_segment_area)
-                    self.bin_end_list_2.append(bin_end) 
+                    if index == 0:
+                        self.horizontal_rh_list_1.append(horizontal_rh_length)
+                        self.rh_area_list_1.append(rh_segment_area)
+                        self.bin_end_list_1.append(bin_end)
+                            
+                    elif index == 1:
+                        self.horizontal_rh_list_2.append(horizontal_rh_length)
+                        self.rh_area_list_2.append(rh_segment_area)
+                        self.bin_end_list_2.append(bin_end) 
 
 
     def clean_data(self) -> None:
@@ -86,20 +121,9 @@ class GetParams(Root):
 
         # see if bin lists are different in length 
         if len(self.bin_end_list_1) != len(self.bin_end_list_2):
-            # if len(self.bin_end_list_1) > len(self.bin_end_list_2):
-            #     self.bin_list = self.bin_end_list_1 # set bin_list as length of longer list
-            # else:
-            #     self.bin_list = self.bin_end_list_2
-            raise ValueError(f'Bin positions differ in length for each segment, length {len(self.bin_end_l1)} for list 1, and length {len(self.bin_end_list_2)} for list 2.')
+            raise ValueError(f'Bin positions differ in length for each segment, length {len(self.bin_end_list_1)} for list 1, and length {len(self.bin_end_list_2)} for list 2.')
         else:
             self.bin_list = self.bin_end_list_1
-
-        # # pad lists together, set Nones to 0s, and unpack back into lists
-        # pad_lists = list(zip_longest(self.horizontal_rh_list_1, self.horizontal_rh_list_2, self.rh_area_list_1, self.rh_area_list_2, self.bin_list))
-        # # set Nones to 0s in pad_lists
-        # pad_lists = [tuple(0 if x is None else x for x in tup) for tup in pad_lists]
-        # # unpack tuples back into lists for each, now all of equal length 
-        # self.horizontal_rh_list_1, self.horizontal_rh_list_2, self.rh_area_list_1, self.rh_area_list_2, self.bin_list = map(list, zip(*pad_lists))
 
     def calibrate_data(self, conv: int) -> None:
         """
@@ -162,7 +186,7 @@ class GetParams(Root):
         self.gradient = np.gradient(self.smooth_avg_rhl[:, 1], self.smooth_avg_rhd[:, 0])
         self.pos_regions = self.gradient > 0 # retain regions of positive gradient (increasing RHL)
 
-        labels, n_features = label(self.pos_regions) # label regions of bool array
+        labels, n_features = cast(Tuple[np.ndarray, int], label(self.pos_regions)) # label regions of bool array
         regions = [self.smooth_avg_rhl[labels == i] for i in range(1, n_features + 1)]
         longest_region = max(regions, key=len) # keep the longest growth region
         
@@ -177,14 +201,15 @@ class GetParams(Root):
         self.growth_gradient = (max_y - min_y) / (self.max_x - self.min_x) # gradient of the region
 
 
-    def generate_table(self, img_name: str, run_id:str, root_thickness: int, conv: int) -> tuple[pd.DataFrame, pd.DataFrame]:
+    def generate_table(self, img_name: str, run_id:str, root_thickness: float, conv: int) -> tuple[pd.DataFrame, pd.DataFrame]:
         """
         Generate table of summary parameters, and raw RHL/RHD measurements for each image
         """
-       
+        assert self.max_x is not None
+        assert self.rh_pixel_intensity is not None
+        assert self.bg_pixel_intensity is not None
         # if datetime is None:
         #     datetime = 'NA'
-        
         print('...Generating tables...\n')
         summary_df = pd.DataFrame({'Name': [img_name],
                                    'Batch_ID': [run_id],
@@ -201,7 +226,10 @@ class GetParams(Root):
                                    'Elongation Zone Stop (mm)': [self.max_x],
                                    'Elongation Zone Gradient': [self.growth_gradient],
                                    'Root Thickness (mm)': [root_thickness / conv],
-                                   'Root Length (mm)': [np.max(self.bin_list)]})
+                                   'Root Length (mm)': [np.max(self.bin_list)],
+                                   'RH Pixel Intensity Mean': self.rh_pixel_intensity,
+                                   'Background Pixel Intensity Mean': self.bg_pixel_intensity,
+                                   'RH:Background Pixel Ratio': self.rh_pixel_intensity / self.bg_pixel_intensity})
 
         raw_df = pd.DataFrame({'Name': [img_name] * len(self.bin_list),
                                'Distance From Root Tip (mm)': self.bin_list,
@@ -216,6 +244,9 @@ class GetParams(Root):
         """
         Plot root hair length relative to distance from root tip
         """
+        assert self.smooth_1_rhl is not None
+        assert self.smooth_2_rhl is not None
+
         ax.scatter(x=self.bin_list, y=self.horizontal_rh_list_1, color='darkmagenta', marker='*', alpha=0.3)
         ax.scatter(x=self.bin_list, y=self.horizontal_rh_list_2, color='lightseagreen', marker='X', alpha=0.3)
         ax.plot(self.smooth_1_rhl[:, 0], self.smooth_1_rhl[:, 1], color='darkmagenta', linewidth=4, linestyle='dashed', label='RHL 1')
@@ -230,6 +261,9 @@ class GetParams(Root):
         Plot average root hair length relative to distance from root tip
         Annotate regions of positive root hair growth and estimate elongation zone
         """
+        assert self.smooth_avg_rhl is not None
+        assert self.gradient is not None
+
         ax.fill_between(self.smooth_avg_rhl[:, 0], min(self.gradient) * 1.1, max(self.avg_rhl_list) * 2, where=self.pos_regions, color='cyan', alpha=0.15, label='RH Growth Regions')        
         ax.scatter(x=self.bin_list, y=self.avg_rhl_list, color='orangered')
         ax.plot(self.smooth_avg_rhl[:, 0], self.smooth_avg_rhl[:, 1], color='darkviolet', linewidth=3, label='Avg RHL')
@@ -246,6 +280,9 @@ class GetParams(Root):
         """
         Plot root hair density relative to distance from root tip
         """
+        assert self.smooth_1_rhd is not None
+        assert self.smooth_2_rhd is not None
+
         ax.scatter(x=self.bin_list, y=self.rh_area_list_1, color='darkmagenta', marker='*', alpha=0.3)
         ax.scatter(x=self.bin_list, y=self.rh_area_list_2, color='lightseagreen', marker='X', alpha=0.3)
         ax.plot(self.smooth_1_rhd[:, 0], self.smooth_1_rhd[:, 1], color='darkmagenta', linewidth=4, linestyle='dashed', label='RHD 1')
@@ -259,6 +296,8 @@ class GetParams(Root):
         """
         Plot average root hair density relative to distance from root tip
         """
+        assert self.smooth_avg_rhd is not None
+
         ax.scatter(x=self.bin_list, y=self.avg_rhd_list, color='orangered')
         ax.plot(self.smooth_avg_rhd[:, 0], self.smooth_avg_rhd[:, 1], color='darkviolet', linewidth=3, label='Avg RHD')
 
