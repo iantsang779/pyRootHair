@@ -1,10 +1,11 @@
 import numpy as np
+
 from skimage.measure import label, regionprops
 from skimage.morphology import remove_small_objects, skeletonize
 from scipy.ndimage import convolve
 from sklearn.cluster import KMeans
 from numpy.typing import NDArray
-
+from typing import cast, Tuple
 from pyroothair.skeleton import Skeleton
 
 class Root(Skeleton):
@@ -24,14 +25,15 @@ class Root(Skeleton):
         self.error = False
 
 
-    def check_root_tip(self) -> None:
+    def check_root_tip(self) -> 'NDArray':
         """
         Check whether root tip is present in root mask
         
         """
 
         self.final_root_mask = self.extract_root(self.final_root_mask) # get rid of all but main root, should only be 1 root left
-        self.final_labeled_root, _ = label(self.final_root_mask, connectivity=2, return_num=True)
+        self.final_labeled_root, _ = cast(Tuple[np.ndarray, int], label(self.final_root_mask, connectivity=2, return_num=True))
+
         root_measured = regionprops(self.final_labeled_root) # measure cleaned root
         coords = [i.coords for i in root_measured][0] # get all coords of masked cleaned root
         max_root_y_coord = max(coords[:,0]) # get max y-coord of cleaned root
@@ -41,7 +43,7 @@ class Root(Skeleton):
             self.found_tip = True 
         return self.final_labeled_root
     
-    def calculate_avg_root_thickness(self, final_root_labeled: 'NDArray') -> None:
+    def calculate_avg_root_thickness(self, final_root_labeled: 'NDArray') -> float:
         """
         Calculate average root thickness from root mask via sliding window
         """
@@ -62,7 +64,7 @@ class Root(Skeleton):
 
             width_list.append(root_width)
 
-        self.root_thickness = np.mean(width_list) # mean root thickness in px
+        self.root_thickness = float(np.mean(width_list)) # mean root thickness in px
         self.split_root = np.percentile(width_list, 20) # get 20th percentile of root thickness to use as padding
 
         return self.root_thickness
@@ -93,7 +95,7 @@ class Root(Skeleton):
         Clean up root hair mask, and determine how many 'root hair chunks' are present.
         This function differentiates the main root hair segment from non-primary root hair fragments and segmentation errors.
         """
-        rh_mask_labeled, rh_count = label(self.rh_mask, connectivity=2, return_num=True)
+        rh_mask_labeled, rh_count = cast(Tuple[np.ndarray, int], label(self.rh_mask, connectivity=2, return_num=True))
         rh_props = regionprops(rh_mask_labeled)
         areas = [i.area for i in rh_props]
         print(f'...Found {rh_count} root hair fragments...')
@@ -126,12 +128,18 @@ class Root(Skeleton):
         """
         Split the root hair mask around the location of root tip and root start based on mean root thickness
         """
-     
+      
+        assert self.split_root is not None
+      
         # self.rh_mask = self.extract_root(self.rh_mask) # keep the largest RH chunk (pre-tip splitting)
 
         padding = int(self.split_root // 2.65)
 
         if self.found_tip:
+            assert self.root_start_y is not None
+            assert self.root_start_x is not None
+            assert self.root_tip_y is not None
+            assert self.root_tip_x is not None
             root_tip_y_max, root_tip_y_min = self.root_tip_y + padding*5, self.root_tip_y - padding*2
             root_tip_x_max, root_tip_x_min = self.root_tip_x + padding, self.root_tip_x - int(padding*0.7)
 
@@ -143,7 +151,7 @@ class Root(Skeleton):
             self.rh_mask[root_tip_y_min:root_tip_y_max, root_tip_x_min:root_tip_x_max] = False # apply coords to mask
             self.rh_mask[root_start_y_min:root_start_y_max, root_start_x_min:root_start_x_max] = False
             
-        self.rh_mask_labeled, self.count = label(self.rh_mask, connectivity=2, return_num=True)
+        self.rh_mask_labeled, self.count = cast(Tuple[np.ndarray, int], label(self.rh_mask, connectivity=2, return_num=True))
      
         return self.rh_mask_labeled
     
