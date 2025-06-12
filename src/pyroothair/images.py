@@ -1,5 +1,5 @@
 import imageio.v3 as iio
-import magic
+# import magic
 import numpy as np
 import os
 
@@ -24,11 +24,12 @@ class ImageLoader():
         Check if with of input image is too large relative to height.
         """
         # check each input image is a PNG 
-        if magic.from_file(os.path.join(img_dir, img), mime=True) != 'image/png':
-            raise TypeError(f'Incorrect file format for {img}. Image must be a PNG!')
-        
+        # if magic.from_file(os.path.join(img_dir, img), mime=True) != 'image/png':
+        #     raise TypeError(f'Incorrect file format for {img}. Image must be a PNG!')
+
         self.image = iio.imread(os.path.join(img_dir, img))
         self.image_name = img
+        
         print(f'\n...Loading {img}...')
         self.old_h, self.old_w, self.old_c = self.image.shape
 
@@ -42,6 +43,9 @@ class ImageLoader():
         """
         Resize input image if height > 5000px
         """
+        assert self.old_h is not None
+        assert self.old_w is not None
+
         if self.adjust_height:
             
             self.image = resize(self.image, (int(round(self.old_h / 3)), int(round(self.old_w / 3))), anti_aliasing=True)
@@ -51,6 +55,8 @@ class ImageLoader():
         """
         Remove alpha channel if present
         """
+        assert self.image is not None
+
         if self.adjust_channel:
             self.image = self.image[:,:,:3]
 
@@ -76,6 +82,9 @@ class ImageLoader():
         Convert image from float64 to uint8 and save image as XXX_resized.png
         Save images with _0000.png suffix for nnUNet 
         """
+        assert self.image_name is not None
+        assert self.image is not None
+        assert self.sub_dir_path is not None
 
         x = self.image_name.split('.')
 
