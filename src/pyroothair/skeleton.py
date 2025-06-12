@@ -8,6 +8,7 @@ from skimage.morphology import skeletonize
 from skimage.measure import label, regionprops
 from scipy.spatial.distance import euclidean
 from scipy.interpolate import CubicSpline
+from typing import cast, Tuple
 
 class Skeleton():
    
@@ -22,25 +23,25 @@ class Skeleton():
         """
         Clean up each small section of the root mask by removing all but the largest area present
         """
-        root_section_labeled, num_labels = label(mask, connectivity=2, return_num=True) # label the root mask
+        root_section_labeled, num_labels = cast(Tuple[np.ndarray, int], label(mask, connectivity=2, return_num=True)) # label the root mask
         
-        if num_labels > 0:
-            root_section_measured = regionprops(root_section_labeled) # measure the root section 
-            max_label = max(root_section_measured, key=lambda x: x.area).label # get the label associated with the largest area in the measured section
-            
-            # mask out the smaller sections, retaining only the largest section
-            clean_root_mask = root_section_labeled == max_label 
-            root_section_labeled, _ = label(clean_root_mask, connectivity=2, return_num=True) # re label root 
-            root_section_measured = regionprops(root_section_labeled) # re measure root section
+        # if num_labels > 0:
+        root_section_measured = regionprops(root_section_labeled) # measure the root section 
+        max_label = max(root_section_measured, key=lambda x: x.area).label # get the label associated with the largest area in the measured section
+        
+        # mask out the smaller sections, retaining only the largest section
+        clean_root_mask = root_section_labeled == max_label 
+        root_section_labeled, _ = cast(Tuple[np.ndarray, int], label(clean_root_mask, connectivity=2, return_num=True)) # re label root 
+        root_section_measured = regionprops(root_section_labeled) # re measure root section
 
-            return root_section_labeled, root_section_measured
+        return root_section_labeled, root_section_measured
       
         
     def extract_root(self, root_mask: 'NDArray') -> 'NDArray':
         """
         Filter out non-primary root sections from root mask
         """
-        root_labeled_cleaned, root_count_cleaned = label(root_mask, connectivity=2, return_num=True) # re check num objects
+        root_labeled_cleaned, root_count_cleaned = cast(Tuple[np.ndarray, int], label(root_mask, connectivity=2, return_num=True)) # re check num objects
 
         if root_count_cleaned > 1: # if more than 1 root is present    
             root_labeled_cleaned, count = self.clean_root_chunk(root_mask)
@@ -90,7 +91,7 @@ class Skeleton():
 
         return med_x, med_y
     
-    def calc_rotation(self, med_x: 'NDArray', med_y: 'NDArray', init_mask: 'NDArray') -> 'NDArray':
+    def calc_rotation(self, med_x: list, med_y: list, init_mask: 'NDArray') -> 'NDArray':
         """
         Get angle of rotation from root skeleton
         """
@@ -106,7 +107,7 @@ class Skeleton():
 
         return rotated_mask
    
-    def add_endpoints(self, med_x: 'NDArray', med_y: 'NDArray') -> None:
+    def add_endpoints(self, med_x: list, med_y: list) -> None:
         """
         Add endpoints beyond image boundaries to capture ends of image during warping
         """
@@ -165,6 +166,7 @@ class Skeleton():
         Generate co-ordinates to pad around the root
         Define region to be warped during transformation
         """
+
         padding = rotated_mask.shape[1] 
         
         self.old_buffer_coords = np.vstack([self.points+[padding,0], self.points+[-padding,0]])
