@@ -37,7 +37,6 @@ If you have used pyRootHair in your work, please cite the following paper: XXX
         - [`--plot_segmentation`](#--plot_segmentation)
         - [`--plot_transformation`](#--plot_transformation)
         - [`--plot_summary`](#--plot_summary)
-        - [`-p/--pipeline`](#-p--pipeline)
         - [A Full Example](#a-full-example)
     - [Random Forest Pipeline](#random-forest-pipeline)
       - [Training the Random Forest Model](#training-the-random-forest-model)
@@ -49,8 +48,10 @@ If you have used pyRootHair in your work, please cite the following paper: XXX
     - [Naming Images](#naming-images)
     - [Image Format](#image-format)
     - [Image Dimensions](#image-dimensions)
+    - [Image Examples](#image-examples)
   - [Model](#model)
   - [Workflow](#workflow)
+
 
 ## Installation Instructions (Linux/MacOS)
 
@@ -114,7 +115,7 @@ usage: pyRootHair [-h] [-i [IMG_DIR]] [-b [BATCH_ID]] [-p [{cnn,random_forest,si
                   [--conv [CONV]] [--frac [FRAC]] [-o SAVE_PATH] [--plot_segmentation] [--plot_transformation]
                   [--plot_summary] [--rfc_model_path RFC_MODEL_PATH]
                   [--sigma_min SIGMA_MIN] [--sigma_max SIGMA_MAX] [--input_mask [INPUT_MASK]]
-pyRootHair: error: The following arguments are required when running pyRootHair using the main pipeline: ['-i/--input', '-b/--batch_id', '-o/--output']
+pyRootHair: error: The following arguments are required for pyRootHair: ['-i/--input', '-b/--batch_id', '-o/--output']
 ```
 
 ### Uninstalling pyRootHair
@@ -161,11 +162,9 @@ conda activate pyroothair
 
 Next, we can install pyRootHair:
 
-`python -m pip install pyroothair`
-
-After installation, install the `python-magic-bin` package, which is specific to Windows, and thus has not been included in the build dependencies:
-
-`python -m pip install python-magic-bin`
+```bash
+python -m pip install pyroothair
+```
 
 ### Uninstalling pyRootHair
 
@@ -175,7 +174,6 @@ pip uninstall pyroothair
 ```
 To remove the model, remove the files in: `C:\Users\USER\AppData\Local\Programs\Python\Python313\Lib\site-packages\pyroothair\model`
 
-```
 You can now remove the conda environment:
 
 ```bash
@@ -187,9 +185,9 @@ conda remove -n pyroothair --all
 To quickly check whether pyRootHair is working after installation, the `pyroothair_run_demo` command will run pyRootHair on set of five wheat (cultivar: Gladiator) images that have been automatically pre-installed:
 
 ```bash
-pyroothair_run_demo -b demo -o demo 
+pyroothair_run_demo -o demo 
 ```
-Data will be saved in the `demo` folder provided to `-o/--output`. For more flag and argument options, please read the [user guide](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#user-guide). Note that you do not need `-i/--input` for `pyroothair_run_demo`, as the input images are already pre-loaded during installation!
+Data will be saved in the folder path provided to `-o/--output`. For more flag and argument options, please read the [user guide](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#user-guide). Note that you do not need `-i/--input` for `pyroothair_run_demo`, as the input images are already pre-loaded during installation!
 
 ## User Guide
 
@@ -264,10 +262,6 @@ Toggle plotting of co-ordinates illustrating how each root is warped and straigh
 *OPTIONAL - FLAG*   
 Toggle plotting of summary plots describing RHL and RHD for each input image. Plots are saved in filepath specified in `--output` under `output/plots`
 
-##### `-p/--pipeline` 
-*OPTIONAL - ARGUMENT - STR*  
-Specify which pyRootHair pipeline to run. By default, the main pipeline (`-p cnn`) uses a CNN to segment input images, with or without a GPU (GPU preferred, of course!). If you wish to use a random forest model instead to perform image segmentation, you must specify `-p random_forest`. If you wish to process a single input binary mask with pyRootHair, you must specify `-p single`. 
-
 ##### A Full Example
 
 Here is a full command example, saving all diagnostic/summary plots, with a pixel:mm conversion factor of 100, 0.1 smoothing factor, and a bin size of 50 px:
@@ -287,7 +281,7 @@ To train a random forest model, you will need to train the model on a single rep
 Once you have generated a suitable mask, you can train a random forest model like so:
 
 ```bash
-pyroothair_train_rf_model --train_img /path/to/representative/training/image/example --train_mask /path/to/generated/binary/mask --model_output /path/to/output/rf_model/
+pyroothair_train_random_forest --train_img /path/to/representative/training/image/example --train_mask /path/to/generated/binary/mask --model_output /path/to/output/rf_model/
 ```
 
 If successful, you should see `...RFC model saved as /path/to/output/rf_model.joblib...`, indicating the random forest model has been saved in `--model_output`. There are some additional flags/arguments that allow you to toggle the behaviour of how the random forest model is trained, please see the [documentation](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html) from scikit-learn on the `RandomForestClassifier` for more information. 
@@ -302,21 +296,19 @@ If successful, you should see `...RFC model saved as /path/to/output/rf_model.jo
 Once your random forest model is trained, you can deploy it like so:
 
 ```bash
-pyroothair -i /path/to/input/image/folder -b batch_id -o /path/to/output/folder -p random_forest -rfc_model_path /path/to/rf_model.joblib
+pyroothair_run_random_forest -i /path/to/input/image/folder -b batch_id -o /path/to/output/folder -rfc /path/to/rf_model.joblib
 ```
 
-The command is the same as before, but you specify to run the random forest pipeline with `-p random_forest`, and provide the path to the trained model for `--rfc_model_path`.
+The command is the same as before, but you must provide the path to the trained model using `-rfc/--rfc_model_path`.
 
 ### Single Mask Pipeline
-If you wish, you can also run pyRootHair on a single, user generated binary mask of an input image. See [this](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#generating-binary-masks) for instructions on generating binary masks. 
+If you wish, you can also run pyRootHair on a single, user generated binary mask of an input image. See [this](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#generating-binary-masks) for instructions on generating and converting binary masks. 
 
 To run pyRootHair on a single binary mask (with classes converted!):
 
 ```bash
-pyroothair --input_mask /path/to/converted/binary/mask -p single -b batch_id -o /path/to/output
+pyroothair_run_single_mask -m /path/to/converted/binary/mask -i /path/to/raw/image/of/binary/mask -b batch_id -o /path/to/output
 ```
-
-Note that you no longer require `-i` when using this pipeline option.
 
 ## Generating Binary Masks
 pyRootHair will accept binary masks of any images as long as they are arrays of 0s, 1s and 2s. It is recommended that you use the [ilastik](https://www.ilastik.org/) software to generate the masks, as it is simple and requires minimal expertise to use.
@@ -337,7 +329,7 @@ This section is not a tutorial on how to use ilastik, rather, a demonstration on
 
 6.) Once generated, the mask should be converted such that each pixel is a 0, 1 or 2 in the array. By default, ilastik saves each pixel associated with the background as 1, root hair as 2, and root as 3. 
 
-If you are using the generated mask to train a random forest model, ***IGNORE the rest of this step!***. However, if you are going to load the mask into pyRootHair with `-p single` and `--input_mask`, please read on:
+If you are using the generated mask to train a random forest model, ***IGNORE the rest of this step!***. However, if you plan on processing the mask with `pyroothair_run_single_mask`, please read on:
 
 You will need to convert the pixel classes of the generated binary mask as follows: 
 
@@ -389,7 +381,7 @@ Here is an example of a summary table, where traits are calculated at the whole 
 
 ## Input Images
 
-pyRootHair has been trained on images of varying lighting conditions, contrasts, and species. However, to ensure a better segmentation, please only run pyRootHair on images of good quality! 
+pyRootHair has been trained on images of varying lighting conditions, contrasts, and species. However, to ensure a better segmentation, please only run pyRootHair on images of good quality! See [example](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#image-examples) images for examples of good and bad images.
 
  - Images ***must not contain overlapping root hair segments***, as the model cannot disentangle the root hairs if they overlap  
  - Images must have the root oriented ***downwards***, or up to 45 degrees downwards from the vertical  
@@ -397,6 +389,17 @@ pyRootHair has been trained on images of varying lighting conditions, contrasts,
  - Images should be backlit rather than toplit to avoid reflections  
  - Images with less noise/anomalies will likely result in better segmentation  
  - Images of straight-ish roots are ideal, as less warping is required to straighten the image. Curved roots are fine as well, but warping can distort the root hairs if the root is extremely curved  
+
+### Naming Images
+Images must be labelled with meaningful information! You can name images with the variety, genotype, species, timestamp etc, as long as it contains information that is meaningful to you. This is because data generated by pyRootHair will refer to the image name, so ensure you provide images with a valid name!
+
+### Image Format
+Images **must** be PNG files, as the model will not work with non-PNG file formats. If you have images of other formats, please convert them to PNG.
+
+### Image Dimensions
+Input images can be of varying shapes as long as they are relatively consistent in size and have only 3 channels (R,G,B). However, it is best to keep the image shapes relatively consistent. Larger images will take more time to segment, and require significantly more GPU VRAM. 
+
+### Image Examples
 
 See some examples of acceptable images:
 
@@ -409,15 +412,6 @@ And examples of bad images:
 ![alt text](demo/paragon.png)
 ![alt text](demo/maize.png)
 ![alt text](demo/maize_2.png)
-
-### Naming Images
-Images must be labelled with meaningful information! You can name images with the variety, genotype, species, timestamp etc, as long as it contains information that is meaningful to you. This is because data generated by pyRootHair will refer to the image name, so ensure you provide images with a valid name!
-
-### Image Format
-Images **must** be PNG files, as the model will not work with non-PNG file formats. If you have images of other formats, please convert them to PNG.
-
-### Image Dimensions
-Input images can be of varying shapes as long as they are relatively consistent in size and have only 3 channels (R,G,B). However, it is best to keep the image shapes relatively consistent. Larger images will take more time to segment, and require significantly more GPU VRAM. 
 
 ## Model
 pyRootHair will automatically download the latest segmentation model (model.pth), and all corresponding model JSON files from the [this](https://huggingface.co/iantsang779/pyroothair_v1/tree/main) repository when you first run `pyroothair`. In subsequent runs, pyRootHair will compare the metadata of your local model installation against the metadata of the latest model on Hugging Face. If a mismatch is detected, the latest model is automatically downloaded. 
