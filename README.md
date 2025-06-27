@@ -427,7 +427,7 @@ And examples of bad images:
 ## Model
 pyRootHair will automatically download the latest segmentation model (model.pth), and all corresponding model JSON files from the [this](https://huggingface.co/iantsang779/pyroothair_v1/tree/main) repository when you first run `pyroothair`. In subsequent runs, pyRootHair will compare the metadata of your local model installation against the metadata of the latest model on Hugging Face. If a mismatch is detected, the latest model is automatically downloaded. 
 
-## Troubleshooting
+## Troubleshooting/FAQ
 
 ### The `plots` directory is empty
 
@@ -453,6 +453,11 @@ Alternatively, if you specify the `--plot_segmentation` flag while running pyRoo
 ### The output data does not match up to the biology of the plant
 
 Please ensure you have provided a value for [--conv](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#--conv), the pixel:mm conversion factor. Without specifying this, the calculations use the default value of 102pixels:1mm. 
+
+
+### Re-running a batch of images with fresh prediction
+
+To force re-prediction of input images, you will need to remove the directories associated with the run. Given the example run `pyroothair -i images -b test -o output`, if you have stored data from multiple different runs in `output`, you will need to remove the `test` folder from `output/plots/`, `output/masks`, and `output/data`. Afterwards, you can re run the same command.
 
 
 
