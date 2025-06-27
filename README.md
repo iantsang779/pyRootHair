@@ -412,17 +412,7 @@ Input images can be of varying shapes as long as they are relatively consistent 
 
 ### Image Examples
 
-See some examples of acceptable images:
-
-![alt text](demo/claire.png)
-![alt text](demo/rialto.png)
-![alt text](demo/xi19.png)
-
-And examples of bad images:
-
-![alt text](demo/paragon.png)
-![alt text](demo/maize.png)
-![alt text](demo/maize_2.png)
+Please see examples of acceptable images [here](demo/good_images) and bad images [here](demo/bad_images).
 
 ## Model
 pyRootHair will automatically download the latest segmentation model (model.pth), and all corresponding model JSON files from the [this](https://huggingface.co/iantsang779/pyroothair_v1/tree/main) repository when you first run `pyroothair`. In subsequent runs, pyRootHair will compare the metadata of your local model installation against the metadata of the latest model on Hugging Face. If a mismatch is detected, the latest model is automatically downloaded. 
