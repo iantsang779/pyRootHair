@@ -255,7 +255,7 @@ You must ensure that all input images for each batch were taken using at the sam
 
 ##### `--resolution` 
 *OPTIONAL - ARGUMENT - INT*  
-pyRootHair computes a sliding window down the root, and takes measurement from bins. Using `--resolution`, you can tweak the bin size (in pixels) of the sliding window. For example, if your input images have the shape 800 (width) x 1500 (height), there will be 75 data points ($\frac{1500}{20} = 75$) for RHL and RHD for each side root hair segment using the default `--resolution` value of 20 pixels. 
+pyRootHair computes a sliding window down the root, and takes measurement from bins. Using `--resolution`, you can tweak the bin size (in pixels) of the sliding window. For example, if your input images have the shape 800 (width) x 1500 (height), there will be 75 data points ($\frac{1500}{20} = 75$) for RHL and RHD for each side root hair segment using the default `--resolution` value of 20 pixels. The default value is recommended. 
 
 ##### `--frac` 
 *OPTIONAL - ARGUMENT - FLOAT*  
@@ -449,6 +449,11 @@ ax.imshow(iio.imread(mask_file))
 ```
 
 Alternatively, if you specify the `--plot_segmentation` flag while running pyRootHair, this will save the masks in a normal image format for you to view. See [--plot_segmentation](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#--plot_segmentation) for more details.
+
+### The output data does not match up to the biology of the plant
+
+Please ensure you have provided a value for [--conv](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#--conv), the pixel:mm conversion factor. Without specifying this, the calculations use the default value of 102pixels:1mm. 
+
 
 
 ## Workflow
