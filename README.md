@@ -1,16 +1,24 @@
 # pyRootHair
 ![Alt text](demo/pyroothair_logo_bgrmv.png)
 
-Welcome to the pyRootHair github repository! 
+Welcome to the pyRootHair github repository - a command line package for extracting root hair traits from agar based images of plant seedling roots.
 
-Here, you will find all necessary information on how to install and setup pyRootHair, detailed information about the various pipelines and options available, and an in-depth tutorial on how pyRootHair works.
+Here, you will find all necessary information on how to install and setup pyRootHair, detailed information about the various pipelines, flags, arguments, and an in-depth tutorial on how pyRootHair works.
 
-Please do not hesitate to submit a pull-request, or get in touch via email if you have any questions, suggestions or concerns.
+If you have questions or suggestions, feel free to submit a pull-request. 
 
+Please ensure you have read all sections of the README document.
+
+A minimal working example:
+
+```bash
+pyroothair -i path/to/image/folder -b batch_id -o path/to/output/folder
+
+```
 If you have used pyRootHair in your work, please cite the following paper: XXX
 
-
 ## Table of Contents
+
 - [pyRootHair](#pyroothair)
   - [Table of Contents](#table-of-contents)
   - [Installation Instructions (Linux/MacOS)](#installation-instructions-linuxmacos)
@@ -50,12 +58,15 @@ If you have used pyRootHair in your work, please cite the following paper: XXX
     - [Image Dimensions](#image-dimensions)
     - [Image Examples](#image-examples)
   - [Model](#model)
+  - [Troubleshooting](#troubleshooting)
+    - [The `plots` directory is empty](#the-plots-directory-is-empty)
+    - [The binary masks in `output/masks/batch_id` are black images](#the-binary-masks-in-outputmasksbatch_id-are-black-images)
   - [Workflow](#workflow)
 
 
 ## Installation Instructions (Linux/MacOS)
 
-The following section assumes you are installing pyRootHair on a HPC/cluster with conda and CUDA already installed. 
+Please ensure you have the environment management package conda and CUDA already installed. 
 
 If you do not have CUDA installed, please see the [pyTorch documentation](https://pytorch.org/get-started/locally/) for instructions on how to install pytorch with CUDA support.
 
@@ -65,7 +76,7 @@ conda create --no-default-packages -n pyroothair python # create fresh conda env
 conda activate pyroothair # activate environment
 ```
 ### Setting Up Environment Variables
-This step is optional, the sole purpose it serves is to remove the nnUNet warning messages that print whenever you run pyRootHair. You can either follow the step below to eliminate the warning messages, or see [nnUNet's documentation](https://github.com/MIC-DKFZ/nnUNet/blob/master/documentation/set_environment_variables.md) on how set variables to prevent the warning message, or ignore this step entirely if you don't care about the warning messages each time you run pyRootHair.
+This step is optional, the sole purpose it serves is to remove the nnUNet warning messages that print whenever you run pyRootHair. You can either follow the step below to eliminate the warning messages, or see [nnUNet's documentation](https://github.com/MIC-DKFZ/nnUNet/blob/master/documentation/set_environment_variables.md) on how set temporary/permanent variables to prevent the warning message, or ignore this step entirely if you don't care about the warning messages each time you run pyRootHair.
 
 ```bash
 # create activate and deactivate directories
@@ -252,7 +263,7 @@ Controls the degree of LOWESS smoothing for the lines used to model average RHL 
 
 ##### `--plot_segmentation` 
 *OPTIONAL - FLAG*  
-Toggle plotting of segmented masks for each image. For each input image, `--plot_segmentation` saves the straightened mask,  abd a mask of just the root hair segments. Masks are saved in filepath specified in `--output` under `output/plots`
+Toggle plotting of segmented masks for each image. For each input image, `--plot_segmentation` saves the raw mask, straightened mask,  abd a mask of just the root hair segments. Masks are saved in filepath specified in `--output` under `output/plots`. Masks are saved in human viewable format (i.e a normal RGB image).
 
 ##### `--plot_transformation` 
 *OPTIONAL - FLAG*  
@@ -416,9 +427,35 @@ And examples of bad images:
 ## Model
 pyRootHair will automatically download the latest segmentation model (model.pth), and all corresponding model JSON files from the [this](https://huggingface.co/iantsang779/pyroothair_v1/tree/main) repository when you first run `pyroothair`. In subsequent runs, pyRootHair will compare the metadata of your local model installation against the metadata of the latest model on Hugging Face. If a mismatch is detected, the latest model is automatically downloaded. 
 
+## Troubleshooting
+
+### The `plots` directory is empty
+
+Please ensure you have specified the any of the following flags: [--plot_summary](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#--plot_summary), [--plot_segmentation](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#--plot_segmentation), [--plot_transformation](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#--plot_transformation) along with your pyroothair command. 
+
+### The binary masks in `output/masks/batch_id` are black images
+
+The binary masks are arrays of [0s, 1s, 2s], such that when viewed as an RGB image, they appear black. There are a few ways to view the masks. This python snippet will read in the masks and display them interactively (e.g. in a Jupyter Notebook):
+
+```python
+import matplotlib.pyplot as plt
+import imageio.v3 as iio
+
+mask_file = 'path/to/mask/file' # change the path as necessary
+
+fig, ax = plt.subplots()
+ax.imshow(iio.imread(mask_file))
+
+```
+
+Alternatively, if you specify the `--plot_segmentation` flag while running pyRootHair, this will save the masks in a normal image format for you to view. See [--plot_segmentation](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#--plot_segmentation) for more details.
+
+
+
 ## Workflow
 
 If you are interested in learning how pyRootHair works behind the scenes, please check out [this](https://github.com/iantsang779/pyRootHair/blob/main/workflow.md) in-depth walk through with code breakdown.
+
 
 
 
