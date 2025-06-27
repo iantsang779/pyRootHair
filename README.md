@@ -1,7 +1,7 @@
 # pyRootHair
 ![Alt text](demo/pyroothair_logo_bgrmv.png)
 
-Welcome to the pyRootHair github repository - a command line package for extracting root hair traits from agar based images of plant seedling roots.
+Welcome to the ***pyRootHair*** github repository - a command line package for extracting root hair traits from agar based images of plant seedling roots.
 
 Here, you will find all necessary information on how to install and setup pyRootHair, detailed information about the various pipelines, flags, arguments, and an in-depth tutorial on how pyRootHair works.
 
@@ -263,15 +263,15 @@ Controls the degree of LOWESS smoothing for the lines used to model average RHL 
 
 ##### `--plot_segmentation` 
 *OPTIONAL - FLAG*  
-Toggle plotting of segmented masks for each image. For each input image, `--plot_segmentation` saves the raw mask, straightened mask,  abd a mask of just the root hair segments. Masks are saved in filepath specified in `--output` under `output/plots`. Masks are saved in human viewable format (i.e a normal RGB image).
+Toggle plotting of segmented masks for each image. For each input image, `--plot_segmentation` saves the raw mask, straightened mask, and a mask of just the root hair segments. Masks are saved in filepath specified in `--output` under `output/plots/batch_id/`. Masks are saved in human viewable format (i.e a normal RGB image).
 
 ##### `--plot_transformation` 
 *OPTIONAL - FLAG*  
-Toggle plotting of co-ordinates illustrating how each root is warped and straightened. Can be helpful to check if an image has been poorly warped. Plots are saved in filepath specified in `--output` under `output/plots`
+Toggle plotting of co-ordinates illustrating how each root is warped and straightened. Can be helpful to check if an image has been poorly warped. Plots are saved in filepath specified in `--output` under `output/plots/batch_id/`
 
 ##### `--plot_summary` 
 *OPTIONAL - FLAG*   
-Toggle plotting of summary plots describing RHL and RHD for each input image. Plots are saved in filepath specified in `--output` under `output/plots`
+Toggle plotting of summary plots describing RHL and RHD for each input image. Plots are saved in filepath specified in `--output` under `output/plots/batch_id/`
 
 ##### A Full Example
 
@@ -449,7 +449,6 @@ ax.imshow(iio.imread(mask_file))
 ```
 
 Alternatively, if you specify the `--plot_segmentation` flag while running pyRootHair, this will save the masks in a normal image format for you to view. See [--plot_segmentation](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#--plot_segmentation) for more details.
-
 
 
 ## Workflow
