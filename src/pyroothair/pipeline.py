@@ -165,20 +165,26 @@ class Pipeline(CheckArgs):
             summary_df, raw_df = data.generate_table(filename.split('.')[0], self.args.batch_id, root_thickness, self.args.conv)
 
             if self.args.show_summary:
+                print('...Plotting summary plot...')
                 data.plot_summary(self.plots_path, filename.split('.')[0])
 
             if self.args.show_transformation:
+                print('...Plotting transformation plot...')
                 skeleton.visualize_transformation(rotated_mask, self.plots_path, filename.split('.')[0]) 
 
             if self.args.show_segmentation:
-                plt.imsave(os.path.join(self.plots_path,f'{filename.split('.')[0]}_mask.png'), straight_mask)
+                print('...Saving segmentation masks...')
+                plt.imsave(os.path.join(self.plots_path,f'{filename.split('.')[0]}_raw_mask.png'), init_mask)
+                plt.imsave(os.path.join(self.plots_path,f'{filename.split('.')[0]}_straight_mask.png'), straight_mask)
                 plt.imsave(os.path.join(self.plots_path,f'{filename.split('.')[0]}_root_hair_mask_cropped.png'), root_hairs_cropped)
 
             return summary_df, raw_df
 
         else:
             if self.args.show_segmentation:
-                plt.imsave(os.path.join(self.plots_path,f'{filename.split('.')[0]}_mask.png'), straight_mask)
+                print('...Saving segmentation masks...')
+                plt.imsave(os.path.join(self.plots_path,f'{filename.split('.')[0]}_raw_mask.png'), init_mask)
+                plt.imsave(os.path.join(self.plots_path,f'{filename.split('.')[0]}_straight_mask.png'), straight_mask)
                 plt.imsave(os.path.join(self.plots_path,f'{filename.split('.')[0]}_root_hair_mask.png'), root_hairs)
 
             return pd.DataFrame(), pd.DataFrame()
