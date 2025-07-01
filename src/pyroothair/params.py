@@ -104,7 +104,7 @@ class GetParams(Root):
 
     def clean_data(self) -> None:
         """
-        Filter raw data by removing bottom 5% of RHL and RHD for each side
+        Filter raw data by removing bottom 10% of RHL and RHD for each side
         """
         min1_rhl = np.percentile(self.horizontal_rh_list_1, 10)
         min2_rhl = np.percentile(self.horizontal_rh_list_2, 10)
