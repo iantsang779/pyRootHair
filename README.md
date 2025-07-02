@@ -1,5 +1,5 @@
 # pyRootHair
-![Alt text](demo/pyroothair_logo_bgrmv.png)
+![Alt text](https://github.com/iantsang779/pyRootHair/blob/43cd8ab8ccd95542378eb1a7eb76ea6375ca874c/demo/pyroothair_logo_bgrmv.png)
 
 Welcome to the ***pyRootHair*** github repository - a command line package for extracting root hair traits from agar based images of plant seedling roots.
 
@@ -19,49 +19,49 @@ If you have used pyRootHair in your work, please cite the following paper: XXX
 
 ## Table of Contents
 
-- [pyRootHair](#pyroothair)
-  - [Table of Contents](#table-of-contents)
-  - [Installation Instructions (Linux/MacOS)](#installation-instructions-linuxmacos)
-    - [Creating Conda Environment](#creating-conda-environment)
-    - [Setting Up Environment Variables](#setting-up-environment-variables)
-    - [Installing pyRootHair](#installing-pyroothair)
-    - [Uninstalling pyRootHair](#uninstalling-pyroothair)
-  - [Installation Instructions (Windows)](#installation-instructions-windows)
-    - [Install Miniconda](#install-miniconda)
-    - [Setting Environment Variables](#setting-environment-variables)
-    - [Installing pyTorch from source](#installing-pytorch-from-source)
-    - [Installing pyRootHair](#installing-pyroothair-1)
-    - [Uninstalling pyRootHair](#uninstalling-pyroothair-1)
-  - [Quick Demo](#quick-demo)
-  - [User Guide](#user-guide)
-    - [Default Pipeline](#default-pipeline)
-      - [Flags/Arguments](#flagsarguments)
-        - [`-i/--input`](#-i--input)
-        - [`-o/--output`](#-o--output)
-        - [`--batch_id/-b`](#--batch_id-b)
-        - [`--conv`](#--conv)
-        - [`--resolution`](#--resolution)
-        - [`--frac`](#--frac)
-        - [`--plot_segmentation`](#--plot_segmentation)
-        - [`--plot_transformation`](#--plot_transformation)
-        - [`--plot_summary`](#--plot_summary)
-        - [A Full Example](#a-full-example)
-    - [Random Forest Pipeline](#random-forest-pipeline)
-      - [Training the Random Forest Model](#training-the-random-forest-model)
-      - [Deploying the Random Forest Model](#deploying-the-random-forest-model)
-    - [Single Mask Pipeline](#single-mask-pipeline)
-  - [Generating Binary Masks](#generating-binary-masks)
-  - [Data Output](#data-output)
-  - [Input Images](#input-images)
-    - [Naming Images](#naming-images)
-    - [Image Format](#image-format)
-    - [Image Dimensions](#image-dimensions)
-    - [Image Examples](#image-examples)
-  - [Model](#model)
-  - [Troubleshooting](#troubleshooting)
-    - [The `plots` directory is empty](#the-plots-directory-is-empty)
-    - [The binary masks in `output/masks/batch_id` are black images](#the-binary-masks-in-outputmasksbatch_id-are-black-images)
-  - [Workflow](#workflow)
+- [pyRootHair](https://github.com/iantsang779/pyRootHair/blob/main/README.md#pyroothair)
+  - [Table of Contents](https://github.com/iantsang779/pyRootHair/blob/main/README.md#table-of-contents)
+  - [Installation Instructions (Linux/MacOS)](https://github.com/iantsang779/pyRootHair/blob/main/README.md#installation-instructions-linuxmacos)
+    - [Creating Conda Environment](https://github.com/iantsang779/pyRootHair/blob/main/README.md#creating-conda-environment)
+    - [Setting Up Environment Variables](https://github.com/iantsang779/pyRootHair/blob/main/README.md#setting-up-environment-variables)
+    - [Installing pyRootHair](https://github.com/iantsang779/pyRootHair/blob/main/README.md#installing-pyroothair)
+    - [Uninstalling pyRootHair](https://github.com/iantsang779/pyRootHair/blob/main/README.md#uninstalling-pyroothair)
+  - [Installation Instructions (Windows)](https://github.com/iantsang779/pyRootHair/blob/main/README.md#installation-instructions-windows)
+    - [Install Miniconda](https://github.com/iantsang779/pyRootHair/blob/main/README.md#install-miniconda)
+    - [Setting Environment Variables](https://github.com/iantsang779/pyRootHair/blob/main/README.md#setting-environment-variables)
+    - [Installing pyTorch from source](https://github.com/iantsang779/pyRootHair/blob/main/README.md#installing-pytorch-from-source)
+    - [Installing pyRootHair](https://github.com/iantsang779/pyRootHair/blob/main/README.md#installing-pyroothair-1)
+    - [Uninstalling pyRootHair](https://github.com/iantsang779/pyRootHair/blob/main/README.md#uninstalling-pyroothair-1)
+  - [Quick Demo](https://github.com/iantsang779/pyRootHair/blob/main/README.md#quick-demo)
+  - [User Guide](https://github.com/iantsang779/pyRootHair/blob/main/README.md#user-guide)
+    - [Default Pipeline](https://github.com/iantsang779/pyRootHair/blob/main/README.md#default-pipeline)
+      - [Flags/Arguments](https://github.com/iantsang779/pyRootHair/blob/main/README.md#flagsarguments)
+        - [`-i/--input`](https://github.com/iantsang779/pyRootHair/blob/main/README.md#-i--input)
+        - [`-o/--output`](https://github.com/iantsang779/pyRootHair/blob/main/README.md#-o--output)
+        - [`--batch_id/-b`](https://github.com/iantsang779/pyRootHair/blob/main/README.md#--batch_id-b)
+        - [`--conv`](https://github.com/iantsang779/pyRootHair/blob/main/README.md#--conv)
+        - [`--resolution`](https://github.com/iantsang779/pyRootHair/blob/main/README.md#--resolution)
+        - [`--frac`](https://github.com/iantsang779/pyRootHair/blob/main/README.md#--frac)
+        - [`--plot_segmentation`](https://github.com/iantsang779/pyRootHair/blob/main/README.md#--plot_segmentation)
+        - [`--plot_transformation`](https://github.com/iantsang779/pyRootHair/blob/main/README.md#--plot_transformation)
+        - [`--plot_summary`](https://github.com/iantsang779/pyRootHair/blob/main/README.md#--plot_summary)
+        - [A Full Example](https://github.com/iantsang779/pyRootHair/blob/main/README.md#a-full-example)
+    - [Random Forest Pipeline](https://github.com/iantsang779/pyRootHair/blob/main/README.md#random-forest-pipeline)
+      - [Training the Random Forest Model](https://github.com/iantsang779/pyRootHair/blob/main/README.md#training-the-random-forest-model)
+      - [Deploying the Random Forest Model](https://github.com/iantsang779/pyRootHair/blob/main/README.md#deploying-the-random-forest-model)
+    - [Single Mask Pipeline](https://github.com/iantsang779/pyRootHair/blob/main/README.md#single-mask-pipeline)
+  - [Generating Binary Masks](https://github.com/iantsang779/pyRootHair/blob/main/README.md#generating-binary-masks)
+  - [Data Output](https://github.com/iantsang779/pyRootHair/blob/main/README.md#data-output)
+  - [Input Images](https://github.com/iantsang779/pyRootHair/blob/main/README.md#input-images)
+    - [Naming Images](https://github.com/iantsang779/pyRootHair/blob/main/README.md#naming-images)
+    - [Image Format](https://github.com/iantsang779/pyRootHair/blob/main/README.md#image-format)
+    - [Image Dimensions](https://github.com/iantsang779/pyRootHair/blob/main/README.md#image-dimensions)
+    - [Image Examples](https://github.com/iantsang779/pyRootHair/blob/main/README.md#image-examples)
+  - [Model](https://github.com/iantsang779/pyRootHair/blob/main/README.md#model)
+  - [Troubleshooting](https://github.com/iantsang779/pyRootHair/blob/main/README.md#troubleshooting)
+    - [The `plots` directory is empty](https://github.com/iantsang779/pyRootHair/blob/main/README.md#the-plots-directory-is-empty)
+    - [The binary masks in `output/masks/batch_id` are black images](https://github.com/iantsang779/pyRootHair/blob/main/README.md#the-binary-masks-in-outputmasksbatch_id-are-black-images)
+  - [Workflow](https://github.com/iantsang779/pyRootHair/blob/main/README.md#workflow)
 
 
 ## Installation Instructions (Linux/MacOS)
@@ -330,11 +330,11 @@ This section is not a tutorial on how to use ilastik, rather, a demonstration on
 2.) Select all features under the `Feature Selection` tab.  
 3.) Specify the following label categories. The label order **must** be in the exact order as shown here!  
 
-![alt text](demo/ilastik_classes.png)
+![alt text](https://github.com/iantsang779/pyRootHair/blob/43cd8ab8ccd95542378eb1a7eb76ea6375ca874c/demo/ilastik_classes.png)
 
 4.) Ensure that the root hairs wrap around the root, especially at the root tip:
 
-![alt text](demo/demo_mask.png)
+![alt text](https://github.com/iantsang779/pyRootHair/blob/43cd8ab8ccd95542378eb1a7eb76ea6375ca874c/demo/demo_mask.png)
 
 5.) After generating the mask, select `Source: Simple Segmentation` under `4. Prediction Export`. Click on `Choose Export Image Settings`, and set the output file format to `.png`, then hit `Export All`. 
 
@@ -401,7 +401,7 @@ pyRootHair has been trained on images of varying lighting conditions, contrasts,
  - Images with less noise/anomalies will likely result in better segmentation  
  - Images of straight-ish roots are ideal, as less warping is required to straighten the image. Curved roots are fine as well, but warping can distort the root hairs if the root is extremely curved  
 
-### Naming Images
+### Naming **Images**
 Images must be labelled with meaningful information! You can name images with the variety, genotype, species, timestamp etc, as long as it contains information that is meaningful to you. This is because data generated by pyRootHair will refer to the image name, so ensure you provide images with a valid name!
 
 ### Image Format
@@ -412,7 +412,7 @@ Input images can be of varying shapes as long as they are relatively consistent 
 
 ### Image Examples
 
-Please see examples of acceptable images [here](demo/good_images) and bad images [here](demo/bad_images).
+Please see examples of acceptable images [here](https://github.com/iantsang779/pyRootHair/tree/43cd8ab8ccd95542378eb1a7eb76ea6375ca874c/demo/good_images) and bad images [here](https://github.com/iantsang779/pyRootHair/tree/43cd8ab8ccd95542378eb1a7eb76ea6375ca874c/demo/bad_images).
 
 ## Model
 pyRootHair will automatically download the latest segmentation model (model.pth), and all corresponding model JSON files from the [this](https://huggingface.co/iantsang779/pyroothair_v1/tree/main) repository when you first run `pyroothair`. In subsequent runs, pyRootHair will compare the metadata of your local model installation against the metadata of the latest model on Hugging Face. If a mismatch is detected, the latest model is automatically downloaded. 
