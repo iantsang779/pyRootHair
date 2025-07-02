@@ -1,5 +1,5 @@
 # pyRootHair
-![Alt text](https://github.com/iantsang779/pyRootHair/blob/43cd8ab8ccd95542378eb1a7eb76ea6375ca874c/demo/pyroothair_logo_bgrmv.png)
+![Alt text](https://github.com/iantsang779/pyRootHair/blob/43cd8ab8ccd95542378eb1a7eb76ea6375ca874c/demo/pyroothair_logo_bgrmv.png?raw=true)
 
 Welcome to the ***pyRootHair*** github repository - a command line package for extracting root hair traits from agar based images of plant seedling roots.
 
@@ -330,11 +330,11 @@ This section is not a tutorial on how to use ilastik, rather, a demonstration on
 2.) Select all features under the `Feature Selection` tab.  
 3.) Specify the following label categories. The label order **must** be in the exact order as shown here!  
 
-![alt text](https://github.com/iantsang779/pyRootHair/blob/43cd8ab8ccd95542378eb1a7eb76ea6375ca874c/demo/ilastik_classes.png)
+![alt text](https://github.com/iantsang779/pyRootHair/blob/43cd8ab8ccd95542378eb1a7eb76ea6375ca874c/demo/ilastik_classes.png?raw=true)
 
 4.) Ensure that the root hairs wrap around the root, especially at the root tip:
 
-![alt text](https://github.com/iantsang779/pyRootHair/blob/43cd8ab8ccd95542378eb1a7eb76ea6375ca874c/demo/demo_mask.png)
+![alt text](https://github.com/iantsang779/pyRootHair/blob/43cd8ab8ccd95542378eb1a7eb76ea6375ca874c/demo/demo_mask.png?raw=true)
 
 5.) After generating the mask, select `Source: Simple Segmentation` under `4. Prediction Export`. Click on `Choose Export Image Settings`, and set the output file format to `.png`, then hit `Export All`. 
 
