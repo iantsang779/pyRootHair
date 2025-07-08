@@ -38,13 +38,14 @@ If you have used pyRootHair in your work, please cite the following paper: XXX
       - [Flags/Arguments](https://github.com/iantsang779/pyRootHair/blob/main/README.md#flagsarguments)
         - [`-i/--input`](https://github.com/iantsang779/pyRootHair/blob/main/README.md#-i--input)
         - [`-o/--output`](https://github.com/iantsang779/pyRootHair/blob/main/README.md#-o--output)
-        - [`--batch_id/-b`](https://github.com/iantsang779/pyRootHair/blob/main/README.md#--batch_id-b)
+        - [`--batch-id/-b`](https://github.com/iantsang779/pyRootHair/blob/main/README.md#--batch-id-b)
         - [`--conv`](https://github.com/iantsang779/pyRootHair/blob/main/README.md#--conv)
         - [`--resolution`](https://github.com/iantsang779/pyRootHair/blob/main/README.md#--resolution)
         - [`--frac`](https://github.com/iantsang779/pyRootHair/blob/main/README.md#--frac)
-        - [`--plot_segmentation`](https://github.com/iantsang779/pyRootHair/blob/main/README.md#--plot_segmentation)
-        - [`--plot_transformation`](https://github.com/iantsang779/pyRootHair/blob/main/README.md#--plot_transformation)
-        - [`--plot_summary`](https://github.com/iantsang779/pyRootHair/blob/main/README.md#--plot_summary)
+        - [`--length-cutoff`](https://github.com/iantsang779/pyRootHair/blob/main/README.md#--length-cutoff)
+        - [`--plot-segmentation`](https://github.com/iantsang779/pyRootHair/blob/main/README.md#--plot-segmentation)
+        - [`--plot-transformation`](https://github.com/iantsang779/pyRootHair/blob/main/README.md#--plot-transformation)
+        - [`--plot-summary`](https://github.com/iantsang779/pyRootHair/blob/main/README.md#--plot-summary)
         - [A Full Example](https://github.com/iantsang779/pyRootHair/blob/main/README.md#a-full-example)
     - [Random Forest Pipeline](https://github.com/iantsang779/pyRootHair/blob/main/README.md#random-forest-pipeline)
       - [Training the Random Forest Model](https://github.com/iantsang779/pyRootHair/blob/main/README.md#training-the-random-forest-model)
@@ -122,11 +123,12 @@ After installation, run `pyroothair`. You should be greeted with this output (if
 
 ...No GPU Detected...
 
-usage: pyRootHair [-h] [-i [IMG_DIR]] [-b [BATCH_ID]] [-p [{cnn,random_forest,single}]] [--resolution [HEIGHT_BIN_SIZE]]
-                  [--conv [CONV]] [--frac [FRAC]] [-o SAVE_PATH] [--plot_segmentation] [--plot_transformation]
-                  [--plot_summary] [--rfc_model_path RFC_MODEL_PATH]
-                  [--sigma_min SIGMA_MIN] [--sigma_max SIGMA_MAX] [--input_mask [INPUT_MASK]]
-pyRootHair: error: The following arguments are required for pyRootHair: ['-i/--input', '-b/--batch_id', '-o/--output']
+usage: pyRootHair [-h] [-i [IMG_DIR]] [-b [BATCH_ID]] [-o SAVE_PATH]
+                  [--resolution [HEIGHT_BIN_SIZE]] [--conv [CONV]]
+                  [--frac [FRAC]] [--plot-segmentation]
+                  [--plot-transformation] [--plot-summary]
+
+pyRootHair: error: The following arguments are required for pyRootHair: ['-i/--input', '-b/--batch-id', '-o/--output']
 ```
 
 ### Uninstalling pyRootHair
@@ -209,7 +211,7 @@ The following arguments are required to run the standard segmentation pipeline:
 
 ```
 -i/--input: The filepath to the directory containing the images you want to process. MUST be a folder of images!
--b/--batch_id: A unique ID associated with each batch of images you are processing per run. Can be species/genotype name, or date, or anything that is easily identifiable by you
+-b/--batch-id: A unique ID associated with each batch of images you are processing per run. Can be species/genotype name, or date, or anything that is easily identifiable by you
 -o/--output: The filepath to location to store data, plots and segmentation masks. Directory will be automatically created should it not already exist.
 ```
 If GPUs are available on your cluster, this command this requests a single GPU with 10GB VRAM on a SLURM system:
@@ -225,7 +227,7 @@ A basic command example to run pyRootHair is as follows:
 ```bash
 pyroothair -i ~/Images/Wheat/Brompton/ -b Brompton -o ~/Output/
 ```
-In this example, all images in the `~/Images/Wheat/Brompton` will be copied to `~/Output/adjusted_images/Brompton` and renamed for inference. Inference will then be run on these renamed images, and masks will be saved to `~/Output/masks/Brompton`. The value provided to `-b/--batch_id` is used to name the sub folder in Output, which is 'Brompton' in this case. After inference, pyRootHair will post-process the binary masks, and compute traits. The output data will be stored in `~/Output/data/Brompton`.
+In this example, all images in the `~/Images/Wheat/Brompton` will be copied to `~/Output/adjusted_images/Brompton` and renamed for inference. Inference will then be run on these renamed images, and masks will be saved to `~/Output/masks/Brompton`. The value provided to `-b/--batch-id` is used to name the sub folder in Output, which is 'Brompton' in this case. After inference, pyRootHair will post-process the binary masks, and compute traits. The output data will be stored in `~/Output/data/Brompton`.
 
 
 #### Flags/Arguments
@@ -238,16 +240,16 @@ Filepath to directory/folder containing your input images. You can split your im
 
 ##### `-o/--output` 
 *REQUIRED - ARGUMENT - STRING*  
-Filepath to store outputs. By default, only the raw and summary data tables will be saved to this path. Any additional outputs (e.g. with `--plot_segmentation`) will be stored here as well. Required if using the main pipeline or the random forest pipeline. The structure of the output directory is as follows:
+Filepath to store outputs. By default, only the raw and summary data tables will be saved to this path. Any additional outputs (e.g. with `--plot-segmentation`) will be stored here as well. Required if using the main pipeline or the random forest pipeline. The structure of the output directory is as follows:
 
 - `adjusted_images`: A copy of the raw input images provided with `-i`, but images are renamed with a suffix  
 - `masks`: Binary segmentation masks corresponding to the input images  
-- `plots`: Location of stored plots for `--plot_segmentation`, `--plot_summary` and `--plot_transformation`.
+- `plots`: Location of stored plots for `--plot-segmentation`, `--plot-summary` and `--plot-transformation`.
 - `data`: Location of stored data tables for each batch of images, including summary and raw tables. See [this](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#data-output) section for more information on the summary data tables.
 
-##### `--batch_id/-b` 
+##### `--batch-id/-b` 
 *REQUIRED - ARGUMENT - STRING/INT/FLOAT*  
-In the above example, the renamed images will be stored in `~/Output/adjusted_images/Brompton`, and segmentation masks will be stored in `~/Output/masks/Brompton`. The `--batch_id/-b` argument assigns a unique ID to the entire batch of images given by `-i`. This could be an ID for a particular genotype (e.g. Brompton, a wheat variety), or a timestamp (e.g. each batch of images are from a specific timepoint). You must assign a unique ID for each run of new images! Required if using the main pipeline or the random forest pipeline.
+In the above example, the renamed images will be stored in `~/Output/adjusted_images/Brompton`, and segmentation masks will be stored in `~/Output/masks/Brompton`. The `--batch-id/-b` argument assigns a unique ID to the entire batch of images given by `-i`. This could be an ID for a particular genotype (e.g. Brompton, a wheat variety), or a timestamp (e.g. each batch of images are from a specific timepoint). You must assign a unique ID for each run of new images! Required if using the main pipeline or the random forest pipeline.
 
 ##### `--conv` 
 *OPTIONAL - ARGUMENT - INT*  
@@ -261,15 +263,19 @@ pyRootHair computes a sliding window down the root, and takes measurement from b
 *OPTIONAL - ARGUMENT - FLOAT*  
 Controls the degree of LOWESS smoothing for the lines used to model average RHL and RHD for each image. Since measurements from each bin in the sliding window is noisy, a smoothed line over these points reduces the effect of variation between bin measurements. A smaller value for `--frac` decreases the smoothing effect, i.e. the line will better fit the RHL/RHD data for each bin, but will fluctuate significantly. A larger value for `--frac` increases the smoothing effect, i.e the line will be much smoother through the RHL/RHD data for each bin, but be a worse fit. See [this](https://github.com/iantsang779/pyRootHair/blob/main/workflow.md#summary-plots) for a visual representation of the regression lines. Value must be a floating point number (e.g. 0.15) between 0 and 1. The default value is recommended. 
 
-##### `--plot_segmentation` 
-*OPTIONAL - FLAG*  
-Toggle plotting of segmented masks for each image. For each input image, `--plot_segmentation` saves the raw mask, straightened mask, and a mask of just the root hair segments. Masks are saved in filepath specified in `--output` under `output/plots/batch_id/`. Masks are saved in human viewable format (i.e a normal RGB image).
+##### `--length-cutoff`
+*OPTIONAL - ARGUMENT - NUMERIC(INT/FLOAT)*
+Set a length cutoff (value in milimetres) for all images in the input batch. `--length-cutoff` helps standardize your measurements if you have significant variation in root length in the input batch. The value must not be greater than the length of the shortest root in the batch. It is recommended that you first run pyroothair without `--length-cutoff`, then check the length of the shortest root in the previous run in the summary.csv file, and set the shorted length as your value for `--length-cutoff` if you wish. For example, `--length-cutoff 10` will extract traits from only the first 10 milimetres from the root tip for all input images.
 
-##### `--plot_transformation` 
+##### `--plot-segmentation` 
+*OPTIONAL - FLAG*  
+Toggle plotting of segmented masks for each image. For each input image, `--plot-segmentation` saves the raw mask, straightened mask, and a mask of just the root hair segments. Masks are saved in filepath specified in `--output` under `output/plots/batch_id/`. Masks are saved in human viewable format (i.e a normal RGB image).
+
+##### `--plot-transformation` 
 *OPTIONAL - FLAG*  
 Toggle plotting of co-ordinates illustrating how each root is warped and straightened. Can be helpful to check if an image has been poorly warped. Plots are saved in filepath specified in `--output` under `output/plots/batch_id/`
 
-##### `--plot_summary` 
+##### `--plot-summary` 
 *OPTIONAL - FLAG*   
 Toggle plotting of summary plots describing RHL and RHD for each input image. Plots are saved in filepath specified in `--output` under `output/plots/batch_id/`
 
@@ -278,7 +284,7 @@ Toggle plotting of summary plots describing RHL and RHD for each input image. Pl
 Here is a full command example, saving all diagnostic/summary plots, with a pixel:mm conversion factor of 100, 0.1 smoothing factor, and a bin size of 50 px:
 
 ```bash
-pyroothair -i /path/to/image/folder -b batch_id -o /path/to/output/folder --plot_segmentation --plot_summary --plot_transformation --conv 100 --frac 0.1 --resolution 50
+pyroothair -i /path/to/image/folder -b batch_id -o /path/to/output/folder --plot-segmentation --plot-summary --plot-transformation --conv 100 --frac 0.1 --resolution 50
 ```
 
 ### Random Forest Pipeline
@@ -292,16 +298,16 @@ To train a random forest model, you will need to train the model on a single rep
 Once you have generated a suitable mask, you can train a random forest model like so:
 
 ```bash
-pyroothair_train_random_forest --train_img /path/to/representative/training/image/example --train_mask /path/to/generated/binary/mask --model_output /path/to/output/rf_model/
+pyroothair_train_random_forest --train-img /path/to/representative/training/image/example --train-mask /path/to/generated/binary/mask --model-output /path/to/output/rf_model/
 ```
 
-If successful, you should see `...RFC model saved as /path/to/output/rf_model.joblib...`, indicating the random forest model has been saved in `--model_output`. There are some additional flags/arguments that allow you to toggle the behaviour of how the random forest model is trained, please see the [documentation](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html) from scikit-learn on the `RandomForestClassifier` for more information. 
+If successful, you should see `...RFC model saved as /path/to/output/rf_model.joblib...`, indicating the random forest model has been saved in `--model-output`. There are some additional flags/arguments that allow you to toggle the behaviour of how the random forest model is trained, please see the [documentation](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html) from scikit-learn on the `RandomForestClassifier` for more information. 
 
-**`--sigma_min`**: Minimum sigma (blurring factor) for feature extraction from the input image. Default = 1  
-**`--sigma_max`**: Maximum sigma (blurring factor) for feature extraction from input image. Default = 4  
-**`--n_estimators`**: Number of trees in the Random Forest Classifier. Default = 50  
-**`--max_depth`**: Maximum depth of the Random Forest Classifier. Default = 10  
-**`--max_samples`**: Number of samples extracted from image features to train each estimator. Default = 0.05  
+**`--sigma-min`**: Minimum sigma (blurring factor) for feature extraction from the input image. Default = 1  
+**`--sigma-max`**: Maximum sigma (blurring factor) for feature extraction from input image. Default = 4  
+**`--n-estimators`**: Number of trees in the Random Forest Classifier. Default = 50  
+**`--max-depth`**: Maximum depth of the Random Forest Classifier. Default = 10  
+**`--max-samples`**: Number of samples extracted from image features to train each estimator. Default = 0.05  
 
 #### Deploying the Random Forest Model
 Once your random forest model is trained, you can deploy it like so:
@@ -310,7 +316,7 @@ Once your random forest model is trained, you can deploy it like so:
 pyroothair_run_random_forest -i /path/to/input/image/folder -b batch_id -o /path/to/output/folder -rfc /path/to/rf_model.joblib
 ```
 
-The command is the same as before, but you must provide the path to the trained model using `-rfc/--rfc_model_path`.
+The command is the same as before, but you must provide the path to the trained model using `-rfc/--rfc-model-path`.
 
 ### Single Mask Pipeline
 If you wish, you can also run pyRootHair on a single, user generated binary mask of an input image. See [this](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#generating-binary-masks) for instructions on generating and converting binary masks. 
@@ -421,7 +427,7 @@ pyRootHair will automatically download the latest segmentation model (model.pth)
 
 ### The `plots` directory is empty
 
-Please ensure you have specified the any of the following flags: [--plot_summary](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#--plot_summary), [--plot_segmentation](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#--plot_segmentation), [--plot_transformation](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#--plot_transformation) along with your pyroothair command. 
+Please ensure you have specified the any of the following flags: [--plot-summary](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#--plot-summary), [--plot-segmentation](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#--plot-segmentation), [--plot-transformation](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#--plot-transformation) along with your pyroothair command. 
 
 ### The binary masks in `output/masks/batch_id` are black images
 
@@ -438,7 +444,7 @@ ax.imshow(iio.imread(mask_file))
 
 ```
 
-Alternatively, if you specify the `--plot_segmentation` flag while running pyRootHair, this will save the masks in a normal image format for you to view. See [--plot_segmentation](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#--plot_segmentation) for more details.
+Alternatively, if you specify the `--plot-segmentation` flag while running pyRootHair, this will save the masks in a normal image format for you to view. See [--plot-segmentation](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#--plot-segmentation) for more details.
 
 ### The output data does not match up to the biology of the plant
 
