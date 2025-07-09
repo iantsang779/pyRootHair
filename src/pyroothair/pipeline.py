@@ -5,10 +5,10 @@ import numpy as np
 
 from pathlib import Path
 from numpy.typing import NDArray
-from pyroothair.params import GetParams
-from pyroothair.root import Root
+from pyroothair.images import ImageLoader
 from pyroothair.skeleton import Skeleton
-
+from pyroothair.root import Root
+from pyroothair.params import GetParams
 class CheckArgs():
     """
     Check command line arguments for various pipeline configurations.
@@ -16,6 +16,10 @@ class CheckArgs():
     def __init__(self, args, parser) -> None:
         self.args = args
         self.parser = parser
+
+        print('#########################################')
+        print('     Thank you for using pyRootHair!     ')
+        print('#########################################\n')  
 
     def check_arguments_gpu(self) -> None:
         """
@@ -104,16 +108,20 @@ class CheckArgs():
         
         return newmask
 
-class Pipeline(CheckArgs):
+class Pipeline(ImageLoader):
     """
     Run core pipeline to mine traits from binary masks generated from inference
     """
-    def __init__(self, check_args, input_img:'NDArray', input_img_path: str) -> None:
-        self.input_img = input_img
-        self.check_args = check_args
-        self.input_img_path = input_img_path
-        self.args = check_args.args
-        self.parser = check_args.parser
+    def __init__(self, args, parser, img_dir: str, img:str) -> None:
+        super().__init__(img_dir, img)
+        self.args = args
+        self.parser = parser
+        self.img_dir = img_dir
+        self.img = img
+        # self.input_img = input_img
+        # self.check_args = check_args
+        # self.args = check_args.args
+        # self.parser = check_args.parser
         if self.args.save_path:
             if not Path(self.args.save_path).exists():
                     Path(self.args.save_path).mkdir(parents=True, exist_ok=True)
@@ -128,7 +136,8 @@ class Pipeline(CheckArgs):
         rh_mask = init_mask == 1
         bg_mask = init_mask == 0
 
-        skeleton = Skeleton() 
+        print(f'\n...Loading {self.img}...')
+        skeleton = Skeleton(self.img_dir, self.img) 
         clean_root = skeleton.extract_root(root_mask)
         sk_y, sk_x = skeleton.skeletonize(clean_root)
         sk_spline, sk_start, sk_end = skeleton.skeleton_params(sk_x, sk_y)
@@ -145,18 +154,18 @@ class Pipeline(CheckArgs):
         skeleton.generate_buffer_coords(rotated_mask)
         straight_mask = skeleton.straighten_image(rotated_mask)
 
-        rt = Root(straight_mask)
+        rt = Root(self.img_dir, self.img, straight_mask)
         final_root = rt.check_root_tip()
-        root_thickness = rt.calculate_avg_root_thickness(final_root)
+        root_thickness = rt.calculate_avg_root_thickness(final_root, self.args.length_cutoff, self.args.conv)
         rt.find_root_tip()
         rt.process_rh_mask()
         root_hairs = rt.split_root_coords()
         root_hairs_cropped = rt.crop_rh_mask(root_hairs)
 
         if root_hairs_cropped.shape != (1,1):
-            data = GetParams(root_hairs_cropped, self.input_img, self.input_img_path, rh_mask, bg_mask)
-            data.calculate_pixel_intensity()
-            data.sliding_window(self.args.height_bin_size)
+            data = GetParams(self.img_dir, self.img, straight_mask, root_hairs_cropped, rh_mask, bg_mask)
+            data.calculate_pixel_intensity(self.args.length_cutoff, self.args.conv)
+            data.sliding_window(self.args.height_bin_size, self.args.length_cutoff, self.args.conv)
             data.clean_data()
             data.calibrate_data(self.args.conv)
             data.calculate_uniformity()

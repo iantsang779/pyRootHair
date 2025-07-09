@@ -17,7 +17,7 @@ Train a RFC segmentation model.
 
 Please read the tutorial documentation on the github repository: https://github.com/iantsang779/pyRootHair
 
-Basic usage: pyroothair_train_random_forest --train_img /path/to/representative/training/image/example --train_mask /path/to/generated/binary/mask --model_output /path/to/output/rf_model/
+Basic usage: pyroothair_train_random_forest --train-img /path/to/representative/training/image/example --train-mask /path/to/generated/binary/mask --model-output /path/to/output/rf_model/
 
 Please cite the following paper when using pyRootHair: xxxxxx
 
@@ -30,14 +30,14 @@ def parse_args():
                                      description=description,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     
-    parser.add_argument('--train_img', help='Path to RGB image to train the Random Forest Classifier on.', dest='train_img_path', type=str, required=True)
-    parser.add_argument('--train_mask', help='Path to binary mask corresponding to the training image.', dest='train_mask_path', type=str, required=True)
-    parser.add_argument('--model_output', help='Save name and path for the trained Random Forest Classifier', dest='model_output_path', required=True)
-    parser.add_argument('--sigma_min', help='Minimum sigma for feature extraction. Default = 1', dest='sigma_min', type=int, default=1)
-    parser.add_argument('--sigma_max', help='Maximum sigma for feature extraction. Default = 4', dest='sigma_max', type=int, default=4)
-    parser.add_argument('--n_estimators', help='Number of trees in the Random Forest Classifier. Default = 50', dest='n_estimators', type=int, default=50)
-    parser.add_argument('--max_depth', help='Maximum depth of the Random Forest Classifier. Default = 10', dest='max_depth', type=int, default=10)
-    parser.add_argument('--max_samples', help='Number of samples extracted from features to train each estimator. Default = 0.05.', dest='max_samples', default=0.05)
+    parser.add_argument('--train-img', help='Path to RGB image to train the Random Forest Classifier on.', dest='train_img_path', type=str, required=True)
+    parser.add_argument('--train-mask', help='Path to binary mask corresponding to the training image.', dest='train_mask_path', type=str, required=True)
+    parser.add_argument('--model-output', help='Save name and path for the trained Random Forest Classifier', dest='model_output_path', required=True)
+    parser.add_argument('--sigma-min', help='Minimum sigma for feature extraction. Default = 1', dest='sigma_min', type=int, default=1)
+    parser.add_argument('--sigma-max', help='Maximum sigma for feature extraction. Default = 4', dest='sigma_max', type=int, default=4)
+    parser.add_argument('--n-estimators', help='Number of trees in the Random Forest Classifier. Default = 50', dest='n_estimators', type=int, default=50)
+    parser.add_argument('--max-depth', help='Maximum depth of the Random Forest Classifier. Default = 10', dest='max_depth', type=int, default=10)
+    parser.add_argument('--max-samples', help='Number of samples extracted from features to train each estimator. Default = 0.05.', dest='max_samples', default=0.05)
     
     return parser.parse_args(), parser
 
@@ -70,7 +70,7 @@ class ForestTrainer():
         newmask = self.train_mask.copy()
 
         if not np.array_equal(np.unique(self.train_mask), [1,2,3]):
-            print('\n...Mask classes are not correct!...')
+            # print('...Reconverting mask classes...')
 
             newmask[self.train_mask == 0] = 1
             newmask[self.train_mask  == 1] = 2
@@ -86,7 +86,7 @@ class ForestTrainer():
         original_mask = altered_mask.copy()
 
         if not np.array_equal(np.unique(altered_mask), [0,1,2]):
-            print('...Reconverting mask classes...')
+            # print('...Reconverting mask classes...')
 
             original_mask[altered_mask == 1] = 0
             original_mask[altered_mask == 2] = 1
@@ -100,7 +100,7 @@ class ForestTrainer():
 
         https://github.com/scikit-image/scikit-image/blob/v0.25.2/skimage/feature/_basic_features.py#L115-L198
         """
-        print('\n...Extracting features...')
+        # print('...Extracting features...')
         return multiscale_basic_features(
             image,
             intensity=True,
@@ -147,7 +147,6 @@ class ForestTrainer():
         
         https://github.com/scikit-image/scikit-image/blob/v0.25.2/skimage/future/trainable_segmentation.py#L122-L164
         """
-        print(f'\n...Loading {image}...')
 
         img = iio.imread(os.path.join(img_path, image))
         if img.shape[2] == 4:

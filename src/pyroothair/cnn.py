@@ -15,10 +15,6 @@ class nnUNetv2():
         self.model_path = os.path.join(Path(__file__).parent, 'model')
         self.gpu_exists=False
 
-        print('#########################################')
-        print('     Thank you for using pyRootHair!     ')
-        print('#########################################\n')  
-
     def check_gpu(self) -> None:
         """
         Check whether GPU is available on local machine/cluster

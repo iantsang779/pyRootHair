@@ -9,46 +9,45 @@ from pathlib import Path
 
 class ImageLoader():
 
-    def __init__(self) -> None:
+    def __init__(self, img_dir:str, img:str) -> None:
         self.old_h, self.old_w, self.old_c = (None, None, None)
         self.adjust_height, self.adjust_channel = (False, False)
-        self.image = None
-        self.image_name = None
-        self.input_path = None
-        self.sub_dir_path = None
-
-    def read_images(self, img_dir:str, img:str) -> None:
-        """
-        Read an image in user specified input directory and check dimensions.
-        Check whether image is a PNG file.
-        Check if with of input image is too large relative to height.
-        """
-        # check each input image is a PNG 
-        # if magic.from_file(os.path.join(img_dir, img), mime=True) != 'image/png':
-        #     raise TypeError(f'Incorrect file format for {img}. Image must be a PNG!')
-
         self.image = iio.imread(os.path.join(img_dir, img))
         self.image_name = img
-        
-        print(f'\n...Loading {img}...')
+        self.sub_dir_path = None
         self.old_h, self.old_w, self.old_c = self.image.shape
-
-        if self.old_h > 5000:
-            self.adjust_height = True
         if self.old_c > 3:
             self.adjust_channel = True
 
-        
-    def resize_image(self) -> None:
-        """
-        Resize input image if height > 5000px
-        """
-        assert self.old_h is not None
-        assert self.old_w is not None
+    # def read_images(self) -> None:
+    #     """
+    #     Read an image in user specified input directory and check dimensions.
+    #     Check whether image is a PNG file.
+    #     Check if with of input image is too large relative to height.
+    #     """
+    #     # check each input image is a PNG 
+    #     # if magic.from_file(os.path.join(img_dir, img), mime=True) != 'image/png':
+    #     #     raise TypeError(f'Incorrect file format for {img}. Image must be a PNG!')
 
-        if self.adjust_height:
+    #     # self.image = iio.imread(os.path.join(img_dir, img))
+    #     # self.image_name = img
+        
+
+    #     # if self.old_h > 5000:
+    #     #     self.adjust_height = True
+        
+
+        
+    # def resize_image(self) -> None:
+    #     """
+    #     Resize input image if height > 5000px
+    #     """
+    #     assert self.old_h is not None
+    #     assert self.old_w is not None
+
+    #     if self.adjust_height:
             
-            self.image = resize(self.image, (int(round(self.old_h / 3)), int(round(self.old_w / 3))), anti_aliasing=True)
+    #         self.image = resize(self.image, (int(round(self.old_h / 3)), int(round(self.old_w / 3))), anti_aliasing=True)
 
 
     def resize_channel(self) -> None:

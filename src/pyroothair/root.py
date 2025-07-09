@@ -10,7 +10,8 @@ from pyroothair.skeleton import Skeleton
 
 class Root(Skeleton):
 
-    def __init__(self, straight_mask: 'NDArray') -> None:
+    def __init__(self, img_dir:str, img:str, straight_mask: 'NDArray') -> None:
+        super().__init__(img_dir, img)
         self.straight_mask = straight_mask
         self.found_tip = False
         self.root_tip_x, self.root_tip_y = None, None
@@ -43,7 +44,7 @@ class Root(Skeleton):
             self.found_tip = True 
         return self.final_labeled_root
     
-    def calculate_avg_root_thickness(self, final_root_labeled: 'NDArray') -> float:
+    def calculate_avg_root_thickness(self, final_root_labeled: 'NDArray', length_cutoff: float, conv: int) -> float:
         """
         Calculate average root thickness from root mask via sliding window
         """
@@ -53,6 +54,11 @@ class Root(Skeleton):
         root_params = [i.bbox for i in root_measured]
         root_start, _, root_end, _ = root_params[0]
 
+        if length_cutoff:
+            if length_cutoff * conv > root_end:
+                raise ValueError(f'Cannot specify a length cutoff ({length_cutoff}) greater than the existing root length ({root_end / conv}).')
+            root_end = round(length_cutoff * conv)
+            
         for start in range(root_start, root_end, 100):
 
             end = start + 100

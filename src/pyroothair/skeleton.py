@@ -8,16 +8,17 @@ from skimage.morphology import skeletonize
 from skimage.measure import label, regionprops
 from scipy.spatial.distance import euclidean
 from scipy.interpolate import CubicSpline
+from pyroothair.images import ImageLoader
 from typing import cast, Tuple
 
-class Skeleton():
+class Skeleton(ImageLoader):
    
-    def __init__(self) -> None:
+    def __init__(self, img_dir, img) -> None:
+        super().__init__(img_dir, img)
         self.points = None
         self.new_points = None
         self.old_buffer_coords = None
         self.new_buffer_coords = None
-        self.final_rh_mask, self.final_root_mask = None, None
 
     def clean_root_chunk(self, mask: 'NDArray') -> tuple[NDArray, list]:
         """

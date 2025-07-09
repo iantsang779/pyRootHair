@@ -40,9 +40,10 @@ def parse_args():
     parser.add_argument('--resolution', help='Bin size defining measurement intervals along each root hair segment. Default = 20 px', type=int, nargs='?', dest='height_bin_size', default=20)
     parser.add_argument('--conv', help='The number of pixels corresponding to 1mm in the original input images. Default = 102 px', nargs='?', type=int, dest='conv', default=102)
     parser.add_argument('--frac', help='Degree of smoothing of lowess regression line to model average root hair length per input image. Value must be between 0 and 1. See statsmodels.nonparametric.smoothers_lowess.lowess for more details. Default = 0.1', type=float, nargs='?', dest='frac', default=0.1)
-    parser.add_argument('--plot_segmentation', help='toggle plotting of predicted binary masks for each image (straightened mask, root hair segments, and cropped root hair segments). Must provide a valid filepath for --output', dest='show_segmentation', action='store_true')
-    parser.add_argument('--plot_transformation', help='toggle plotting of co-ordinates illustrating how each input image is warped and straightened. Useful for debugging any strangely warped masks. Must provide a valid filepath for --output', dest='show_transformation', action='store_true')
-    parser.add_argument('--plot_summary', help='toggle plotting of summary plots describing RHL and RHD for each image. Must provide a valid filepath for --output', dest='show_summary', action='store_true')
+    parser.add_argument('--length-cutoff', help='Set maximum length (mm) of root (as distance from the root tip) to standardize measurements for all images in the input batch. Please only use this argument once you have run pyroothair once on the existing batch.', dest='length_cutoff', type=float, default=None)
+    parser.add_argument('--plot-segmentation', help='toggle plotting of predicted binary masks for each image (straightened mask, root hair segments, and cropped root hair segments). Must provide a valid filepath for --output', dest='show_segmentation', action='store_true')
+    parser.add_argument('--plot-transformation', help='toggle plotting of co-ordinates illustrating how each input image is warped and straightened. Useful for debugging any strangely warped masks. Must provide a valid filepath for --output', dest='show_transformation', action='store_true')
+    parser.add_argument('--plot-summary', help='toggle plotting of summary plots describing RHL and RHD for each image. Must provide a valid filepath for --output', dest='show_summary', action='store_true')
 
     return parser.parse_args(), parser
 
@@ -71,9 +72,7 @@ def main():
     device = torch.device('cuda', 0) if model.gpu_exists else torch.device('cpu')
     
     for img in demo_imgs: # loop through all input images, modify and save with nnUNet prefix
-        im_loader = ImageLoader()
-        im_loader.read_images(demo_img_dir, img)
-        im_loader.resize_image()
+        im_loader = ImageLoader(demo_img_dir, img)
         im_loader.resize_channel()
         im_loader.setup_dir(args.save_path, args.batch_id)
         im_loader.save_resized_image()
@@ -86,10 +85,8 @@ def main():
     failed_images = []
 
     for mask, img in zip(mask_files, demo_imgs): # loop through each predicted mask
-        img_file = iio.imread(os.path.join(demo_img_dir, img))
-        main = Pipeline(check_args, img_file, demo_img_dir)
+        main = Pipeline(args, parser, demo_img_dir, img)
         init_mask = iio.imread(os.path.join(mask_path, mask))
-        print(f'\n...Processing {mask}...')
         s, r = main.run_pipeline(init_mask, mask) # run pipeline for each image
         if len(s) > 0:
             summary = pd.concat([s,summary]) # add data from each image to the correct data frame
