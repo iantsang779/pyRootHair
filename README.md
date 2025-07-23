@@ -15,7 +15,6 @@ A minimal working example:
 pyroothair -i path/to/image/folder -b batch_id -o path/to/output/folder
 
 ```
-If you have used pyRootHair in your work, please cite the following paper: XXX
 
 ## Table of Contents
 
@@ -63,6 +62,7 @@ If you have used pyRootHair in your work, please cite the following paper: XXX
     - [The `plots` directory is empty](https://github.com/iantsang779/pyRootHair/blob/main/README.md#the-plots-directory-is-empty)
     - [The binary masks in `output/masks/batch_id` are black images](https://github.com/iantsang779/pyRootHair/blob/main/README.md#the-binary-masks-in-outputmasksbatch_id-are-black-images)
   - [Workflow](https://github.com/iantsang779/pyRootHair/blob/main/README.md#workflow)
+  - [Citation](https://github.com/iantsang779/pyRootHair/blob/main/README.md#citation)
 
 
 ## Installation Instructions (Linux/MacOS)
@@ -461,7 +461,22 @@ To force re-prediction of input images, you will need to remove the directories 
 
 If you are interested in learning how pyRootHair works behind the scenes, please check out [this](https://github.com/iantsang779/pyRootHair/blob/main/workflow.md) in-depth walk through with code breakdown.
 
+## Citation
 
+```
+@misc{tsangPyRootHairMachineLearning2025,
+	title = {{pyRootHair}: Machine Learning Accelerated Software for High-Throughput Phenotyping of Plant Root Hair Traits},
+	rights = {https://www.biorxiv.org/about/{FAQ}\#license},
+	url = {http://biorxiv.org/lookup/doi/10.1101/2025.07.14.664697},
+	doi = {10.1101/2025.07.14.664697},
+	shorttitle = {{pyRootHair}},
+	publisher = {Cold Spring Harbor Laboratory},
+	author = {Tsang, Ian and Percival-Alwyn, Lawrence and Rawsthorne, Stephen and Cockram, James and Leigh, Fiona and Atkinson, Jonathan A.},
+	urldate = {2025-07-23},
+	date = {2025-07-18},
+}
+
+```
 
 
 
