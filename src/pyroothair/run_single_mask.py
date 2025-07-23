@@ -17,7 +17,9 @@ Please read the tutorial documentation on the github repository: https://github.
 
 Basic usage: pyroothair_run_single_mask -m /path/to/binary/mask -i /path/to/image/of/binary/mask -b unqiue_id_for_mask/image -o /path/to/output/folder
 
-Please cite the following paper when using pyRootHair: xxxxxx
+Please cite the following paper when using pyRootHair: 
+
+Tsang, I. et al. pyRootHair: Machine Learning Accelerated Software for High-Throughput Phenotyping of Plant Root Hair Traits. Preprint at https://doi.org/10.1101/2025.07.14.664697 (2025).
 
 Author: Ian Tsang
 Contact: ian.tsang@niab.com
