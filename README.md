@@ -354,7 +354,7 @@ You will need to convert the pixel classes of the generated binary mask as follo
 pyroothair_convert_mask -i path/to/your/generated/mask
 ```
 
-You should see a the following message if the conversion has been successful: `...Saved converted input mask XXX in ZZZ...`. You can now process this mask with pyRootHair: `pyroothair -p single --input_mask /path/to/converted/mask`.
+You should see a the following message if the conversion has been successful: `...Saved converted input mask XXX in ZZZ...`. You can now process this mask with pyRootHair: `pyroothair_run_single_mask -i /path/to/converted/mask`.
 
 ## Data Output
 
