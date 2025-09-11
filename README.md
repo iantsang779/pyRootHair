@@ -50,7 +50,7 @@ pyroothair -i path/to/image/folder -b batch_id -o path/to/output/folder
       - [Training the Random Forest Model](https://github.com/iantsang779/pyRootHair/blob/main/README.md#training-the-random-forest-model)
       - [Deploying the Random Forest Model](https://github.com/iantsang779/pyRootHair/blob/main/README.md#deploying-the-random-forest-model)
     - [Single Mask Pipeline](https://github.com/iantsang779/pyRootHair/blob/main/README.md#single-mask-pipeline)
-  - [Generating Binary Masks](https://github.com/iantsang779/pyRootHair/blob/main/README.md#generating-binary-masks)
+  - [Generating Segmentation Masks](https://github.com/iantsang779/pyRootHair/blob/main/README.md#generating-segmentation-masks)
   - [Data Output](https://github.com/iantsang779/pyRootHair/blob/main/README.md#data-output)
   - [Input Images](https://github.com/iantsang779/pyRootHair/blob/main/README.md#input-images)
     - [Naming Images](https://github.com/iantsang779/pyRootHair/blob/main/README.md#naming-images)
@@ -60,7 +60,7 @@ pyroothair -i path/to/image/folder -b batch_id -o path/to/output/folder
   - [Model](https://github.com/iantsang779/pyRootHair/blob/main/README.md#model)
   - [Troubleshooting](https://github.com/iantsang779/pyRootHair/blob/main/README.md#troubleshooting)
     - [The `plots` directory is empty](https://github.com/iantsang779/pyRootHair/blob/main/README.md#the-plots-directory-is-empty)
-    - [The binary masks in `output/masks/batch_id` are black images](https://github.com/iantsang779/pyRootHair/blob/main/README.md#the-binary-masks-in-outputmasksbatch_id-are-black-images)
+    - [The segmentation masks in `output/masks/batch_id` are black images](https://github.com/iantsang779/pyRootHair/blob/main/README.md#the-segmentation-masks-in-outputmasksbatch_id-are-black-images)
   - [Workflow](https://github.com/iantsang779/pyRootHair/blob/main/README.md#workflow)
   - [Citation](https://github.com/iantsang779/pyRootHair/blob/main/README.md#citation)
 
@@ -200,12 +200,12 @@ To quickly check whether pyRootHair is working after installation, the `pyrootha
 ```bash
 pyroothair_run_demo -o demo 
 ```
-Data will be saved in the folder path provided to `-o/--output`. For more flag and argument options, please read the [user guide](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#user-guide). Note that you do not need `-i/--input` for `pyroothair_run_demo`, as the input images are already pre-loaded during installation!
+Data will be saved in the folder path provided to `-o/--output`. For more flag and argument options, please read the [user guide](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#user-guide). Note that you do not need `-i/--input` for `pyroothair_run_demo`, as the input images are already pre-loaded during installation! For `pyroothair_run_demo`, all summary plots and segmentation masks will be automatically saved.
 
 ## User Guide
 
 ### Default Pipeline
-The default segmentation pipeline in pyRootHair uses a CNN to perform image segmentation. As such, a GPU is required to maximize segmentation speed and performance. However, it is still possible to run the default segmentation pipeline without a GPU, if you do not have access to one. Segmentation performance will be **extremely** slow when using a CPU, and will very likely produce out-of-memory crashes unless your images are very small in size. The following section assumes you are running pyRootHair on a cluster with a GPU. Please check the sections on deploying a [random forest model](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#random-forest-pipeline) or [loading a single binary mask](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#single-mask-pipeline) if you don't have this available.
+The default segmentation pipeline in pyRootHair uses a CNN to perform image segmentation. As such, a GPU is required to maximize segmentation speed and performance. However, it is still possible to run the default segmentation pipeline without a GPU, if you do not have access to one. Segmentation performance will be **extremely** slow when using a CPU, and will very likely produce out-of-memory crashes unless your images are very small in size. The following section assumes you are running pyRootHair on a cluster with a GPU. Please check the sections on deploying a [random forest model](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#random-forest-pipeline) or [loading a single segmentation mask](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#single-mask-pipeline) if you don't have this available.
 
 The following arguments are required to run the standard segmentation pipeline:
 
@@ -227,7 +227,7 @@ A basic command example to run pyRootHair is as follows:
 ```bash
 pyroothair -i ~/Images/Wheat/Brompton/ -b Brompton -o ~/Output/
 ```
-In this example, all images in the `~/Images/Wheat/Brompton` will be copied to `~/Output/adjusted_images/Brompton` and renamed for inference. Inference will then be run on these renamed images, and masks will be saved to `~/Output/masks/Brompton`. The value provided to `-b/--batch-id` is used to name the sub folder in Output, which is 'Brompton' in this case. After inference, pyRootHair will post-process the binary masks, and compute traits. The output data will be stored in `~/Output/data/Brompton`.
+In this example, all images in the `~/Images/Wheat/Brompton` will be copied to `~/Output/adjusted_images/Brompton` and renamed for inference. Inference will then be run on these renamed images, and masks will be saved to `~/Output/masks/Brompton`. The value provided to `-b/--batch-id` is used to name the sub folder in Output, which is 'Brompton' in this case. After inference, pyRootHair will post-process the segmentation masks, and compute traits. The output data will be stored in `~/Output/data/Brompton`.
 
 
 #### Flags/Arguments
@@ -243,7 +243,7 @@ Filepath to directory/folder containing your input images. You can split your im
 Filepath to store outputs. By default, only the raw and summary data tables will be saved to this path. Any additional outputs (e.g. with `--plot-segmentation`) will be stored here as well. Required if using the main pipeline or the random forest pipeline. The structure of the output directory is as follows:
 
 - `adjusted_images`: A copy of the raw input images provided with `-i`, but images are renamed with a suffix  
-- `masks`: Binary segmentation masks corresponding to the input images  
+- `masks`: Segmentation masks corresponding to the input images  
 - `plots`: Location of stored plots for `--plot-segmentation`, `--plot-summary` and `--plot-transformation`.
 - `data`: Location of stored data tables for each batch of images, including summary and raw tables. See [this](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#data-output) section for more information on the summary data tables.
 
@@ -293,12 +293,12 @@ If you do not have access to a GPU, it is possible to train your own random fore
 You will need to ensure that all the images are relatively consistent in terms of lighting, appearance, root hair morphology, and have the same input dimensions. Should your images vary for these traits, you will need to train separate random forest models for different batches of images.
 
 #### Training the Random Forest Model
-To train a random forest model, you will need to train the model on a single representative example of an image, and a corresponding binary mask of the image. See [this](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#generating-binary-masks) section for details on how to generate suitable binary masks.
+To train a random forest model, you will need to train the model on a single representative example of an image, and a corresponding segmentation mask of the image. See [this](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#generating-segmentation-masks) section for details on how to generate suitable segmentation masks.
 
 Once you have generated a suitable mask, you can train a random forest model like so:
 
 ```bash
-pyroothair_train_random_forest --train-img /path/to/representative/training/image/example --train-mask /path/to/generated/binary/mask --model-output /path/to/output/rf_model/
+pyroothair_train_random_forest --train-img /path/to/representative/training/image/example --train-mask /path/to/generated/segmetation/mask --model-output /path/to/output/rf_model/
 ```
 
 If successful, you should see `...RFC model saved as /path/to/output/rf_model.joblib...`, indicating the random forest model has been saved in `--model-output`. There are some additional flags/arguments that allow you to toggle the behaviour of how the random forest model is trained, please see the [documentation](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html) from scikit-learn on the `RandomForestClassifier` for more information. 
@@ -319,16 +319,16 @@ pyroothair_run_random_forest -i /path/to/input/image/folder -b batch_id -o /path
 The command is the same as before, but you must provide the path to the trained model using `-rfc/--rfc-model-path`.
 
 ### Single Mask Pipeline
-If you wish, you can also run pyRootHair on a single, user generated binary mask of an input image. See [this](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#generating-binary-masks) for instructions on generating and converting binary masks. 
+If you wish, you can also run pyRootHair on a single, user generated segmentation mask of an input image. See [this](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#generating-segmentation-masks) for instructions on generating and converting segmentation masks. 
 
-To run pyRootHair on a single binary mask (with classes converted!):
+To run pyRootHair on a single segmentation mask (with classes converted!):
 
 ```bash
-pyroothair_run_single_mask -m /path/to/converted/binary/mask -i /path/to/raw/image/of/binary/mask -b batch_id -o /path/to/output
+pyroothair_run_single_mask -m /path/to/converted/segmentation/mask -i /path/to/raw/image/of/segmentation/mask -b batch_id -o /path/to/output
 ```
 
-## Generating Binary Masks
-pyRootHair will accept binary masks of any images as long as they are arrays of 0s, 1s and 2s. It is recommended that you use the [ilastik](https://www.ilastik.org/) software to generate the masks, as it is simple and requires minimal expertise to use.
+## Generating Segmentation Masks
+pyRootHair will accept segmentation masks of any images as long as they are arrays of 0s, 1s and 2s. It is recommended that you use the [ilastik](https://www.ilastik.org/) software to generate the masks, as it is simple and requires minimal expertise to use.
 
 This section is not a tutorial on how to use ilastik, rather, a demonstration on what the masks need to look like if you wish to generate your own masks suitable for pyroothair.
 
@@ -348,7 +348,7 @@ This section is not a tutorial on how to use ilastik, rather, a demonstration on
 
 If you are using the generated mask to train a random forest model, ***IGNORE the rest of this step!***. However, if you plan on processing the mask with `pyroothair_run_single_mask`, please read on:
 
-You will need to convert the pixel classes of the generated binary mask as follows: 
+You will need to convert the pixel classes of the generated segmentation mask as follows: 
 
 ```bash
 pyroothair_convert_mask -i path/to/your/generated/mask
@@ -429,9 +429,9 @@ pyRootHair will automatically download the latest segmentation model (model.pth)
 
 Please ensure you have specified the any of the following flags: [--plot-summary](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#--plot-summary), [--plot-segmentation](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#--plot-segmentation), [--plot-transformation](https://github.com/iantsang779/pyRootHair?tab=readme-ov-file#--plot-transformation) along with your pyroothair command. 
 
-### The binary masks in `output/masks/batch_id` are black images
+### The segmentation masks in `output/masks/batch_id` are black images
 
-The binary masks are arrays of [0s, 1s, 2s], such that when viewed as an RGB image, they appear black. There are a few ways to view the masks. This python snippet will read in the masks and display them interactively (e.g. in a Jupyter Notebook):
+The segmentation masks are arrays of [0s, 1s, 2s], such that when viewed as an RGB image, they appear black. There are a few ways to view the masks. This python snippet will read in the masks and display them interactively (e.g. in a Jupyter Notebook):
 
 ```python
 import matplotlib.pyplot as plt
