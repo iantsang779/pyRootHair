@@ -43,9 +43,9 @@ def parse_args():
     parser.add_argument('--conv', help='The number of pixels corresponding to 1mm in the original input images. Default = 102 px', nargs='?', type=int, dest='conv', default=102)
     parser.add_argument('--frac', help='Degree of smoothing of lowess regression line to model average root hair length per input image. Value must be between 0 and 1. See statsmodels.nonparametric.smoothers_lowess.lowess for more details. Default = 0.1', type=float, nargs='?', dest='frac', default=0.1)
     parser.add_argument('--length-cutoff', help='Set maximum length (mm) of root (as distance from the root tip) to standardize measurements for all images in the input batch. Please only use this argument once you have run pyroothair once on the existing batch.', dest='length_cutoff', type=float, default=None)
-    parser.add_argument('--plot-segmentation', help='toggle plotting of predicted binary masks for each image (straightened mask, root hair segments, and cropped root hair segments). Must provide a valid filepath for --output', dest='show_segmentation', action='store_true')
-    parser.add_argument('--plot-transformation', help='toggle plotting of co-ordinates illustrating how each input image is warped and straightened. Useful for debugging any strangely warped masks. Must provide a valid filepath for --output', dest='show_transformation', action='store_true')
-    parser.add_argument('--plot-summary', help='toggle plotting of summary plots describing RHL and RHD for each image. Must provide a valid filepath for --output', dest='show_summary', action='store_true')
+    # parser.add_argument('--plot-segmentation', help='toggle plotting of predicted binary masks for each image (straightened mask, root hair segments, and cropped root hair segments). Must provide a valid filepath for --output', dest='show_segmentation', action='store_true')
+    # parser.add_argument('--plot-transformation', help='toggle plotting of co-ordinates illustrating how each input image is warped and straightened. Useful for debugging any strangely warped masks. Must provide a valid filepath for --output', dest='show_transformation', action='store_true')
+    # parser.add_argument('--plot-summary', help='toggle plotting of summary plots describing RHL and RHD for each image. Must provide a valid filepath for --output', dest='show_summary', action='store_true')
 
     return parser.parse_args(), parser
 
@@ -56,6 +56,8 @@ def main():
     check_args.check_argument_demo()
 
     args.batch_id = 'demo'
+
+    args.show_segmentation, args.show_transformation, args.show_summary = True,True,True # set all plotting arguments to true by default for demo
 
     raw = pd.DataFrame() # initialize empty data frames to append to in run_pipeline()
     summary = pd.DataFrame()    
