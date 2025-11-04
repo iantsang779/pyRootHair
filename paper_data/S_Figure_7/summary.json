@@ -1,0 +1,2194 @@
+{
+    "foreground_mean": {
+        "Dice": 0.9777289614405082,
+        "FN": 4411.0722891566265,
+        "FP": 5543.945783132531,
+        "IoU": 0.9569683446302395,
+        "TN": 3060118.8975903615,
+        "TP": 207553.98795180724,
+        "n_pred": 213097.93373493975,
+        "n_ref": 211965.06024096385
+    },
+    "mean": {
+        "1": {
+            "Dice": 0.9700137022438801,
+            "FN": 7723.566265060241,
+            "FP": 9758.819277108434,
+            "IoU": 0.942120408957093,
+            "TN": 2976048.638554217,
+            "TP": 284096.8795180723,
+            "n_pred": 293855.6987951807,
+            "n_ref": 291820.4457831325
+        },
+        "2": {
+            "Dice": 0.9854442206371364,
+            "FN": 1098.578313253012,
+            "FP": 1329.0722891566265,
+            "IoU": 0.971816280303386,
+            "TN": 3144189.1566265062,
+            "TP": 131011.09638554217,
+            "n_pred": 132340.1686746988,
+            "n_ref": 132109.6746987952
+        }
+    },
+    "metric_per_case": [
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9527056665470351,
+                    "FN": 5133,
+                    "FP": 4355,
+                    "IoU": 0.9096828237444313,
+                    "TN": 2979028,
+                    "TP": 95564,
+                    "n_pred": 99919,
+                    "n_ref": 100697
+                },
+                "2": {
+                    "Dice": 0.9551541689472723,
+                    "FN": 1402,
+                    "FP": 1056,
+                    "IoU": 0.914157993993155,
+                    "TN": 3055446,
+                    "TP": 26176,
+                    "n_pred": 27232,
+                    "n_ref": 27578
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/DJ_1_4.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/DJ_1_4.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9408517440857495,
+                    "FN": 2357,
+                    "FP": 2786,
+                    "IoU": 0.8883097704519296,
+                    "TN": 3036513,
+                    "TP": 40904,
+                    "n_pred": 43690,
+                    "n_ref": 43261
+                },
+                "2": {
+                    "Dice": 0.9692252912152195,
+                    "FN": 368,
+                    "FP": 237,
+                    "IoU": 0.9402881958152388,
+                    "TN": 3072428,
+                    "TP": 9527,
+                    "n_pred": 9764,
+                    "n_ref": 9895
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/DJ_1_5.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/DJ_1_5.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9718957161160938,
+                    "FN": 2792,
+                    "FP": 3262,
+                    "IoU": 0.9453279510173119,
+                    "TN": 2973347,
+                    "TP": 104679,
+                    "n_pred": 107941,
+                    "n_ref": 107471
+                },
+                "2": {
+                    "Dice": 0.9335052351929989,
+                    "FN": 1130,
+                    "FP": 572,
+                    "IoU": 0.875302219942853,
+                    "TN": 3070431,
+                    "TP": 11947,
+                    "n_pred": 12519,
+                    "n_ref": 13077
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/DJ_2_1.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/DJ_2_1.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9596682291850234,
+                    "FN": 5105,
+                    "FP": 5194,
+                    "IoU": 0.9224636371849309,
+                    "TN": 2949732,
+                    "TP": 122529,
+                    "n_pred": 127723,
+                    "n_ref": 127634
+                },
+                "2": {
+                    "Dice": 0.9421938787834867,
+                    "FN": 1256,
+                    "FP": 1137,
+                    "IoU": 0.8907056405572048,
+                    "TN": 3060665,
+                    "TP": 19502,
+                    "n_pred": 20639,
+                    "n_ref": 20758
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/DJ_2_1_1.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/DJ_2_1_1.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9654433936403509,
+                    "FN": 4552,
+                    "FP": 3516,
+                    "IoU": 0.9331953299660511,
+                    "TN": 2961790,
+                    "TP": 112702,
+                    "n_pred": 116218,
+                    "n_ref": 117254
+                },
+                "2": {
+                    "Dice": 0.9081842182458199,
+                    "FN": 1692,
+                    "FP": 1438,
+                    "IoU": 0.831810854379366,
+                    "TN": 3063950,
+                    "TP": 15480,
+                    "n_pred": 16918,
+                    "n_ref": 17172
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/DJ_2_1_2.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/DJ_2_1_2.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9778142259830143,
+                    "FN": 1773,
+                    "FP": 1798,
+                    "IoU": 0.956591503069349,
+                    "TN": 3001815,
+                    "TP": 78694,
+                    "n_pred": 80492,
+                    "n_ref": 80467
+                },
+                "2": {
+                    "Dice": 0.9574468085106383,
+                    "FN": 767,
+                    "FP": 509,
+                    "IoU": 0.9183673469387755,
+                    "TN": 3068449,
+                    "TP": 14355,
+                    "n_pred": 14864,
+                    "n_ref": 15122
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/DJ_4_1_1.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/DJ_4_1_1.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9692020384262336,
+                    "FN": 6111,
+                    "FP": 7511,
+                    "IoU": 0.940244426702696,
+                    "TN": 2856118,
+                    "TP": 214340,
+                    "n_pred": 221851,
+                    "n_ref": 220451
+                },
+                "2": {
+                    "Dice": 0.9375271338022054,
+                    "FN": 3257,
+                    "FP": 2499,
+                    "IoU": 0.8824010133616639,
+                    "TN": 3035134,
+                    "TP": 43190,
+                    "n_pred": 45689,
+                    "n_ref": 46447
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/DJ_4_1_2.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/DJ_4_1_2.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9822186603889355,
+                    "FN": 1253,
+                    "FP": 1587,
+                    "IoU": 0.965058625229149,
+                    "TN": 3002801,
+                    "TP": 78439,
+                    "n_pred": 80026,
+                    "n_ref": 79692
+                },
+                "2": {
+                    "Dice": 0.9537657982976528,
+                    "FN": 788,
+                    "FP": 646,
+                    "IoU": 0.9116178736517719,
+                    "TN": 3067855,
+                    "TP": 14791,
+                    "n_pred": 15437,
+                    "n_ref": 15579
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/NDJ188_1_1_1.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/NDJ188_1_1_1.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9866178963333035,
+                    "FN": 1205,
+                    "FP": 1495,
+                    "IoU": 0.9735892244035567,
+                    "TN": 2981849,
+                    "TP": 99531,
+                    "n_pred": 101026,
+                    "n_ref": 100736
+                },
+                "2": {
+                    "Dice": 0.9643737866624692,
+                    "FN": 681,
+                    "FP": 677,
+                    "IoU": 0.9311987030094234,
+                    "TN": 3064342,
+                    "TP": 18380,
+                    "n_pred": 19057,
+                    "n_ref": 19061
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/NDJ188_1_1_3.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/NDJ188_1_1_3.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9842585608493586,
+                    "FN": 6063,
+                    "FP": 6083,
+                    "IoU": 0.9690050271773802,
+                    "TN": 3672386,
+                    "TP": 379724,
+                    "n_pred": 385807,
+                    "n_ref": 385787
+                },
+                "2": {
+                    "Dice": 0.9942192016248731,
+                    "FN": 909,
+                    "FP": 423,
+                    "IoU": 0.988504854368932,
+                    "TN": 3948381,
+                    "TP": 114543,
+                    "n_pred": 114966,
+                    "n_ref": 115452
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/alchemy_0006.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/alchemy_0006.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9646607416231068,
+                    "FN": 14208,
+                    "FP": 9407,
+                    "IoU": 0.9317339546608234,
+                    "TN": 3718330,
+                    "TP": 322311,
+                    "n_pred": 331718,
+                    "n_ref": 336519
+                },
+                "2": {
+                    "Dice": 0.9895689522932966,
+                    "FN": 1504,
+                    "FP": 536,
+                    "IoU": 0.9793532715955671,
+                    "TN": 3965451,
+                    "TP": 96765,
+                    "n_pred": 97301,
+                    "n_ref": 98269
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/bersee_0005.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/bersee_0005.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9654703771835976,
+                    "FN": 14958,
+                    "FP": 16445,
+                    "IoU": 0.9332457533262334,
+                    "TN": 3593829,
+                    "TP": 439024,
+                    "n_pred": 455469,
+                    "n_ref": 453982
+                },
+                "2": {
+                    "Dice": 0.9852523681103683,
+                    "FN": 1914,
+                    "FP": 1821,
+                    "IoU": 0.9709333997416302,
+                    "TN": 3935758,
+                    "TP": 124763,
+                    "n_pred": 126584,
+                    "n_ref": 126677
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/brigadier_0004.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/brigadier_0004.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9734006810430695,
+                    "FN": 19625,
+                    "FP": 30766,
+                    "IoU": 0.9481797455623553,
+                    "TN": 3091837,
+                    "TP": 922028,
+                    "n_pred": 952794,
+                    "n_ref": 941653
+                },
+                "2": {
+                    "Dice": 0.989644877644604,
+                    "FN": 3084,
+                    "FP": 2365,
+                    "IoU": 0.9795020144377443,
+                    "TN": 3798425,
+                    "TP": 260382,
+                    "n_pred": 262747,
+                    "n_ref": 263466
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/hereward_3.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/hereward_3.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9796841810607433,
+                    "FN": 10372,
+                    "FP": 14304,
+                    "IoU": 0.9601773910349102,
+                    "TN": 3444608,
+                    "TP": 594972,
+                    "n_pred": 609276,
+                    "n_ref": 605344
+                },
+                "2": {
+                    "Dice": 0.9919098489132652,
+                    "FN": 1618,
+                    "FP": 1515,
+                    "IoU": 0.9839495484049448,
+                    "TN": 3869059,
+                    "TP": 192064,
+                    "n_pred": 193579,
+                    "n_ref": 193682
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/hereward_6.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/hereward_6.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9928839389332206,
+                    "FN": 1099,
+                    "FP": 1274,
+                    "IoU": 0.9858684389180691,
+                    "TN": 2914638,
+                    "TP": 165549,
+                    "n_pred": 166823,
+                    "n_ref": 166648
+                },
+                "2": {
+                    "Dice": 0.9961171261957866,
+                    "FN": 103,
+                    "FP": 710,
+                    "IoU": 0.9922642891804714,
+                    "TN": 2977463,
+                    "TP": 104284,
+                    "n_pred": 104994,
+                    "n_ref": 104387
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-11.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-11.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9877266343488597,
+                    "FN": 3223,
+                    "FP": 3742,
+                    "IoU": 0.9757508869291536,
+                    "TN": 2795333,
+                    "TP": 280262,
+                    "n_pred": 284004,
+                    "n_ref": 283485
+                },
+                "2": {
+                    "Dice": 0.9953985764100525,
+                    "FN": 1035,
+                    "FP": 724,
+                    "IoU": 0.9908393050579118,
+                    "TN": 2890544,
+                    "TP": 190257,
+                    "n_pred": 190981,
+                    "n_ref": 191292
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-12.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-12.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9567529849589084,
+                    "FN": 9255,
+                    "FP": 13057,
+                    "IoU": 0.9170915144398698,
+                    "TN": 2813444,
+                    "TP": 246804,
+                    "n_pred": 259861,
+                    "n_ref": 256059
+                },
+                "2": {
+                    "Dice": 0.9501008726727025,
+                    "FN": 1583,
+                    "FP": 15508,
+                    "IoU": 0.9049449113186245,
+                    "TN": 2902759,
+                    "TP": 162710,
+                    "n_pred": 178218,
+                    "n_ref": 164293
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-14.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-14.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.986549293607067,
+                    "FN": 4226,
+                    "FP": 9321,
+                    "IoU": 0.9734556277713661,
+                    "TN": 2572207,
+                    "TP": 496806,
+                    "n_pred": 506127,
+                    "n_ref": 501032
+                },
+                "2": {
+                    "Dice": 0.9970956099716728,
+                    "FN": 681,
+                    "FP": 778,
+                    "IoU": 0.994208042048265,
+                    "TN": 2830659,
+                    "TP": 250442,
+                    "n_pred": 251220,
+                    "n_ref": 251123
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-15.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-15.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9815869509213938,
+                    "FN": 4392,
+                    "FP": 5543,
+                    "IoU": 0.9638397228015388,
+                    "TN": 2807811,
+                    "TP": 264814,
+                    "n_pred": 270357,
+                    "n_ref": 269206
+                },
+                "2": {
+                    "Dice": 0.9926579373940753,
+                    "FN": 1055,
+                    "FP": 1332,
+                    "IoU": 0.9854229007633588,
+                    "TN": 2918810,
+                    "TP": 161363,
+                    "n_pred": 162695,
+                    "n_ref": 162418
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-16.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-16.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9574468550672313,
+                    "FN": 13880,
+                    "FP": 25014,
+                    "IoU": 0.9183674326060127,
+                    "TN": 2606108,
+                    "TP": 437558,
+                    "n_pred": 462572,
+                    "n_ref": 451438
+                },
+                "2": {
+                    "Dice": 0.9792005341961024,
+                    "FN": 2173,
+                    "FP": 3060,
+                    "IoU": 0.9592486741996527,
+                    "TN": 2954147,
+                    "TP": 123180,
+                    "n_pred": 126240,
+                    "n_ref": 125353
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-17.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-17.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9756038996581603,
+                    "FN": 5966,
+                    "FP": 12932,
+                    "IoU": 0.9523697906821418,
+                    "TN": 2685795,
+                    "TP": 377867,
+                    "n_pred": 390799,
+                    "n_ref": 383833
+                },
+                "2": {
+                    "Dice": 0.9798496919167773,
+                    "FN": 787,
+                    "FP": 2964,
+                    "IoU": 0.960495413423766,
+                    "TN": 2987609,
+                    "TP": 91200,
+                    "n_pred": 94164,
+                    "n_ref": 91987
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-18.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-18.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9852251948829224,
+                    "FN": 6760,
+                    "FP": 6225,
+                    "IoU": 0.970880622887808,
+                    "TN": 2636637,
+                    "TP": 432938,
+                    "n_pred": 439163,
+                    "n_ref": 439698
+                },
+                "2": {
+                    "Dice": 0.9941241685144124,
+                    "FN": 468,
+                    "FP": 1334,
+                    "IoU": 0.988316984459385,
+                    "TN": 2928319,
+                    "TP": 152439,
+                    "n_pred": 153773,
+                    "n_ref": 152907
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-19.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-19.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9905818179756295,
+                    "FN": 1577,
+                    "FP": 1745,
+                    "IoU": 0.981339385019829,
+                    "TN": 2904538,
+                    "TP": 174700,
+                    "n_pred": 176445,
+                    "n_ref": 176277
+                },
+                "2": {
+                    "Dice": 0.9969092383993757,
+                    "FN": 240,
+                    "FP": 362,
+                    "IoU": 0.9938375235443453,
+                    "TN": 2984872,
+                    "TP": 97086,
+                    "n_pred": 97448,
+                    "n_ref": 97326
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-2.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-2.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9917488922910781,
+                    "FN": 2274,
+                    "FP": 4037,
+                    "IoU": 0.9836328318494563,
+                    "TN": 2696971,
+                    "TP": 379278,
+                    "n_pred": 383315,
+                    "n_ref": 381552
+                },
+                "2": {
+                    "Dice": 0.9978199677589101,
+                    "FN": 206,
+                    "FP": 316,
+                    "IoU": 0.9956494199226563,
+                    "TN": 2962576,
+                    "TP": 119462,
+                    "n_pred": 119778,
+                    "n_ref": 119668
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-21.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-21.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9791881651991172,
+                    "FN": 6682,
+                    "FP": 15422,
+                    "IoU": 0.9592249343289749,
+                    "TN": 2540464,
+                    "TP": 519992,
+                    "n_pred": 535414,
+                    "n_ref": 526674
+                },
+                "2": {
+                    "Dice": 0.9958621749023147,
+                    "FN": 600,
+                    "FP": 1555,
+                    "IoU": 0.9917584518892458,
+                    "TN": 2821080,
+                    "TP": 259325,
+                    "n_pred": 260880,
+                    "n_ref": 259925
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-22.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-22.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9605900257550924,
+                    "FN": 3117,
+                    "FP": 5299,
+                    "IoU": 0.9241685663570096,
+                    "TN": 2971577,
+                    "TP": 102567,
+                    "n_pred": 107866,
+                    "n_ref": 105684
+                },
+                "2": {
+                    "Dice": 0.9929801648844993,
+                    "FN": 461,
+                    "FP": 743,
+                    "IoU": 0.9860581989138364,
+                    "TN": 2996201,
+                    "TP": 85155,
+                    "n_pred": 85898,
+                    "n_ref": 85616
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-24.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-24.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9620412027976644,
+                    "FN": 27664,
+                    "FP": 43655,
+                    "IoU": 0.9268587591248362,
+                    "TN": 2107474,
+                    "TP": 903767,
+                    "n_pred": 947422,
+                    "n_ref": 931431
+                },
+                "2": {
+                    "Dice": 0.9936479935229281,
+                    "FN": 2304,
+                    "FP": 1556,
+                    "IoU": 0.9873761736724542,
+                    "TN": 2776789,
+                    "TP": 301911,
+                    "n_pred": 303467,
+                    "n_ref": 304215
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-25.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-25.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.985048953004588,
+                    "FN": 1814,
+                    "FP": 3853,
+                    "IoU": 0.970538387955415,
+                    "TN": 2890208,
+                    "TP": 186685,
+                    "n_pred": 190538,
+                    "n_ref": 188499
+                },
+                "2": {
+                    "Dice": 0.9936426151152651,
+                    "FN": 423,
+                    "FP": 532,
+                    "IoU": 0.987365552277508,
+                    "TN": 3006973,
+                    "TP": 74632,
+                    "n_pred": 75164,
+                    "n_ref": 75055
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-27.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-27.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9766519938218199,
+                    "FN": 9121,
+                    "FP": 14249,
+                    "IoU": 0.95436937183202,
+                    "TN": 2570404,
+                    "TP": 488786,
+                    "n_pred": 503035,
+                    "n_ref": 497907
+                },
+                "2": {
+                    "Dice": 0.9907121475644529,
+                    "FN": 1444,
+                    "FP": 1696,
+                    "IoU": 0.9815952358623277,
+                    "TN": 2911952,
+                    "TP": 167468,
+                    "n_pred": 169164,
+                    "n_ref": 168912
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-28.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-28.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9655206726702821,
+                    "FN": 15820,
+                    "FP": 21602,
+                    "IoU": 0.9333397460561754,
+                    "TN": 2521176,
+                    "TP": 523962,
+                    "n_pred": 545564,
+                    "n_ref": 539782
+                },
+                "2": {
+                    "Dice": 0.9844465934288559,
+                    "FN": 4574,
+                    "FP": 5253,
+                    "IoU": 0.969369594015429,
+                    "TN": 2761735,
+                    "TP": 310998,
+                    "n_pred": 316251,
+                    "n_ref": 315572
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-29.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-29.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9852617383643936,
+                    "FN": 4935,
+                    "FP": 7830,
+                    "IoU": 0.9709515996531942,
+                    "TN": 2643121,
+                    "TP": 426674,
+                    "n_pred": 434504,
+                    "n_ref": 431609
+                },
+                "2": {
+                    "Dice": 0.9947015659588423,
+                    "FN": 473,
+                    "FP": 561,
+                    "IoU": 0.9894589828020348,
+                    "TN": 2984467,
+                    "TP": 97059,
+                    "n_pred": 97620,
+                    "n_ref": 97532
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-30.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-30.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9592881251917766,
+                    "FN": 1473,
+                    "FP": 1844,
+                    "IoU": 0.9217614869327295,
+                    "TN": 3040164,
+                    "TP": 39079,
+                    "n_pred": 40923,
+                    "n_ref": 40552
+                },
+                "2": {
+                    "Dice": 0.9704923026157146,
+                    "FN": 1328,
+                    "FP": 997,
+                    "IoU": 0.9426761014817919,
+                    "TN": 3042001,
+                    "TP": 38234,
+                    "n_pred": 39231,
+                    "n_ref": 39562
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-31.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-31.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9634251235637717,
+                    "FN": 1225,
+                    "FP": 1624,
+                    "IoU": 0.9294312890121866,
+                    "TN": 3042188,
+                    "TP": 37523,
+                    "n_pred": 39147,
+                    "n_ref": 38748
+                },
+                "2": {
+                    "Dice": 0.9778899750944547,
+                    "FN": 750,
+                    "FP": 555,
+                    "IoU": 0.9567365070945498,
+                    "TN": 3052396,
+                    "TP": 28859,
+                    "n_pred": 29414,
+                    "n_ref": 29609
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-32.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-32.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9463280326161775,
+                    "FN": 1456,
+                    "FP": 1585,
+                    "IoU": 0.8981239530988274,
+                    "TN": 3052710,
+                    "TP": 26809,
+                    "n_pred": 28394,
+                    "n_ref": 28265
+                },
+                "2": {
+                    "Dice": 0.972306564757617,
+                    "FN": 432,
+                    "FP": 626,
+                    "IoU": 0.9461056492282615,
+                    "TN": 3062929,
+                    "TP": 18573,
+                    "n_pred": 19199,
+                    "n_ref": 19005
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-33.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-33.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9603589654464159,
+                    "FN": 1010,
+                    "FP": 1499,
+                    "IoU": 0.9237409197288836,
+                    "TN": 3049659,
+                    "TP": 30392,
+                    "n_pred": 31891,
+                    "n_ref": 31402
+                },
+                "2": {
+                    "Dice": 0.9790155808804112,
+                    "FN": 493,
+                    "FP": 540,
+                    "IoU": 0.9588937524870672,
+                    "TN": 3057430,
+                    "TP": 24097,
+                    "n_pred": 24637,
+                    "n_ref": 24590
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-34.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-34.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9615172261484098,
+                    "FN": 1186,
+                    "FP": 1602,
+                    "IoU": 0.9258865436758998,
+                    "TN": 3044942,
+                    "TP": 34830,
+                    "n_pred": 36432,
+                    "n_ref": 36016
+                },
+                "2": {
+                    "Dice": 0.9772306310688694,
+                    "FN": 677,
+                    "FP": 540,
+                    "IoU": 0.955475066769107,
+                    "TN": 3055227,
+                    "TP": 26116,
+                    "n_pred": 26656,
+                    "n_ref": 26793
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-35.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-35.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9806834544321381,
+                    "FN": 4369,
+                    "FP": 5518,
+                    "IoU": 0.9620990247791953,
+                    "TN": 2821696,
+                    "TP": 250977,
+                    "n_pred": 256495,
+                    "n_ref": 255346
+                },
+                "2": {
+                    "Dice": 0.9918648753434587,
+                    "FN": 1701,
+                    "FP": 712,
+                    "IoU": 0.9838610431130195,
+                    "TN": 2933046,
+                    "TP": 147101,
+                    "n_pred": 147813,
+                    "n_ref": 148802
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-36.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-36.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9681639646572816,
+                    "FN": 5218,
+                    "FP": 7937,
+                    "IoU": 0.9382924529629473,
+                    "TN": 2869377,
+                    "TP": 200028,
+                    "n_pred": 207965,
+                    "n_ref": 205246
+                },
+                "2": {
+                    "Dice": 0.989795642719181,
+                    "FN": 1435,
+                    "FP": 1587,
+                    "IoU": 0.9797974395828458,
+                    "TN": 2932975,
+                    "TP": 146563,
+                    "n_pred": 148150,
+                    "n_ref": 147998
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-37.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-37.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9802992149311213,
+                    "FN": 4797,
+                    "FP": 6508,
+                    "IoU": 0.9613596746077862,
+                    "TN": 2789990,
+                    "TP": 281265,
+                    "n_pred": 287773,
+                    "n_ref": 286062
+                },
+                "2": {
+                    "Dice": 0.9904013984929848,
+                    "FN": 2132,
+                    "FP": 1459,
+                    "IoU": 0.9809853114045771,
+                    "TN": 2893706,
+                    "TP": 185263,
+                    "n_pred": 186722,
+                    "n_ref": 187395
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-38.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-38.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9691084327317387,
+                    "FN": 1292,
+                    "FP": 1676,
+                    "IoU": 0.9400682511156432,
+                    "TN": 3033037,
+                    "TP": 46555,
+                    "n_pred": 48231,
+                    "n_ref": 47847
+                },
+                "2": {
+                    "Dice": 0.9945586497439561,
+                    "FN": 279,
+                    "FP": 536,
+                    "IoU": 0.9891761955987622,
+                    "TN": 3007263,
+                    "TP": 74482,
+                    "n_pred": 75018,
+                    "n_ref": 74761
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-39.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-39.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9916111014322896,
+                    "FN": 1016,
+                    "FP": 2162,
+                    "IoU": 0.9833617792111242,
+                    "TN": 2891554,
+                    "TP": 187828,
+                    "n_pred": 189990,
+                    "n_ref": 188844
+                },
+                "2": {
+                    "Dice": 0.9961283704138452,
+                    "FN": 260,
+                    "FP": 525,
+                    "IoU": 0.9922866042389286,
+                    "TN": 2980789,
+                    "TP": 100986,
+                    "n_pred": 101511,
+                    "n_ref": 101246
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-4.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-4.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.970325510976533,
+                    "FN": 1178,
+                    "FP": 1566,
+                    "IoU": 0.942361417438612,
+                    "TN": 3034953,
+                    "TP": 44863,
+                    "n_pred": 46429,
+                    "n_ref": 46041
+                },
+                "2": {
+                    "Dice": 0.9889650001703983,
+                    "FN": 978,
+                    "FP": 641,
+                    "IoU": 0.9781708846252376,
+                    "TN": 3008393,
+                    "TP": 72548,
+                    "n_pred": 73189,
+                    "n_ref": 73526
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-40.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-40.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.980610817531862,
+                    "FN": 1470,
+                    "FP": 1524,
+                    "IoU": 0.9619592147894035,
+                    "TN": 3003855,
+                    "TP": 75711,
+                    "n_pred": 77235,
+                    "n_ref": 77181
+                },
+                "2": {
+                    "Dice": 0.9913849375359499,
+                    "FN": 463,
+                    "FP": 870,
+                    "IoU": 0.9829170457894939,
+                    "TN": 3004529,
+                    "TP": 76698,
+                    "n_pred": 77568,
+                    "n_ref": 77161
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-41.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-41.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9744075505832758,
+                    "FN": 1323,
+                    "FP": 1676,
+                    "IoU": 0.9500923599207868,
+                    "TN": 3022469,
+                    "TP": 57092,
+                    "n_pred": 58768,
+                    "n_ref": 58415
+                },
+                "2": {
+                    "Dice": 0.985961870742165,
+                    "FN": 770,
+                    "FP": 1643,
+                    "IoU": 0.972312423265367,
+                    "TN": 2995409,
+                    "TP": 84738,
+                    "n_pred": 86381,
+                    "n_ref": 85508
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-42.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-42.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9671006137251256,
+                    "FN": 1258,
+                    "FP": 2280,
+                    "IoU": 0.9362970165109202,
+                    "TN": 3027021,
+                    "TP": 52001,
+                    "n_pred": 54281,
+                    "n_ref": 53259
+                },
+                "2": {
+                    "Dice": 0.9785272598255228,
+                    "FN": 397,
+                    "FP": 3204,
+                    "IoU": 0.957957291800446,
+                    "TN": 2996909,
+                    "TP": 82050,
+                    "n_pred": 85254,
+                    "n_ref": 82447
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-43.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-43.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9777337766652968,
+                    "FN": 1687,
+                    "FP": 1889,
+                    "IoU": 0.956437525125169,
+                    "TN": 3000471,
+                    "TP": 78513,
+                    "n_pred": 80402,
+                    "n_ref": 80200
+                },
+                "2": {
+                    "Dice": 0.9887546357219763,
+                    "FN": 526,
+                    "FP": 1166,
+                    "IoU": 0.9777593753696913,
+                    "TN": 3006483,
+                    "TP": 74385,
+                    "n_pred": 75551,
+                    "n_ref": 74911
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-44.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-44.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9821015971055983,
+                    "FN": 1462,
+                    "FP": 1714,
+                    "IoU": 0.9648326338984177,
+                    "TN": 2992249,
+                    "TP": 87135,
+                    "n_pred": 88849,
+                    "n_ref": 88597
+                },
+                "2": {
+                    "Dice": 0.9932690622261174,
+                    "FN": 559,
+                    "FP": 593,
+                    "IoU": 0.986628129679284,
+                    "TN": 2996409,
+                    "TP": 84999,
+                    "n_pred": 85592,
+                    "n_ref": 85558
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-45.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-45.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9759712713980156,
+                    "FN": 1210,
+                    "FP": 2149,
+                    "IoU": 0.953070206077541,
+                    "TN": 3010985,
+                    "TP": 68216,
+                    "n_pred": 70365,
+                    "n_ref": 69426
+                },
+                "2": {
+                    "Dice": 0.9960559754447341,
+                    "FN": 134,
+                    "FP": 344,
+                    "IoU": 0.9921429393296842,
+                    "TN": 3021723,
+                    "TP": 60359,
+                    "n_pred": 60703,
+                    "n_ref": 60493
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-46.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-46.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.971292088858137,
+                    "FN": 1617,
+                    "FP": 2698,
+                    "IoU": 0.944186467643673,
+                    "TN": 3005249,
+                    "TP": 72996,
+                    "n_pred": 75694,
+                    "n_ref": 74613
+                },
+                "2": {
+                    "Dice": 0.9941408252647614,
+                    "FN": 399,
+                    "FP": 401,
+                    "IoU": 0.9883499104399365,
+                    "TN": 3013891,
+                    "TP": 67869,
+                    "n_pred": 68270,
+                    "n_ref": 68268
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-47.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-47.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9766412302673735,
+                    "FN": 2017,
+                    "FP": 2394,
+                    "IoU": 0.9543488160291439,
+                    "TN": 2985936,
+                    "TP": 92213,
+                    "n_pred": 94607,
+                    "n_ref": 94230
+                },
+                "2": {
+                    "Dice": 0.9933202221394349,
+                    "FN": 339,
+                    "FP": 432,
+                    "IoU": 0.9867290910029778,
+                    "TN": 3024463,
+                    "TP": 57326,
+                    "n_pred": 57758,
+                    "n_ref": 57665
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-48.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-48.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.975316970574813,
+                    "FN": 1727,
+                    "FP": 3249,
+                    "IoU": 0.9518230931588018,
+                    "TN": 2979274,
+                    "TP": 98310,
+                    "n_pred": 101559,
+                    "n_ref": 100037
+                },
+                "2": {
+                    "Dice": 0.9964734763050007,
+                    "FN": 217,
+                    "FP": 349,
+                    "IoU": 0.9929717379426811,
+                    "TN": 3002028,
+                    "TP": 79966,
+                    "n_pred": 80315,
+                    "n_ref": 80183
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-49.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-49.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9809195682092668,
+                    "FN": 1907,
+                    "FP": 2169,
+                    "IoU": 0.9625536293397275,
+                    "TN": 2973711,
+                    "TP": 104773,
+                    "n_pred": 106942,
+                    "n_ref": 106680
+                },
+                "2": {
+                    "Dice": 0.996662380042668,
+                    "FN": 203,
+                    "FP": 246,
+                    "IoU": 0.9933469653864391,
+                    "TN": 3015072,
+                    "TP": 67039,
+                    "n_pred": 67285,
+                    "n_ref": 67242
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-50.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-50.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9699433756550487,
+                    "FN": 1822,
+                    "FP": 2451,
+                    "IoU": 0.9416408309318619,
+                    "TN": 3009341,
+                    "TP": 68946,
+                    "n_pred": 71397,
+                    "n_ref": 70768
+                },
+                "2": {
+                    "Dice": 0.9885523837125054,
+                    "FN": 555,
+                    "FP": 946,
+                    "IoU": 0.9773638968481375,
+                    "TN": 3016250,
+                    "TP": 64809,
+                    "n_pred": 65755,
+                    "n_ref": 65364
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-51.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-51.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9787735538495977,
+                    "FN": 983,
+                    "FP": 2241,
+                    "IoU": 0.9584295016439945,
+                    "TN": 3005005,
+                    "TP": 74331,
+                    "n_pred": 76572,
+                    "n_ref": 75314
+                },
+                "2": {
+                    "Dice": 0.9961993410083994,
+                    "FN": 226,
+                    "FP": 255,
+                    "IoU": 0.9924274626489712,
+                    "TN": 3019041,
+                    "TP": 63038,
+                    "n_pred": 63293,
+                    "n_ref": 63264
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-52.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-52.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9900386815413077,
+                    "FN": 1868,
+                    "FP": 3285,
+                    "IoU": 0.9802738614308628,
+                    "TN": 2821333,
+                    "TP": 256074,
+                    "n_pred": 259359,
+                    "n_ref": 257942
+                },
+                "2": {
+                    "Dice": 0.9966797070919852,
+                    "FN": 218,
+                    "FP": 444,
+                    "IoU": 0.9933813899081193,
+                    "TN": 2982539,
+                    "TP": 99359,
+                    "n_pred": 99803,
+                    "n_ref": 99577
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-6.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-6.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9769670575472826,
+                    "FN": 9409,
+                    "FP": 13904,
+                    "IoU": 0.9549712594835978,
+                    "TN": 2564824,
+                    "TP": 494423,
+                    "n_pred": 508327,
+                    "n_ref": 503832
+                },
+                "2": {
+                    "Dice": 0.9971280263144897,
+                    "FN": 1563,
+                    "FP": 763,
+                    "IoU": 0.9942725018529417,
+                    "TN": 2676449,
+                    "TP": 403785,
+                    "n_pred": 404548,
+                    "n_ref": 405348
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-7.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-7.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9837294396029318,
+                    "FN": 5932,
+                    "FP": 8164,
+                    "IoU": 0.9679798647503651,
+                    "TN": 2642337,
+                    "TP": 426127,
+                    "n_pred": 434291,
+                    "n_ref": 432059
+                },
+                "2": {
+                    "Dice": 0.9962525636905558,
+                    "FN": 967,
+                    "FP": 1750,
+                    "IoU": 0.9925331090792666,
+                    "TN": 2718687,
+                    "TP": 361156,
+                    "n_pred": 362906,
+                    "n_ref": 362123
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-8.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-8.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9727452886347024,
+                    "FN": 4008,
+                    "FP": 6843,
+                    "IoU": 0.9469367994835984,
+                    "TN": 2878068,
+                    "TP": 193641,
+                    "n_pred": 200484,
+                    "n_ref": 197649
+                },
+                "2": {
+                    "Dice": 0.9955061625519215,
+                    "FN": 667,
+                    "FP": 1447,
+                    "IoU": 0.9910525335635804,
+                    "TN": 2846292,
+                    "TP": 234154,
+                    "n_pred": 235601,
+                    "n_ref": 234821
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/img-9.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/img-9.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9595767509775149,
+                    "FN": 32041,
+                    "FP": 12641,
+                    "IoU": 0.9222946064297117,
+                    "TN": 3489238,
+                    "TP": 530336,
+                    "n_pred": 542977,
+                    "n_ref": 562377
+                },
+                "2": {
+                    "Dice": 0.9969010434904405,
+                    "FN": 595,
+                    "FP": 467,
+                    "IoU": 0.9938212347058105,
+                    "TN": 3892377,
+                    "TP": 170817,
+                    "n_pred": 171284,
+                    "n_ref": 171412
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/kloka_0002.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/kloka_0002.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9650274542134762,
+                    "FN": 27306,
+                    "FP": 30979,
+                    "IoU": 0.93241840872224,
+                    "TN": 3201817,
+                    "TP": 804154,
+                    "n_pred": 835133,
+                    "n_ref": 831460
+                },
+                "2": {
+                    "Dice": 0.9911635509245071,
+                    "FN": 2339,
+                    "FP": 2851,
+                    "IoU": 0.9824818996506506,
+                    "TN": 3767991,
+                    "TP": 291075,
+                    "n_pred": 293926,
+                    "n_ref": 293414
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/kloka_0008.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/kloka_0008.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9693476896524672,
+                    "FN": 11098,
+                    "FP": 20160,
+                    "IoU": 0.9405186209941219,
+                    "TN": 3538747,
+                    "TP": 494251,
+                    "n_pred": 514411,
+                    "n_ref": 505349
+                },
+                "2": {
+                    "Dice": 0.9926585509719172,
+                    "FN": 1276,
+                    "FP": 927,
+                    "IoU": 0.9854241100965991,
+                    "TN": 3913116,
+                    "TP": 148937,
+                    "n_pred": 149864,
+                    "n_ref": 150213
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/kloka_0009.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/kloka_0009.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9593508104603129,
+                    "FN": 25403,
+                    "FP": 35970,
+                    "IoU": 0.9218772474945806,
+                    "TN": 3278659,
+                    "TP": 724224,
+                    "n_pred": 760194,
+                    "n_ref": 749627
+                },
+                "2": {
+                    "Dice": 0.9948923587664318,
+                    "FN": 1044,
+                    "FP": 673,
+                    "IoU": 0.9898366283887771,
+                    "TN": 3895316,
+                    "TP": 167223,
+                    "n_pred": 167896,
+                    "n_ref": 168267
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/kloka_0012.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/kloka_0012.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.95541553419369,
+                    "FN": 15277,
+                    "FP": 26159,
+                    "IoU": 0.9146369350382872,
+                    "TN": 3578847,
+                    "TP": 443973,
+                    "n_pred": 470132,
+                    "n_ref": 459250
+                },
+                "2": {
+                    "Dice": 0.9827031375703942,
+                    "FN": 4018,
+                    "FP": 1830,
+                    "IoU": 0.9659944642151048,
+                    "TN": 3892284,
+                    "TP": 166124,
+                    "n_pred": 167954,
+                    "n_ref": 170142
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/kloka_0013.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/kloka_0013.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9756617716821809,
+                    "FN": 18384,
+                    "FP": 27790,
+                    "IoU": 0.9524800936936862,
+                    "TN": 3092579,
+                    "TP": 925503,
+                    "n_pred": 953293,
+                    "n_ref": 943887
+                },
+                "2": {
+                    "Dice": 0.9963413816979741,
+                    "FN": 732,
+                    "FP": 906,
+                    "IoU": 0.9927094367839625,
+                    "TN": 3839582,
+                    "TP": 223036,
+                    "n_pred": 223942,
+                    "n_ref": 223768
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/kloka_0020.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/kloka_0020.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9856995410091398,
+                    "FN": 5210,
+                    "FP": 5514,
+                    "IoU": 0.971802321759594,
+                    "TN": 3683941,
+                    "TP": 369591,
+                    "n_pred": 375105,
+                    "n_ref": 374801
+                },
+                "2": {
+                    "Dice": 0.9958061079545455,
+                    "FN": 1367,
+                    "FP": 995,
+                    "IoU": 0.9916472464557379,
+                    "TN": 3781475,
+                    "TP": 280419,
+                    "n_pred": 281414,
+                    "n_ref": 281786
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/maize_1_4.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/maize_1_4.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9835868495815876,
+                    "FN": 5848,
+                    "FP": 6030,
+                    "IoU": 0.9677037818496232,
+                    "TN": 3696473,
+                    "TP": 355905,
+                    "n_pred": 361935,
+                    "n_ref": 361753
+                },
+                "2": {
+                    "Dice": 0.997287393190029,
+                    "FN": 641,
+                    "FP": 932,
+                    "IoU": 0.9945894630394628,
+                    "TN": 3773527,
+                    "TP": 289156,
+                    "n_pred": 290088,
+                    "n_ref": 289797
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/maize_1_5.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/maize_1_5.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9662428202244296,
+                    "FN": 7571,
+                    "FP": 12088,
+                    "IoU": 0.9346903113497136,
+                    "TN": 3763244,
+                    "TP": 281353,
+                    "n_pred": 293441,
+                    "n_ref": 288924
+                },
+                "2": {
+                    "Dice": 0.9975971909935002,
+                    "FN": 779,
+                    "FP": 591,
+                    "IoU": 0.9952059012905574,
+                    "TN": 3778488,
+                    "TP": 284398,
+                    "n_pred": 284989,
+                    "n_ref": 285177
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/maize_3_7.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/maize_3_7.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9437799951977289,
+                    "FN": 15190,
+                    "FP": 21804,
+                    "IoU": 0.893544896808131,
+                    "TN": 3716748,
+                    "TP": 310514,
+                    "n_pred": 332318,
+                    "n_ref": 325704
+                },
+                "2": {
+                    "Dice": 0.9913617541610795,
+                    "FN": 1337,
+                    "FP": 2612,
+                    "IoU": 0.9828714687856484,
+                    "TN": 3833705,
+                    "TP": 226602,
+                    "n_pred": 229214,
+                    "n_ref": 227939
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/maize_3_8.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/maize_3_8.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9625080121620511,
+                    "FN": 17321,
+                    "FP": 28303,
+                    "IoU": 0.9277257303623535,
+                    "TN": 3432994,
+                    "TP": 585638,
+                    "n_pred": 613941,
+                    "n_ref": 602959
+                },
+                "2": {
+                    "Dice": 0.9905780968714382,
+                    "FN": 1742,
+                    "FP": 1796,
+                    "IoU": 0.9813320810666779,
+                    "TN": 3874733,
+                    "TP": 185985,
+                    "n_pred": 187781,
+                    "n_ref": 187727
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/maris_fundin_0004.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/maris_fundin_0004.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.980019766169825,
+                    "FN": 12832,
+                    "FP": 15916,
+                    "IoU": 0.9608223117125588,
+                    "TN": 3330471,
+                    "TP": 705037,
+                    "n_pred": 720953,
+                    "n_ref": 717869
+                },
+                "2": {
+                    "Dice": 0.9965006596101796,
+                    "FN": 1279,
+                    "FP": 416,
+                    "IoU": 0.9930257245840123,
+                    "TN": 3821220,
+                    "TP": 241341,
+                    "n_pred": 241757,
+                    "n_ref": 242620
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/robigus_4.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/robigus_4.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.965801594503081,
+                    "FN": 21666,
+                    "FP": 10068,
+                    "IoU": 0.933864903842146,
+                    "TN": 3584420,
+                    "TP": 448102,
+                    "n_pred": 458170,
+                    "n_ref": 469768
+                },
+                "2": {
+                    "Dice": 0.9939745744012763,
+                    "FN": 1496,
+                    "FP": 634,
+                    "IoU": 0.9880213254150357,
+                    "TN": 3886440,
+                    "TP": 175686,
+                    "n_pred": 176320,
+                    "n_ref": 177182
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/robigus_6.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/robigus_6.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9679527755819188,
+                    "FN": 17041,
+                    "FP": 15918,
+                    "IoU": 0.9378958178272299,
+                    "TN": 3533551,
+                    "TP": 497746,
+                    "n_pred": 513664,
+                    "n_ref": 514787
+                },
+                "2": {
+                    "Dice": 0.9701293671082191,
+                    "FN": 3178,
+                    "FP": 4534,
+                    "IoU": 0.9419914852646939,
+                    "TN": 3931310,
+                    "TP": 125234,
+                    "n_pred": 129768,
+                    "n_ref": 128412
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/slejpner-2.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/slejpner-2.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.963604313780693,
+                    "FN": 8352,
+                    "FP": 8971,
+                    "IoU": 0.9297648828468678,
+                    "TN": 3817613,
+                    "TP": 229320,
+                    "n_pred": 238291,
+                    "n_ref": 237672
+                },
+                "2": {
+                    "Dice": 0.981147829350095,
+                    "FN": 1413,
+                    "FP": 2606,
+                    "IoU": 0.9629933150402387,
+                    "TN": 3955654,
+                    "TP": 104583,
+                    "n_pred": 107189,
+                    "n_ref": 105996
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/slejpner_7.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/slejpner_7.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9750402927211743,
+                    "FN": 1408,
+                    "FP": 1457,
+                    "IoU": 0.9512962175945602,
+                    "TN": 1391575,
+                    "TP": 55960,
+                    "n_pred": 57417,
+                    "n_ref": 57368
+                },
+                "2": {
+                    "Dice": 0.9927121379427504,
+                    "FN": 460,
+                    "FP": 398,
+                    "IoU": 0.985529733193915,
+                    "TN": 1391106,
+                    "TP": 58436,
+                    "n_pred": 58834,
+                    "n_ref": 58896
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/tef_0011.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/tef_0011.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9276902433315256,
+                    "FN": 38879,
+                    "FP": 36188,
+                    "IoU": 0.8651327077483071,
+                    "TN": 3507657,
+                    "TP": 481532,
+                    "n_pred": 517720,
+                    "n_ref": 520411
+                },
+                "2": {
+                    "Dice": 0.9949525604574642,
+                    "FN": 352,
+                    "FP": 280,
+                    "IoU": 0.9899558183147389,
+                    "TN": 4001334,
+                    "TP": 62290,
+                    "n_pred": 62570,
+                    "n_ref": 62642
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/tef_5.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/tef_5.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9668921686947086,
+                    "FN": 8099,
+                    "FP": 6852,
+                    "IoU": 0.9359063394893428,
+                    "TN": 1605324,
+                    "TP": 218317,
+                    "n_pred": 225169,
+                    "n_ref": 226416
+                },
+                "2": {
+                    "Dice": 0.983208113202538,
+                    "FN": 1361,
+                    "FP": 1169,
+                    "IoU": 0.9669708481833966,
+                    "TN": 1761993,
+                    "TP": 74069,
+                    "n_pred": 75238,
+                    "n_ref": 75430
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/tef_6.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/tef_6.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9554776714071441,
+                    "FN": 9221,
+                    "FP": 20492,
+                    "IoU": 0.9147508341868865,
+                    "TN": 1176045,
+                    "TP": 318830,
+                    "n_pred": 339322,
+                    "n_ref": 328051
+                },
+                "2": {
+                    "Dice": 0.9939299157079998,
+                    "FN": 222,
+                    "FP": 236,
+                    "IoU": 0.9879330786457647,
+                    "TN": 1486633,
+                    "TP": 37497,
+                    "n_pred": 37733,
+                    "n_ref": 37719
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/tef_7.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/tef_7.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9681891447566755,
+                    "FN": 7127,
+                    "FP": 8701,
+                    "IoU": 0.9383397546523723,
+                    "TN": 2825863,
+                    "TP": 240869,
+                    "n_pred": 249570,
+                    "n_ref": 247996
+                },
+                "2": {
+                    "Dice": 0.998205957290209,
+                    "FN": 593,
+                    "FP": 616,
+                    "IoU": 0.9964183402310156,
+                    "TN": 2745007,
+                    "TP": 336344,
+                    "n_pred": 336960,
+                    "n_ref": 336937
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/wheat_bad_1.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/wheat_bad_1.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9505422678415804,
+                    "FN": 6142,
+                    "FP": 10202,
+                    "IoU": 0.905746118889991,
+                    "TN": 2909156,
+                    "TP": 157060,
+                    "n_pred": 167262,
+                    "n_ref": 163202
+                },
+                "2": {
+                    "Dice": 0.9929275975723963,
+                    "FN": 692,
+                    "FP": 1634,
+                    "IoU": 0.9859545303583829,
+                    "TN": 2916955,
+                    "TP": 163279,
+                    "n_pred": 164913,
+                    "n_ref": 163971
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/wheat_bad_2.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/wheat_bad_2.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9209578686858666,
+                    "FN": 14722,
+                    "FP": 14757,
+                    "IoU": 0.85349574586514,
+                    "TN": 2881344,
+                    "TP": 171737,
+                    "n_pred": 186494,
+                    "n_ref": 186459
+                },
+                "2": {
+                    "Dice": 0.9806237914646018,
+                    "FN": 2737,
+                    "FP": 1662,
+                    "IoU": 0.9619841852828069,
+                    "TN": 2966845,
+                    "TP": 111316,
+                    "n_pred": 112978,
+                    "n_ref": 114053
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/wheat_bad_3.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/wheat_bad_3.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9528679700580431,
+                    "FN": 15414,
+                    "FP": 18845,
+                    "IoU": 0.9099788210192188,
+                    "TN": 2701994,
+                    "TP": 346307,
+                    "n_pred": 365152,
+                    "n_ref": 361721
+                },
+                "2": {
+                    "Dice": 0.9919969659180027,
+                    "FN": 1280,
+                    "FP": 1210,
+                    "IoU": 0.9841210119188067,
+                    "TN": 2925749,
+                    "TP": 154321,
+                    "n_pred": 155531,
+                    "n_ref": 155601
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/wheat_bad_4.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/wheat_bad_4.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9530167596668101,
+                    "FN": 11570,
+                    "FP": 12351,
+                    "IoU": 0.910250253254793,
+                    "TN": 2816030,
+                    "TP": 242609,
+                    "n_pred": 254960,
+                    "n_ref": 254179
+                },
+                "2": {
+                    "Dice": 0.9890973697668166,
+                    "FN": 2059,
+                    "FP": 2077,
+                    "IoU": 0.9784299102463142,
+                    "TN": 2890813,
+                    "TP": 187611,
+                    "n_pred": 189688,
+                    "n_ref": 189670
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/wheat_bad_5.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/wheat_bad_5.png"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9571838590881092,
+                    "FN": 6702,
+                    "FP": 6366,
+                    "IoU": 0.9178836244815886,
+                    "TN": 2923420,
+                    "TP": 146072,
+                    "n_pred": 152438,
+                    "n_ref": 152774
+                },
+                "2": {
+                    "Dice": 0.994416538527251,
+                    "FN": 542,
+                    "FP": 275,
+                    "IoU": 0.9888950809422191,
+                    "TN": 3008989,
+                    "TP": 72754,
+                    "n_pred": 73029,
+                    "n_ref": 73296
+                }
+            },
+            "prediction_file": "/home/itsang/image_processing/nnUNet/nnUNet_results/Dataset999_pyRootHair/nnUNetTrainer__nnUNetResEncUNetMPlans__2d/fold_all/validation/wheat_bad_6.png",
+            "reference_file": "/home/itsang/image_processing/nnUNet/nnUNet_preprocessed/Dataset999_pyRootHair/gt_segmentations/wheat_bad_6.png"
+        }
+    ]
+}
