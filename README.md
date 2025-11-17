@@ -464,17 +464,7 @@ If you are interested in learning how pyRootHair works behind the scenes, please
 ## Citation
 
 ```
-@misc{tsangPyRootHairMachineLearning2025,
-	title = {{pyRootHair}: Machine Learning Accelerated Software for High-Throughput Phenotyping of Plant Root Hair Traits},
-	rights = {https://www.biorxiv.org/about/{FAQ}\#license},
-	url = {http://biorxiv.org/lookup/doi/10.1101/2025.07.14.664697},
-	doi = {10.1101/2025.07.14.664697},
-	shorttitle = {{pyRootHair}},
-	publisher = {Cold Spring Harbor Laboratory},
-	author = {Tsang, Ian and Percival-Alwyn, Lawrence and Rawsthorne, Stephen and Cockram, James and Leigh, Fiona and Atkinson, Jonathan A.},
-	urldate = {2025-07-23},
-	date = {2025-07-18},
-}
+Tsang, I., Percival-Alwyn, L., Rawsthorne, S., Cockram, J., Leigh, F., Atkinson, J.A., 2025. pyRootHair: Machine Learning Accelerated Software for High-Throughput Phenotyping of Plant Root Hair Traits. GigaScience giaf141. https://doi.org/10.1093/gigascience/giaf141
 
 ```
 

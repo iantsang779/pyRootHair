@@ -21,7 +21,7 @@ Basic usage: pyroothair_train_random_forest --train-img /path/to/representative/
 
 Please cite the following paper when using pyRootHair:
 
-Tsang, I. et al. pyRootHair: Machine Learning Accelerated Software for High-Throughput Phenotyping of Plant Root Hair Traits. Preprint at https://doi.org/10.1101/2025.07.14.664697 (2025).
+Tsang, I., Percival-Alwyn, L., Rawsthorne, S., Cockram, J., Leigh, F., Atkinson, J.A., 2025. pyRootHair: Machine Learning Accelerated Software for High-Throughput Phenotyping of Plant Root Hair Traits. GigaScience giaf141. https://doi.org/10.1093/gigascience/giaf141
 
 Author: Ian Tsang
 Contact: ian.tsang@niab.com
