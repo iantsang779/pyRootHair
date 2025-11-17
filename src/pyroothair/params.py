@@ -6,6 +6,7 @@ import imageio.v3 as iio
 
 from numpy.typing import NDArray
 from scipy.ndimage import label
+# from orientationpy import computeGradient, computeStructureTensor, computeOrientation
 from skimage.measure import label as lb
 from skimage.measure import regionprops
 from statsmodels.nonparametric.smoothers_lowess import lowess
@@ -24,6 +25,7 @@ class GetParams(Root):
         self.bin_end_list_1, self.bin_end_list_2 = [], []
         self.bin_list = []
         self.avg_rhl_list, self.avg_rha_list = [], []
+        self.angle_list_1, self.angle_list_2 = [], []
         self.smooth_avg_rha, self.smooth_avg_rhl = None, None
         self.smooth_1_rhl, self.smooth_2_rhl = None, None
         self.smooth_1_rha, self.smooth_2_rha = None, None
@@ -72,6 +74,18 @@ class GetParams(Root):
         self.rh_pixel_intensity = float([i.intensity_mean for i in rh_props][0])
         self.bg_pixel_intensity = float([i.intensity_mean for i in bg_props][0])
 
+    # def calculate_angle(self, rh_segment: 'NDArray') -> np.float64:
+    #     """
+    #     Calculate angle of each root hair segment in the sliding window.
+    #     """
+    #     Gy, Gx = computeGradient(rh_segment, mode='splines')
+    #     structureTensor = computeStructureTensor([Gy, Gx], sigma=3)
+    #     orientations = computeOrientation(structureTensor)
+    #     thetas = orientations['theta'] # get angles
+    #     orientations_nozeros = thetas[thetas != 0] # remove 0s prior to calculation
+
+    #     return np.mean(orientations_nozeros) # mean angle of all pixels in each binned root hair segment
+
     def sliding_window(self, height_bin_size: int, length_cutoff:float, conv:int) -> None:
         """
         Sliding window down root hair sections to compute data
@@ -84,62 +98,68 @@ class GetParams(Root):
 
         if length_cutoff: # sliding window for length cutoff
             print(f'...Applying length cutoff of {length_cutoff} mm...')
-            max_height = max_root_coords - round(length_cutoff * conv) # set endpoint of sliding window to length_cutoff if provided 
+            start = max_root_coords - round(length_cutoff * conv) # set endpoint of sliding window to length_cutoff if provided 
+        else:
+            start = 0
         
-            for index, segment in enumerate(root_hair_segments): # loop over each root hair section (left and right side)
-                min_row, min_col, max_row, max_col = segment.bbox # calculate binding box coords of each segment
-                segment_mask = self.root_hairs[min_row:max_row, min_col:max_col] # mask each root hair segment
-                # segment_mask = remove_small_objects(segment_mask, connectivity=2, min_size=200)
-                
-                for bin_start in range(max_height, max_root_coords, height_bin_size): # sliding window down each section
-                    bin_end = bin_start + height_bin_size # calculate bin end
-                    # print(bin_start, bin_end)
-                    rh_segment = segment_mask[bin_start:bin_end, :] # define mask for sliding window for root hairs
-                    _, rh_segment_measured = self.clean_root_chunk(rh_segment) 
-                    rh_segment_area = [segment['area'] for segment in rh_segment_measured] # area of each segment
-                    
-                    for region in rh_segment_measured: # for each root hair section on either side of the root
-                        _, min_segment_col, _, max_segment_col = region.bbox 
-                        horizontal_rh_length = max_segment_col - min_segment_col 
-
-                        if index == 0:
-                            self.horizontal_rh_list_1.append(horizontal_rh_length)
-                            self.rh_area_list_1.append(rh_segment_area)
-                            self.bin_end_list_1.append(bin_end - max_height)
-                                
-                        elif index == 1:
-                            self.horizontal_rh_list_2.append(horizontal_rh_length)
-                            self.rh_area_list_2.append(rh_segment_area)
-                            self.bin_end_list_2.append(bin_end - max_height) 
+        for index, segment in enumerate(root_hair_segments): # loop over each root hair section (left and right side)
+            min_row, min_col, max_row, max_col = segment.bbox # calculate binding box coords of each segment
+            segment_mask = self.root_hairs[min_row:max_row, min_col:max_col] # mask each root hair segment
+            # segment_mask = remove_small_objects(segment_mask, connectivity=2, min_size=200)
             
-
-        else: # sliding window no length cutoff
-            for index, segment in enumerate(root_hair_segments): # loop over each root hair section (left and right side)
-                min_row, min_col, max_row, max_col = segment.bbox # calculate binding box coords of each segment
-                segment_mask = self.root_hairs[min_row:max_row, min_col:max_col] # mask each root hair segment
-                # segment_mask = remove_small_objects(segment_mask, connectivity=2, min_size=200)
+            for bin_start in range(start, max_root_coords, height_bin_size): # sliding window down each section
+                bin_end = bin_start + height_bin_size # calculate bin end
+                # print(bin_start, bin_end)
+                rh_segment = segment_mask[bin_start:bin_end, :] # define mask for sliding window for root hairs
+                rh_segment, rh_segment_measured = self.clean_root_chunk(rh_segment) 
+                rh_segment_area = [segment['area'] for segment in rh_segment_measured] # area of each segment
+                # angle = self.calculate_angle(rh_segment)
                 
-                for bin_start in range(0, max_root_coords, height_bin_size): # sliding window down each section
+                for region in rh_segment_measured: # for each root hair section on either side of the root
+                    _, min_segment_col, _, max_segment_col = region.bbox 
+                    horizontal_rh_length = max_segment_col - min_segment_col 
 
-                    bin_end = bin_start + height_bin_size # calculate bin end
-                    rh_segment = segment_mask[bin_start:bin_end, :] # define mask for sliding window for root hairs
-                    _, rh_segment_measured = self.clean_root_chunk(rh_segment) 
-                    rh_segment_area = [segment['area'] for segment in rh_segment_measured] # area of each segment
-                    
-                    for region in rh_segment_measured: # for each root hair section on either side of the root
-                        _, min_segment_col, _, max_segment_col = region.bbox 
-                        horizontal_rh_length = max_segment_col - min_segment_col 
+                    if index == 0:
+                        self.horizontal_rh_list_1.append(horizontal_rh_length)
+                        self.rh_area_list_1.append(rh_segment_area)
+                        self.bin_end_list_1.append(bin_end - start)
+                        # self.angle_list_1.append(angle)
+                            
+                    elif index == 1:
+                        self.horizontal_rh_list_2.append(horizontal_rh_length)
+                        self.rh_area_list_2.append(rh_segment_area)
+                        self.bin_end_list_2.append(bin_end - start) 
+                        # self.angle_list_2.append(angle)
+        
 
-                        if index == 0:
-                            self.horizontal_rh_list_1.append(horizontal_rh_length)
-                            self.rh_area_list_1.append(rh_segment_area)
-                            self.bin_end_list_1.append(bin_end)
-                                
-                        elif index == 1:
-                            self.horizontal_rh_list_2.append(horizontal_rh_length)
-                            self.rh_area_list_2.append(rh_segment_area)
-                            self.bin_end_list_2.append(bin_end) 
+        # else: # sliding window no length cutoff
+        #     for index, segment in enumerate(root_hair_segments): # loop over each root hair section (left and right side)
+        #         min_row, min_col, max_row, max_col = segment.bbox # calculate binding box coords of each segment
+        #         segment_mask = self.root_hairs[min_row:max_row, min_col:max_col] # mask each root hair segment
+        #         # segment_mask = remove_small_objects(segment_mask, connectivity=2, min_size=200)
+                
+        #         for bin_start in range(0, max_root_coords, height_bin_size): # sliding window down each section
 
+        #             bin_end = bin_start + height_bin_size # calculate bin end
+        #             rh_segment = segment_mask[bin_start:bin_end, :] # define mask for sliding window for root hairs
+        #             rh_segment, rh_segment_measured = self.clean_root_chunk(rh_segment) 
+        #             rh_segment_area = [segment['area'] for segment in rh_segment_measured] # area of each segment
+        #             angle = self.calculate_angle(rh_segment)
+
+        #             for region in rh_segment_measured: # for each root hair section on either side of the root
+        #                 _, min_segment_col, _, max_segment_col = region.bbox 
+        #                 horizontal_rh_length = max_segment_col - min_segment_col 
+
+        #                 if index == 0:
+        #                     self.horizontal_rh_list_1.append(horizontal_rh_length)
+        #                     self.rh_area_list_1.append(rh_segment_area)
+        #                     self.bin_end_list_1.append(bin_end)
+        #                     self.angle_list_1.append(angle)
+        #                 elif index == 1:
+        #                     self.horizontal_rh_list_2.append(horizontal_rh_length)
+        #                     self.rh_area_list_2.append(rh_segment_area)
+        #                     self.bin_end_list_2.append(bin_end) 
+        #                     self.angle_list_2.append(angle)
 
     def clean_data(self) -> None:
         """
@@ -242,7 +262,7 @@ class GetParams(Root):
 
     def generate_table(self, img_name: str, run_id:str, root_thickness: float, conv: int) -> tuple[pd.DataFrame, pd.DataFrame]:
         """
-        Generate table of summary parameters, and raw RHL/rha measurements for each image
+        Generate table of summary parameters, and raw RHL/rha/angle measurements for each image
         """
         assert self.max_x is not None
         assert self.rh_pixel_intensity is not None
@@ -266,6 +286,7 @@ class GetParams(Root):
                                    'Elongation Zone Gradient': [self.growth_gradient],
                                    'Root Thickness (mm)': [root_thickness / conv],
                                    'Root Length (mm)': [np.max(self.bin_list)],
+                                   'Mean Root Hair Angle (deg)': [np.mean(self.angle_list_1 + self.angle_list_2)],
                                    'RH Pixel Intensity Mean': self.rh_pixel_intensity,
                                    'Background Pixel Intensity Mean': self.bg_pixel_intensity,
                                    'RH:Background Pixel Ratio': self.rh_pixel_intensity / self.bg_pixel_intensity})
@@ -275,7 +296,9 @@ class GetParams(Root):
                                'RHL 1': self.horizontal_rh_list_1,
                                'RHL 2': self.horizontal_rh_list_2,
                                'RHA 1': self.rh_area_list_1,
-                               'RHA 2': self.rh_area_list_2})   
+                               'RHA 2': self.rh_area_list_2,})
+                            #    'RH Angle 1': self.angle_list_1,
+                            #    'RH Angle 2': self.angle_list_2})   
         
         return summary_df, raw_df
     
